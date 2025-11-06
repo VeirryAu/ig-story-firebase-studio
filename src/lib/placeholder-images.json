@@ -3,31 +3,31 @@
     {
       "id": "user1-avatar",
       "description": "Avatar for Sarah",
-      "imageUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHx3b21hbiUyMHBvcnRyYWl0fGVufDB8fHx8MTc2MjMzOTU2MHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/user1-avatar.jpg",
       "imageHint": "woman portrait"
     },
     {
       "id": "user2-avatar",
       "description": "Avatar for John",
-      "imageUrl": "https://images.unsplash.com/photo-1522556189639-b150ed9c4330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtYW4lMjBwb3J0cmFpdHxlbnwwfHx8fDE3NjIzMzEzMTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/user2-avatar.jpg",
       "imageHint": "man portrait"
     },
     {
       "id": "story1-slide1",
       "description": "A beautiful mountain landscape",
-      "imageUrl": "https://images.unsplash.com/photo-1610892415063-d89a504ce049?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxtb3VudGFpbiUyMGxhbmRzY2FwZXxlbnwwfHx8fDE3NjIzNTk4MjV8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/story1-slide1.jpg",
       "imageHint": "mountain landscape"
     },
     {
       "id": "story1-slide2",
       "description": "A serene lake at dawn",
-      "imageUrl": "https://images.unsplash.com/photo-1699378281595-0d75e9e6a05a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxzZXJlbmUlMjBsYWtlfGVufDB8fHx8MTc2MjM2MDc2MXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/story1-slide2.jpg",
       "imageHint": "serene lake"
     },
     {
       "id": "story2-slide1",
       "description": "Bustling city street at night",
-      "imageUrl": "https://images.unsplash.com/photo-1601042879364-f3947d3f9c16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxjaXR5JTIwbmlnaHR8ZW58MHx8fHwxNzYyMzEwNzA4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageUrl": "/images/story2-slide1.jpg",
       "imageHint": "city night"
     }
   ]
