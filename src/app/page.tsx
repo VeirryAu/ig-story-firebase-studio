@@ -6,7 +6,7 @@ import type { Story } from '@/types/story';
 import { StoryViewer } from '@/components/story-viewer';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Button } from '@/components/ui/button';
-import { stories as storyData } from '@/lib/story-data';
+import { stories as storyData } from '@/lib/story-data.tsx';
 
 export default function Home() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -24,7 +24,11 @@ export default function Home() {
         const imageUrls: string[] = [];
         storiesData.forEach(story => {
           imageUrls.push(story.user.avatar);
-          story.slides.forEach(slide => imageUrls.push(slide.url));
+          story.slides.forEach(slide => {
+            if (slide.type === 'image' && slide.url) {
+              imageUrls.push(slide.url)
+            }
+          });
         });
 
         const imagePromises = imageUrls.map(url => {

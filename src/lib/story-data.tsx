@@ -1,6 +1,8 @@
 
 import type { Story } from '@/types/story';
 import { PlaceHolderImages } from './placeholder-images';
+import { WelcomeSlide } from '@/components/slides/welcome-slide';
+import { CityNightSlide } from '@/components/slides/city-night-slide';
 
 // Helper to find image URL by ID
 const getImageUrl = (id: string) => {
@@ -23,11 +25,10 @@ export const stories: Story[] = [
     slides: [
       {
         id: 'slide1',
-        type: 'image',
-        url: getImageUrl('story1-slide1'),
+        type: 'component',
         duration: 5000,
-        alt: 'A beautiful mountain landscape',
-        aiHint: getImageHint('story1-slide1'),
+        alt: 'Welcome slide',
+        component: <WelcomeSlide />,
       },
       {
         id: 'slide2',
@@ -48,11 +49,10 @@ export const stories: Story[] = [
     slides: [
       {
         id: 'slide1',
-        type: 'image',
-        url: getImageUrl('story2-slide1'),
+        type: 'component',
         duration: 7000,
-        alt: 'Bustling city street at night',
-        aiHint: getImageHint('story2-slide1'),
+        alt: 'Bustling city street at night component',
+        component: <CityNightSlide />,
       },
     ],
   },

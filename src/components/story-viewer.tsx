@@ -104,7 +104,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
                 zIndex: index === currentSlideIndex ? 10 : 1,
               }}
             >
-              {slide.type === 'image' && (
+              {slide.type === 'image' && slide.url && (
                 <Image
                   src={slide.url}
                   alt={slide.alt}
@@ -113,6 +113,9 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
                   priority={index === currentSlideIndex}
                   data-ai-hint={slide.aiHint}
                 />
+              )}
+              {slide.type === 'component' && (
+                <div className="w-full h-full">{slide.component}</div>
               )}
             </div>
           ))}

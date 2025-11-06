@@ -1,7 +1,10 @@
+import type { ReactNode } from 'react';
+
 export interface Slide {
   id: string;
-  type: 'image' | 'video';
-  url: string;
+  type: 'image' | 'video' | 'component';
+  url?: string; // Optional for component type
+  component?: ReactNode; // For React components
   duration: number;
   alt: string;
   title?: string;
