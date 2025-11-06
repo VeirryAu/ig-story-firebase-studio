@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -5,6 +6,7 @@ import type { Story } from '@/types/story';
 import { StoryViewer } from '@/components/story-viewer';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { Button } from '@/components/ui/button';
+import { stories as storyData } from '@/lib/story-data';
 
 export default function Home() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -15,12 +17,8 @@ export default function Home() {
   useEffect(() => {
     async function loadData() {
       try {
-        // 1. Fetch the story data
-        const response = await fetch('/stories.json');
-        if (!response.ok) {
-          throw new Error('Failed to fetch stories data.');
-        }
-        const storiesData: Story[] = await response.json();
+        // 1. Use the imported story data
+        const storiesData: Story[] = storyData;
 
         // 2. Preload all images
         const imageUrls: string[] = [];
