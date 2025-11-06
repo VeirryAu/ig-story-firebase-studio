@@ -111,7 +111,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
                   fill
                   className="object-cover"
                   priority={index === currentSlideIndex}
-                  data-ai-hint={slide.alt.split(' ').slice(0, 2).join(' ')}
+                  data-ai-hint={slide.aiHint}
                 />
               )}
             </div>
@@ -146,10 +146,10 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
         </div>
 
         {/* Standalone navigation buttons for non-touch devices and accessibility */}
-        <button onClick={goToPrevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 hidden md:block" aria-label="Previous Slide">
+        <button onClick={goToPrevStory} className="absolute left-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 hidden md:block" aria-label="Previous Story">
             <ChevronLeft size={32} />
         </button>
-        <button onClick={goToNextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 hidden md:block" aria-label="Next Slide">
+        <button onClick={goToNextStory} className="absolute right-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 hidden md:block" aria-label="Next Story">
             <ChevronRight size={32} />
         </button>
         <button onClick={onClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors" aria-label="Close stories">

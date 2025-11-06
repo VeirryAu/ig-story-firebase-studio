@@ -6,6 +6,7 @@ export interface Slide {
   alt: string;
   title?: string;
   description?: string;
+  aiHint?: string;
 }
 
 export interface StoryUser {
