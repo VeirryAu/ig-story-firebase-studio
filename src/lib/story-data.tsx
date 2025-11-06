@@ -39,21 +39,5 @@ export const stories: Story[] = [
         aiHint: getImageHint('story1-slide2'),
       },
     ],
-  },
-  {
-    id: 'story2',
-    user: {
-      name: 'John',
-      avatar: getImageUrl('user2-avatar'),
-    },
-    slides: [
-      {
-        id: 'slide1',
-        type: 'component',
-        duration: 7000,
-        alt: 'Bustling city street at night component',
-        component: <CityNightSlide />,
-      },
-    ],
-  },
+  }
 ];
