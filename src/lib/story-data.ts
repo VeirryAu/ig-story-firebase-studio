@@ -5,7 +5,7 @@ import { PlaceHolderImages } from './placeholder-images';
 // Helper to find image URL by ID
 const getImageUrl = (id: string) => {
   const image = PlaceHolderImages.find(img => img.id === id);
-  return image ? image.imageUrl : 'https://placehold.co/400x400/EEE/31343C';
+  return image ? image.imageUrl : 'https://placehold.co/1080x1920/EEE/31343C';
 };
 
 const getImageHint = (id: string) => {
