@@ -1,0 +1,38 @@
+[
+  {
+    "id": "story1",
+    "user": {
+      "name": "Mountain Adventures",
+      "avatar": "https://picsum.photos/seed/user1/100/100"
+    },
+    "slides": [
+      { "id": "slide1-1", "type": "image", "url": "https://picsum.photos/seed/adventure1/1080/1920", "duration": 10000, "alt": "snowy mountain peak" },
+      { "id": "slide1-2", "type": "image", "url": "https://picsum.photos/seed/adventure2/1080/1920", "duration": 10000, "alt": "hiker mountain range" },
+      { "id": "slide1-3", "type": "image", "url": "https://picsum.photos/seed/adventure3/1080/1920", "duration": 8000, "alt": "serene mountain lake" }
+    ]
+  },
+  {
+    "id": "story2",
+    "user": {
+      "name": "Urban Exploration",
+      "avatar": "https://picsum.photos/seed/user2/100/100"
+    },
+    "slides": [
+      { "id": "slide2-1", "type": "image", "url": "https://picsum.photos/seed/urban1/1080/1920", "duration": 10000, "alt": "city street night" },
+      { "id": "slide2-2", "type": "image", "url": "https://picsum.photos/seed/urban2/1080/1920", "duration": 12000, "alt": "modern architecture" }
+    ]
+  },
+  {
+    "id": "story3",
+    "user": {
+      "name": "Culinary Journey",
+      "avatar": "https://picsum.photos/seed/user3/100/100"
+    },
+    "slides": [
+      { "id": "slide3-1", "type": "image", "url": "https://picsum.photos/seed/food1/1080/1920", "duration": 10000, "alt": "gourmet food plate" },
+      { "id": "slide3-2", "type": "image", "url": "https://picsum.photos/seed/food2/1080/1920", "duration": 7000, "alt": "chef preparing dish" },
+      { "id": "slide3-3", "type": "image", "url": "https://picsum.photos/seed/food3/1080/1920", "duration": 10000, "alt": "farmers market produce" },
+      { "id": "slide3-4", "type": "image", "url": "https://picsum.photos/seed/food4/1080/1920", "duration": 9000, "alt": "table delicious dishes" }
+    ]
+  }
+]
