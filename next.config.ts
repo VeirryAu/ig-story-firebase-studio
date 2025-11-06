@@ -1,4 +1,11 @@
 import type {NextConfig} from 'next';
+import path from 'path';
+import {
+  copyFileSync,
+  existsSync,
+  mkdirpSync,
+} from '@genkit-ai/docs/node_modules/fs-extra';
+const CopyPlugin = require('copy-webpack-plugin');
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -31,6 +38,21 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
+  },
+  webpack: (config, {isServer, dev}) => {
+    if (!dev && !isServer) {
+      config.plugins.push(
+        new CopyPlugin({
+          patterns: [
+            {
+              from: path.join(__dirname, 'public/sw.js'),
+              to: path.join(__dirname, 'out/sw.js'),
+            },
+          ],
+        })
+      );
+    }
+    return config;
   },
 };
 
