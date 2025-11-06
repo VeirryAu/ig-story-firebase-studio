@@ -5,7 +5,6 @@ import { useEffect, useState } from 'react';
 import type { Story } from '@/types/story';
 import { StoryViewer } from '@/components/story-viewer';
 import { LoadingSpinner } from '@/components/loading-spinner';
-import { Button } from '@/components/ui/button';
 import { stories as storyData } from '@/lib/story-data.tsx';
 
 export default function Home() {
@@ -30,10 +29,8 @@ export default function Home() {
 
     async function loadData() {
       try {
-        // 1. Use the imported story data
         const storiesData: Story[] = storyData;
 
-        // 2. Preload all images
         const imageUrls: string[] = [];
         storiesData.forEach(story => {
           imageUrls.push(story.user.avatar);
@@ -56,6 +53,7 @@ export default function Home() {
         await Promise.all(imagePromises);
 
         setStories(storiesData);
+        setShowStories(true); // Automatically show stories when loaded
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An unknown error occurred.');
       } finally {
@@ -65,21 +63,24 @@ export default function Home() {
 
     loadData();
   }, []);
-
-  const openStoryViewer = () => {
-    if (!isLoading && !error && stories.length > 0) {
-      setShowStories(true);
-    }
+  
+  // This effect will handle closing the viewer and navigating back, 
+  // though in this setup it might just show a blank page.
+  // A more robust solution might redirect to a different page or show a "Thanks for watching" message.
+  const handleClose = () => {
+    setShowStories(false);
+    // Potentially redirect or show a different component here
   };
+  
+  if (showStories) {
+    return <StoryViewer stories={stories} onClose={handleClose} />;
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-8">
       <div className="text-center">
         <h1 className="font-headline text-5xl font-bold text-primary mb-4">StorySwipe</h1>
-        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-          An Instagram-like story viewer. Click the button below to view stories. All assets are preloaded for a smooth experience.
-        </p>
-
+        
         {isLoading && (
           <div className="flex items-center justify-center gap-2">
             <LoadingSpinner />
@@ -88,19 +89,18 @@ export default function Home() {
         )}
         
         {error && (
-          <p className="text-destructive">Error: {error}</p>
+          <div>
+            <p className="text-destructive mb-4">Error: {error}</p>
+            <p className="text-muted-foreground">Could not load stories. Please try again later.</p>
+          </div>
         )}
 
-        {!isLoading && !error && (
-          <Button onClick={openStoryViewer} size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold shadow-lg transition-transform hover:scale-105" disabled={stories.length === 0}>
-            View Stories
-          </Button>
+        {!isLoading && !error && !showStories && (
+            <div className="flex items-center justify-center gap-2">
+                <p>Finished viewing stories.</p>
+            </div>
         )}
       </div>
-
-      {showStories && (
-        <StoryViewer stories={stories} onClose={() => setShowStories(false)} />
-      )}
     </main>
   );
 }
