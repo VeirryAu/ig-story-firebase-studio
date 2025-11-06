@@ -31,10 +31,9 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
       setCurrentStoryIndex(prev => prev + 1);
       setCurrentSlideIndex(0);
       resetAnimation();
-    } else {
-      onClose();
     }
-  }, [currentStoryIndex, stories.length, onClose, resetAnimation]);
+    // Do nothing when the last story finishes, to stay on the last slide.
+  }, [currentStoryIndex, stories.length, resetAnimation]);
 
   const goToNextSlide = useCallback(() => {
     if (currentStory && currentSlideIndex < currentStory.slides.length - 1) {
