@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { Story } from '@/types/story';
+import type { ServerResponse } from '@/types/server';
 import Image from 'next/image';
 import { StoryProgressBar } from './story-progress-bar';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -15,6 +16,7 @@ interface StoryViewerProps {
   stories: Story[];
   initialStoryIndex?: number;
   onClose: () => void;
+  serverResponse?: ServerResponse;
 }
 
 interface VideoSlideProps {
@@ -245,7 +247,7 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
   );
 }
 
-export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryViewerProps) {
+export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverResponse }: StoryViewerProps) {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(initialStoryIndex);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -257,11 +259,19 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
   // Development-only: Limit slides to specific index for development convenience
   const devMaxSlide = process.env.NODE_ENV === 'development' ? config.devMaxSlide : null;
   
-  // Filter slides in development mode if devMaxSlide is set
+  // Filter slides based on trxCount: if trxCount is 0, only show slide1 and slide2
   const originalStory = stories[currentStoryIndex];
+  let filteredSlides = originalStory?.slides || [];
+  
+  // If trxCount is 0, only show first 2 slides (screen-1 and screen-2)
+  if (serverResponse?.trxCount === 0) {
+    filteredSlides = originalStory?.slides.slice(0, 2) || [];
+  }
+  
+  // Apply development mode limit if set
   const limitedSlides = (devMaxSlide !== null && devMaxSlide !== undefined)
-    ? originalStory?.slides.slice(0, devMaxSlide + 1) 
-    : originalStory?.slides;
+    ? filteredSlides.slice(0, devMaxSlide + 1) 
+    : filteredSlides;
   
   const currentStory = originalStory ? { ...originalStory, slides: limitedSlides || [] } : originalStory;
   const currentSlide = currentStory?.slides[currentSlideIndex];
@@ -602,7 +612,11 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
                 )}
                 {slide.type === 'component' && (
                   <div className="w-full h-full">
-                    {slide.id === 'screen-1' && currentStory?.user?.name
+                    {slide.id === 'screen-1' && serverResponse?.userName
+                      ? React.cloneElement(slide.component as React.ReactElement, { userName: serverResponse.userName })
+                      : slide.id === 'screen-2' && serverResponse?.trxCount !== undefined
+                      ? React.cloneElement(slide.component as React.ReactElement, { trxCount: serverResponse.trxCount })
+                      : slide.id === 'screen-1' && currentStory?.user?.name
                       ? React.cloneElement(slide.component as React.ReactElement, { userName: currentStory.user.name || 'John' })
                       : slide.component
                     }
@@ -626,6 +640,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
             animationKey={animationKey}
             onAnimationEnd={goToNextSlide}
             videoDuration={videoDuration}
+            currentStory={currentStory}
           />
           
           <div className="pt-5 p-3 flex items-center gap-3">

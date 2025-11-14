@@ -3,6 +3,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import type { Story } from '@/types/story';
+import type { ServerResponse } from '@/types/server';
 import { StoryViewer } from '@/components/story-viewer';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { stories as storyData } from '@/lib/story-data';
@@ -13,8 +14,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showStories, setShowStories] = useState(false);
+  const [serverResponse, setServerResponse] = useState<ServerResponse | null>(null);
   const audioPreloadRef = useRef<HTMLAudioElement | null>(null);
-
+  console.log('serverResponse', serverResponse);
   // Preload audio as early as possible for offline mode with progressive loading
   useEffect(() => {
     // Start preloading background music immediately with progressive loading
@@ -87,8 +89,46 @@ export default function Home() {
       });
     }
 
+    async function fetchServerResponse(): Promise<ServerResponse> {
+      // TODO: Replace this with your actual backend API endpoint
+      // Example: const response = await fetch('/api/user-data');
+      // return await response.json();
+      
+      // For development, you can use a mock response
+      // Change trxCount to 0 to test the limited slides scenario
+      if (process.env.NODE_ENV === 'development') {
+        // Mock response for development
+        // Set trxCount to 0 to test limited slides (only slide1 and slide2)
+        // Set trxCount to any number > 0 to show all slides
+        return {
+          userName: 'John',
+          trxCount: 5, // Change to 0 to test limited slides
+        };
+      }
+      
+      // Production: Fetch from your backend
+      try {
+        const response = await fetch('/api/user-data');
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        return await response.json();
+      } catch (err) {
+        console.error('Failed to fetch server response:', err);
+        // Fallback to default values
+        return {
+          userName: 'User',
+          trxCount: 0,
+        };
+      }
+    }
+
     async function loadData() {
       try {
+        // Fetch server response first
+        const serverData = await fetchServerResponse();
+        setServerResponse(serverData);
+
         const storiesData: Story[] = storyData;
 
         const imageUrls: string[] = [];
@@ -137,7 +177,7 @@ export default function Home() {
   };
   
   if (showStories) {
-    return <StoryViewer stories={stories} onClose={handleClose} />;
+    return <StoryViewer stories={stories} onClose={handleClose} serverResponse={serverResponse || undefined} />;
   }
 
   return (

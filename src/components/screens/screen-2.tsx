@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-export function Screen2() {
+interface Screen2Props {
+  trxCount?: number;
+}
+
+export function Screen2({ trxCount }: Screen2Props) {
   const [isVisible, setIsVisible] = useState(false);
   const currentYear = new Date().getFullYear();
 

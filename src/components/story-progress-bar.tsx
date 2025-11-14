@@ -7,18 +7,10 @@ interface StoryProgressBarProps {
   currentStoryIndex: number;
   currentSlideIndex: number;
   isPaused: boolean;
-  animationKey: number; // To restart animation
-  onAnimationEnd: () => void;
-}
-
-interface StoryProgressBarProps {
-  stories: Story[];
-  currentStoryIndex: number;
-  currentSlideIndex: number;
-  isPaused: boolean;
   animationKey: number;
   onAnimationEnd: () => void;
   videoDuration?: number | null; // Optional video duration override
+  currentStory?: Story; // Optional filtered story (takes precedence over stories[currentStoryIndex])
 }
 
 export function StoryProgressBar({
@@ -29,8 +21,10 @@ export function StoryProgressBar({
   animationKey,
   onAnimationEnd,
   videoDuration,
+  currentStory: filteredStory,
 }: StoryProgressBarProps) {
-  const currentStory = stories[currentStoryIndex];
+  // Use filtered story if provided, otherwise fall back to stories array
+  const currentStory = filteredStory || stories[currentStoryIndex];
   if (!currentStory) return null;
 
   // Use video duration if available (for slide 14), otherwise use slide duration
