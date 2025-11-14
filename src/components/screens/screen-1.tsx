@@ -1,8 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export function Screen1() {
+interface Screen1Props {
+  userName?: string;
+}
+
+export function Screen1({ userName = "John" }: Screen1Props) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -10,42 +15,47 @@ export function Screen1() {
   }, []);
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-purple-600 via-pink-500 to-orange-400 flex items-center justify-center overflow-hidden">
-      {/* Animated background particles */}
-      <div className="absolute inset-0">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-2 h-2 bg-white/30 rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`,
-              animationDuration: `${2 + Math.random() * 2}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* Main content with fade-in and scale animation */}
-      <div
-        className={`text-center text-white z-10 transition-all duration-1000 ${
-          isVisible
-            ? "opacity-100 scale-100 translate-y-0"
-            : "opacity-0 scale-90 translate-y-10"
-        }`}
-      >
-        <h1 className="text-6xl md:text-8xl font-bold mb-4 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          Welcome
+    <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden" style={{ backgroundColor: '#84913C' }}>
+      {/* Content container */}
+      <div className={`relative z-10 flex flex-col items-center justify-center px-6 text-center transition-all duration-1000 pt-80 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+      }`}>
+        {/* Greeting */}
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2 drop-shadow-lg">
+          Hai {userName}!
         </h1>
-        <p className="text-2xl md:text-3xl font-light drop-shadow-lg animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-          Your Year in Review
+        
+        {/* First paragraph */}
+        <p className="text-2xl md:text-3xl font-bold text-white mb-2 max-w-md leading-relaxed drop-shadow-md">
+          Tak terasa sudah di penghujung tahun. Sudah siap cek persona kopi kamu?
         </p>
-      </div>
-
-      {/* Decorative elements */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2">
-        <div className="w-16 h-1 bg-white/50 rounded-full animate-pulse" />
+        
+        {/* "Here is your coffee core!" with rectangle background and rotation */}
+        <div 
+          className="mb-4 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-lg"
+          style={{ transform: 'rotate(-1.4deg)' }}
+        >
+          <p className="text-lg md:text-xl text-white font-semibold drop-shadow-md">
+            Here is your coffee core!
+          </p>
+        </div>
+        
+        {/* Logo */}
+        <div className="mb-1">
+          <Image
+            src="/stories-asset/slides01/slide1-logo.png"
+            alt="Fore Logo"
+            width={400}
+            height={400}
+            className="object-contain drop-shadow-2xl"
+            priority
+          />
+        </div>
+        
+        {/* Date range */}
+        <p className="text-base md:text-lg text-white/90 drop-shadow-sm">
+          (January-November)
+        </p>
       </div>
     </div>
   );

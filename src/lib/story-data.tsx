@@ -56,8 +56,8 @@ export const stories: Story[] = [
   {
     id: 'year-recap',
     user: {
-      name: 'Year End Recap',
-      avatar: getImageUrl('user1-avatar'),
+      name: '',
+      avatar: '/stories-asset/main/fore-logo.svg',
     },
     slides: [
       {

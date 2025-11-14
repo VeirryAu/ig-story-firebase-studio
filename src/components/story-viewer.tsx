@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { Story } from '@/types/story';
 import Image from 'next/image';
 import { StoryProgressBar } from './story-progress-bar';
@@ -573,7 +573,12 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
                   />
                 )}
                 {slide.type === 'component' && (
-                  <div className="w-full h-full">{slide.component}</div>
+                  <div className="w-full h-full">
+                    {slide.id === 'screen-1' && currentStory?.user?.name
+                      ? React.cloneElement(slide.component as React.ReactElement, { userName: currentStory.user.name || 'John' })
+                      : slide.component
+                    }
+                  </div>
                 )}
               </div>
             );
@@ -582,6 +587,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
 
         {/* Overlay with UI elements */}
         <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/60 via-transparent to-black/50"></div>
+        {/* Top shadow gradient - 30px height */}
+        <div className="absolute top-0 left-0 right-0 h-[30px] bg-gradient-to-b from-black/60 to-transparent z-20"></div>
         <div className="absolute inset-0 z-30 flex flex-col">
           <StoryProgressBar
             stories={stories}
@@ -593,9 +600,9 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
             videoDuration={videoDuration}
           />
           
-          <div className="p-4 flex items-center gap-3">
-            <Avatar className="h-10 w-10 border-2 border-white/80">
-              <AvatarImage src={currentStory.user.avatar} alt={currentStory.user.name} />
+          <div className="pt-5 p-3 flex items-center gap-3">
+            <Avatar className="h-11 w-11 bg-white p-1">
+              <AvatarImage src={currentStory.user.avatar} alt={currentStory.user.name} className="object-contain" />
               <AvatarFallback>{currentStory.user.name.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="text-white font-semibold text-sm drop-shadow-md">{currentStory.user.name}</span>
@@ -618,13 +625,13 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
         {/* Mute/Unmute button - show on all slides */}
         <button 
           onClick={() => setIsMuted(!isMuted)} 
-          className="absolute top-3 right-14 z-40 text-white/80 hover:text-white transition-colors bg-black/20 rounded-full p-2" 
+          className="absolute top-3 right-14 z-40 text-white/80 hover:text-white transition-colors p-2" 
           aria-label={isMuted ? 'Unmute' : 'Mute'}
         >
-          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+          {isMuted ? <VolumeX size={36} /> : <Volume2 size={36} />}
         </button>
-        <button onClick={onClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors bg-black/20 rounded-full p-2" aria-label="Close stories">
-            <X size={24} />
+        <button onClick={onClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors p-2 drop-shadow-none" aria-label="Close stories">
+            <X size={36} />
         </button>
       </div>
     </div>

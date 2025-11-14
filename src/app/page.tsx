@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import type { Story } from '@/types/story';
 import { StoryViewer } from '@/components/story-viewer';
 import { LoadingSpinner } from '@/components/loading-spinner';
-import { stories as storyData } from '@/lib/story-data.tsx';
+import { stories as storyData } from '@/lib/story-data';
 import config from '@/lib/const.json';
 
 export default function Home() {
@@ -92,6 +92,10 @@ export default function Home() {
         const storiesData: Story[] = storyData;
 
         const imageUrls: string[] = [];
+        // Preload the logo
+        imageUrls.push('/stories-asset/main/fore-logo.svg');
+        // Preload first slide logo
+        imageUrls.push('/stories-asset/slides01/slide1-logo.png');
         storiesData.forEach(story => {
           imageUrls.push(story.user.avatar);
           story.slides.forEach(slide => {
@@ -144,8 +148,15 @@ export default function Home() {
       <div className="text-center">
         {isLoading && (
           <div className="flex flex-col items-center justify-center gap-6">
-            <div className="text-white font-bold text-3xl md:text-3xl leading-relaxed whitespace-pre-line">
-              Take a seat, have a sip!<br />
+            <div className="bg-white rounded-full p-4 flex items-center justify-center">
+              <img 
+                src="/stories-asset/main/fore-logo.svg" 
+                alt="Fore Logo" 
+                className="w-12 h-16"
+              />
+            </div>
+            <div className="text-white text-lg md:text-xl leading-relaxed whitespace-pre-line">
+              Take a seat, have a sip!{"\n"}
               While we're doing the math for you!
             </div>
             <LoadingSpinner />
