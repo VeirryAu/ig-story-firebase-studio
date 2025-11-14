@@ -246,8 +246,14 @@ export function useBackgroundMusic({
       isMuted,
       readyState: audio.readyState,
       src: audio.src,
-      currentTime: audio.currentTime
+      currentTime: audio.currentTime,
+      hasUserInteracted: hasUserInteractedRef.current,
+      audioUnlocked: audioUnlockedRef.current
     });
+    
+    // Mark that we've had user interaction (if called from user event)
+    hasUserInteractedRef.current = true;
+    audioUnlockedRef.current = true;
     
     // Ensure audio is not muted when trying to play
     if (audio.muted && !isMuted) {
@@ -270,10 +276,15 @@ export function useBackgroundMusic({
               muted: audio.muted,
               volume: audio.volume
             });
+            audioUnlockedRef.current = true;
           })
           .catch((error) => {
             console.error('[BackgroundMusic] Failed to play audio:', error.name, error.message);
-            if (error.name !== 'NotAllowedError') {
+            if (error.name === 'NotAllowedError') {
+              console.warn('[BackgroundMusic] Autoplay blocked - waiting for user interaction');
+              // Don't mark as unlocked if autoplay is blocked
+              audioUnlockedRef.current = false;
+            } else {
               console.warn('Failed to play background music:', error);
             }
           });

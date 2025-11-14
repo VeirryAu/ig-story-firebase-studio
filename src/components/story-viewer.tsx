@@ -288,12 +288,13 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
   }, [audioReady, isPaused, isVideoSlide, currentSlideIndex, isMuted, shouldPlayMusic]);
 
   // Ensure audio starts playing immediately when story viewer opens
+  // Note: This will only work if there was a user interaction before mount
   useEffect(() => {
     if (!hasAttemptedPlayRef.current && !isVideoSlide && !isMuted) {
       hasAttemptedPlayRef.current = true;
       console.log('[StoryViewer] Attempting to start audio on mount');
-      // Try to play immediately on mount (user interaction from opening story)
-      // Try multiple times to ensure it plays
+      // Try to play immediately on mount
+      // This might be blocked by autoplay policy, but user interaction handlers will catch it
       playAudio();
       
       // Also try after a short delay in case audio isn't ready yet
@@ -318,6 +319,31 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
       };
     }
   }, [audioReady, isVideoSlide, isMuted, playAudio]);
+
+  // Add a one-time click handler on the entire story viewer to unlock audio
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleFirstInteraction = (e: Event) => {
+      console.log('[StoryViewer] First interaction on container:', e.type);
+      if (!isVideoSlide && !isMuted) {
+        playAudio();
+      }
+      // Remove listeners after first interaction
+      container.removeEventListener('click', handleFirstInteraction);
+      container.removeEventListener('touchstart', handleFirstInteraction);
+    };
+
+    container.addEventListener('click', handleFirstInteraction, { once: true, passive: true });
+    container.addEventListener('touchstart', handleFirstInteraction, { once: true, passive: true });
+
+    return () => {
+      container.removeEventListener('click', handleFirstInteraction);
+      container.removeEventListener('touchstart', handleFirstInteraction);
+    };
+  }, [isVideoSlide, isMuted, playAudio]);
 
   // Ensure audio plays when conditions change
   useEffect(() => {
@@ -424,6 +450,10 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
     if (currentVideo && !currentVideo.paused) {
       currentVideo.pause();
     }
+    // User interaction - try to unlock and play audio
+    if (!isVideoSlide && !isMuted) {
+      playAudio();
+    }
   };
 
   const handlePointerUp = () => {
@@ -435,19 +465,21 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
         // Auto-play might be blocked
       });
     }
-    // Also try to start audio if it's not playing (user interaction unlocks audio)
-    if (!isVideoSlide && !isMuted && audioReady) {
+    // User interaction - try to unlock and play audio
+    if (!isVideoSlide && !isMuted) {
       playAudio();
     }
   };
 
   // Handle initial user interaction to unlock audio
-  const handleInitialInteraction = useCallback(() => {
+  const handleInitialInteraction = useCallback((e?: React.MouseEvent | React.TouchEvent) => {
     console.log('[StoryViewer] User interaction detected', {
       isVideoSlide,
       isMuted,
-      audioReady
+      audioReady,
+      eventType: e?.type
     });
+    // Always try to play on user interaction - this unlocks audio
     if (!isVideoSlide && !isMuted) {
       // Try to play even if audioReady is false - it might be loading
       playAudio();
@@ -462,12 +494,21 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
   return (
     <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center font-body backdrop-blur-sm">
       <div 
+        ref={containerRef}
         className="relative w-full max-w-[430px] aspect-[9/16] bg-primary rounded-lg overflow-hidden shadow-2xl select-none touch-pan-y"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
         onClick={handleInitialInteraction}
         onTouchStart={handleInitialInteraction}
+        onMouseDown={handleInitialInteraction}
+        onKeyDown={(e) => {
+          handleInitialInteraction();
+          // Also handle keyboard navigation
+          if (e.key === 'ArrowRight') goToNextSlide();
+          if (e.key === 'ArrowLeft') goToPrevSlide();
+        }}
+        tabIndex={0}
         role="dialog"
         aria-modal="true"
         aria-label={`Story by ${currentStory.user.name}`}
