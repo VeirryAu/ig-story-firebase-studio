@@ -85,8 +85,6 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
           />
         </div>
       </div>
-
-      
     </div>
   );
 }

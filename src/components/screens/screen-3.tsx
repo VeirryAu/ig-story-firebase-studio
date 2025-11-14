@@ -1,83 +1,88 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import { Star } from "lucide-react";
+import type { ServerResponse } from "@/types/server";
 
-export function Screen3() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [counters, setCounters] = useState({ projects: 0, achievements: 0, memories: 0 });
+interface Screen3Props {
+  serverResponse?: ServerResponse;
+}
 
-  useEffect(() => {
-    setIsVisible(true);
-    // Animate counters
-    const duration = 2000;
-    const steps = 60;
-    const interval = duration / steps;
-
-    let step = 0;
-    const timer = setInterval(() => {
-      step++;
-      const progress = step / steps;
-      setCounters({
-        projects: Math.floor(50 * progress),
-        achievements: Math.floor(120 * progress),
-        memories: Math.floor(365 * progress),
-      });
-
-      if (step >= steps) {
-        clearInterval(timer);
-        setCounters({ projects: 50, achievements: 120, memories: 365 });
-      }
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const stats = [
-    { label: "Projects", value: counters.projects, suffix: "+", color: "from-blue-500 to-cyan-400" },
-    { label: "Achievements", value: counters.achievements, suffix: "+", color: "from-purple-500 to-pink-400" },
-    { label: "Memories", value: counters.memories, suffix: "", color: "from-orange-500 to-red-400" },
-  ];
+export function Screen3({ serverResponse }: Screen3Props) {
+  const trxCount = serverResponse?.trxCount || 0;
+  const favoriteProducts = serverResponse?.listProductFavorite || [];
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-slate-900 via-gray-800 to-slate-900 flex items-center justify-center overflow-hidden">
-      {/* Grid pattern background */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="w-full h-full" style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-          backgroundSize: '50px 50px'
-        }} />
+    <div 
+      className="relative w-full h-full flex flex-col"
+      style={{ backgroundColor: '#C83E2B' }}
+    >
+      {/* Header Text */}
+      <div className="px-6 pt-8 pb-4 mt-20 mb-10">
+        <p className="text-white font-bold text-center text-lg md:text-xl leading-relaxed">
+          Dari {trxCount} cup yang kamu beli, favoritmu adalah
+        </p>
       </div>
 
-      <div className="relative z-10 w-full px-8">
-        <h2 className="text-4xl md:text-5xl font-bold text-white text-center mb-12 drop-shadow-lg animate-in fade-in slide-in-from-top-8 duration-1000">
-          By The Numbers
-        </h2>
+      {/* List of Product Cards */}
+      <div className="flex-1 px-6 pb-6 overflow-y-auto space-y-3">
+        {favoriteProducts.map((product, index) => {
+          const rank = index + 1;
+          const isFirstRank = rank === 1;
+          const cardBgColor = isFirstRank ? '#F45F49' : '#A54133';
 
-        <div className="grid grid-cols-1 gap-8 max-w-4xl mx-auto">
-          {stats.map((stat, index) => (
+          return (
             <div
-              key={stat.label}
-              className={`bg-gradient-to-r ${stat.color} rounded-2xl p-6 shadow-2xl transform transition-all duration-1000 ${
-                isVisible
-                  ? "opacity-100 translate-x-0 scale-100"
-                  : "opacity-0 translate-x-[-50px] scale-95"
-              }`}
-              style={{ transitionDelay: `${index * 200}ms` }}
+              key={index}
+              className="w-full rounded-lg p-4 flex items-center gap-4"
+              style={{ backgroundColor: cardBgColor }}
             >
-              <div className="text-center">
-                <div className="text-5xl md:text-7xl font-black text-white mb-2">
-                  {stat.value}
-                  <span className="text-3xl md:text-5xl">{stat.suffix}</span>
-                </div>
-                <div className="text-xl md:text-2xl text-white/90 font-semibold">
-                  {stat.label}
-                </div>
+              {/* Image circle on left */}
+              <div className="flex-shrink-0">
+                {product.productImage ? (
+                  <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden">
+                    <Image
+                      src={product.productImage}
+                      alt={product.productName}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div 
+                    className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+                    style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
+                  >
+                    <span className="text-white font-bold text-xl">
+                      {product.productName.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Product Name and Number of Cups */}
+              <div className="flex-1 min-w-0">
+                <p className="text-white font-bold text-base md:text-lg truncate">
+                  {product.productName}
+                </p>
+                <p className="text-white/90 text-sm md:text-base">
+                  {product.countCups} cup
+                </p>
+              </div>
+
+              {/* Ranking with star only on Rank #1 */}
+              <div className="flex-shrink-0 flex items-center gap-2">
+                {isFirstRank && (
+                  <Star className="w-6 h-6 md:w-8 md:h-8 text-yellow-300 fill-yellow-300" />
+                )}
+                <span className="text-white font-bold text-xl md:text-2xl">
+                  #{rank}
+                </span>
               </div>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );
 }
-

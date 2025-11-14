@@ -11,6 +11,7 @@ import { useVideoPreload } from '@/hooks/use-video-preload';
 import { useBackgroundMusic } from '@/hooks/use-background-music';
 import { useAudioPreload } from '@/hooks/use-audio-preload';
 import { Screen2NoTrx } from '@/components/screens/screen-2-notrx';
+import { ShareButton } from '@/components/share-button';
 import config from '@/lib/const.json';
 
 interface StoryViewerProps {
@@ -635,6 +636,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                       ? <Screen2NoTrx />
                       : slide.id === 'screen-2' && serverResponse?.trxCount !== undefined
                       ? React.cloneElement(slide.component as React.ReactElement, { trxCount: serverResponse.trxCount })
+                      : slide.id === 'screen-3' && serverResponse
+                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
                       : slide.id === 'screen-1' && currentStory?.user?.name
                       ? React.cloneElement(slide.component as React.ReactElement, { userName: currentStory.user.name || 'John' })
                       : slide.component
@@ -695,6 +698,16 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
         <button onClick={onClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors p-2 drop-shadow-none" aria-label="Close stories">
             <X size={36} />
         </button>
+
+        {/* Share Button - only show on screen-2 and screen-3 */}
+        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3') && (
+          <ShareButton
+            onClick={() => {
+              // TODO: Add share functionality
+              console.log('Share clicked');
+            }}
+          />
+        )}
       </div>
     </div>
   );

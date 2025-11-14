@@ -103,6 +103,28 @@ export default function Home() {
         return {
           userName: 'John',
           trxCount: config.devTrxCount, // Change to 0 to test limited slides
+          listProductFavorite: [
+            { 
+              productName: 'Espresso', 
+              countCups: 12,
+              productImage: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400&h=400&fit=crop&crop=center'
+            },
+            { 
+              productName: 'Cappuccino', 
+              countCups: 8,
+              productImage: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=400&h=400&fit=crop&crop=center'
+            },
+            { 
+              productName: 'Latte', 
+              countCups: 6,
+              productImage: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=400&fit=crop&crop=center'
+            },
+            { 
+              productName: 'Americano', 
+              countCups: 4,
+              productImage: 'https://images.unsplash.com/photo-1517487881594-2787fef5ebf7?w=400&h=400&fit=crop&crop=center'
+            },
+          ],
         };
       }
       
