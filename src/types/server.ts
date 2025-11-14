@@ -8,5 +8,6 @@ export interface ServerResponse {
   userName: string;
   trxCount: number;
   listProductFavorite?: ProductFavorite[]; // Optional array of favorite products
+  variantCount?: number; // Number of variants/products tried
 }
 

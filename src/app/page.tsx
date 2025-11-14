@@ -16,7 +16,6 @@ export default function Home() {
   const [showStories, setShowStories] = useState(false);
   const [serverResponse, setServerResponse] = useState<ServerResponse | null>(null);
   const audioPreloadRef = useRef<HTMLAudioElement | null>(null);
-  console.log('serverResponse', serverResponse);
   // Preload audio as early as possible for offline mode with progressive loading
   useEffect(() => {
     // Start preloading background music immediately with progressive loading
@@ -102,6 +101,7 @@ export default function Home() {
         // Set trxCount to any number > 0 to show all slides
         return {
           userName: 'John',
+          variantCount: 5,
           trxCount: config.devTrxCount, // Change to 0 to test limited slides
           listProductFavorite: [
             { 

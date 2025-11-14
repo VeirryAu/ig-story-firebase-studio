@@ -638,6 +638,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                       ? React.cloneElement(slide.component as React.ReactElement, { trxCount: serverResponse.trxCount })
                       : slide.id === 'screen-3' && serverResponse
                       ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
+                      : slide.id === 'screen-4' && serverResponse
+                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
                       : slide.id === 'screen-1' && currentStory?.user?.name
                       ? React.cloneElement(slide.component as React.ReactElement, { userName: currentStory.user.name || 'John' })
                       : slide.component
@@ -699,8 +701,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             <X size={36} />
         </button>
 
-        {/* Share Button - only show on screen-2 and screen-3 */}
-        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3') && (
+        {/* Share Button - only show on screen-2, screen-3, and screen-4 */}
+        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4') && (
           <ShareButton
             onClick={() => {
               // TODO: Add share functionality
