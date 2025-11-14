@@ -137,14 +137,18 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-8">
+    <main 
+      className="flex min-h-screen flex-col items-center justify-center p-8"
+      style={{ backgroundColor: '#222126' }}
+    >
       <div className="text-center">
-        <h1 className="font-headline text-5xl font-bold text-primary mb-4">StorySwipe</h1>
-        
         {isLoading && (
-          <div className="flex items-center justify-center gap-2">
+          <div className="flex flex-col items-center justify-center gap-6">
+            <div className="text-white text-lg md:text-xl leading-relaxed whitespace-pre-line">
+              Take a seat, have a sip!{"\n"}
+              While we're doing the math for you!
+            </div>
             <LoadingSpinner />
-            <p>Loading stories...</p>
           </div>
         )}
         
@@ -157,7 +161,7 @@ export default function Home() {
 
         {!isLoading && !error && !showStories && (
             <div className="flex items-center justify-center gap-2">
-                <p>Finished viewing stories.</p>
+                <p className="text-white">Finished viewing stories.</p>
             </div>
         )}
       </div>
