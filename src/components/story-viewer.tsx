@@ -10,6 +10,7 @@ import { X, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 import { useVideoPreload } from '@/hooks/use-video-preload';
 import { useBackgroundMusic } from '@/hooks/use-background-music';
 import { useAudioPreload } from '@/hooks/use-audio-preload';
+import { Screen2NoTrx } from '@/components/screens/screen-2-notrx';
 import config from '@/lib/const.json';
 
 interface StoryViewerProps {
@@ -630,6 +631,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                   <div className="w-full h-full">
                     {slide.id === 'screen-1' && serverResponse?.userName
                       ? React.cloneElement(slide.component as React.ReactElement, { userName: serverResponse.userName })
+                      : slide.id === 'screen-2' && serverResponse?.trxCount === 0
+                      ? <Screen2NoTrx />
                       : slide.id === 'screen-2' && serverResponse?.trxCount !== undefined
                       ? React.cloneElement(slide.component as React.ReactElement, { trxCount: serverResponse.trxCount })
                       : slide.id === 'screen-1' && currentStory?.user?.name
