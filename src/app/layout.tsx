@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'StorySwipe',
+  title: 'Forecap 2025',
   description: 'An Instagram-like story viewer',
 };
 

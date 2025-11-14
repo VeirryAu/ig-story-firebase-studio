@@ -102,7 +102,7 @@ export default function Home() {
         // Set trxCount to any number > 0 to show all slides
         return {
           userName: 'John',
-          trxCount: 5, // Change to 0 to test limited slides
+          trxCount: config.devTrxCount, // Change to 0 to test limited slides
         };
       }
       
@@ -188,14 +188,14 @@ export default function Home() {
       <div className="text-center">
         {isLoading && (
           <div className="flex flex-col items-center justify-center gap-6">
-            <div className="bg-white rounded-full p-4 flex items-center justify-center">
+            <div className="bg-white rounded-full p-2 flex items-center justify-center">
               <img 
                 src="/stories-asset/main/fore-logo.svg" 
                 alt="Fore Logo" 
-                className="w-12 h-16"
+                className="w-12 h-12"
               />
             </div>
-            <div className="text-white text-lg md:text-xl leading-relaxed whitespace-pre-line">
+            <div className="text-white text-lg md:text-xl font-bold leading-relaxed whitespace-pre-line">
               Take a seat, have a sip!{"\n"}
               While we're doing the math for you!
             </div>

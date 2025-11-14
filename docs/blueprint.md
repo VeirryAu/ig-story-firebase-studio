@@ -1,4 +1,4 @@
-# **App Name**: StorySwipe
+# **App Name**: Forecap 2025
 
 ## Core Features:
 

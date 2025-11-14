@@ -255,6 +255,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const [isMuted, setIsMuted] = useState(false);
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
+  const isNavigatingRef = useRef(false); // Prevent rapid-fire navigation
 
   // Development-only: Limit slides to specific index for development convenience
   const devMaxSlide = process.env.NODE_ENV === 'development' ? config.devMaxSlide : null;
@@ -468,12 +469,20 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   }, [currentStoryIndex, stories.length, resetAnimation]);
 
   const goToNextSlide = useCallback(() => {
+    if (isNavigatingRef.current) return; // Prevent rapid-fire navigation
+    isNavigatingRef.current = true;
+    
     if (currentStory && currentSlideIndex < currentStory.slides.length - 1) {
       setCurrentSlideIndex(prev => prev + 1);
       resetAnimation();
     } else {
       goToNextStory();
     }
+    
+    // Reset navigation lock after a short delay
+    setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 300);
   }, [currentStory, currentSlideIndex, goToNextStory, resetAnimation]);
 
   const goToPrevStory = useCallback(() => {
@@ -485,12 +494,20 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   }, [currentStoryIndex, resetAnimation]);
 
   const goToPrevSlide = useCallback(() => {
+    if (isNavigatingRef.current) return; // Prevent rapid-fire navigation
+    isNavigatingRef.current = true;
+    
     if (currentSlideIndex > 0) {
       setCurrentSlideIndex(prev => prev - 1);
       resetAnimation();
     } else {
       goToPrevStory();
     }
+    
+    // Reset navigation lock after a short delay
+    setTimeout(() => {
+      isNavigatingRef.current = false;
+    }, 300);
   }, [currentSlideIndex, goToPrevStory, resetAnimation]);
 
 
@@ -565,10 +582,9 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
         onTouchStart={handleInitialInteraction}
         onMouseDown={handleInitialInteraction}
         onKeyDown={(e) => {
+          // Only handle initial interaction for audio unlocking
+          // Keyboard navigation is handled by window-level listener to avoid double-triggering
           handleInitialInteraction();
-          // Also handle keyboard navigation
-          if (e.key === 'ArrowRight') goToNextSlide();
-          if (e.key === 'ArrowLeft') goToPrevSlide();
         }}
         tabIndex={0}
         role="dialog"
