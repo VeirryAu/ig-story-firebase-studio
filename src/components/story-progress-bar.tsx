@@ -11,18 +11,32 @@ interface StoryProgressBarProps {
   onAnimationEnd: () => void;
 }
 
+interface StoryProgressBarProps {
+  stories: Story[];
+  currentStoryIndex: number;
+  currentSlideIndex: number;
+  isPaused: boolean;
+  animationKey: number;
+  onAnimationEnd: () => void;
+  videoDuration?: number | null; // Optional video duration override
+}
+
 export function StoryProgressBar({
   stories,
   currentStoryIndex,
   currentSlideIndex,
-isPaused,
+  isPaused,
   animationKey,
   onAnimationEnd,
+  videoDuration,
 }: StoryProgressBarProps) {
   const currentStory = stories[currentStoryIndex];
   if (!currentStory) return null;
 
-  const duration = currentStory.slides[currentSlideIndex]?.duration || 10000;
+  // Use video duration if available (for slide 14), otherwise use slide duration
+  const slide = currentStory.slides[currentSlideIndex];
+  const isVideoSlide = slide?.type === 'video' && slide?.id === 'screen-14';
+  const duration = (isVideoSlide && videoDuration) ? videoDuration : (slide?.duration ?? 10000);
 
   return (
     <div className="absolute top-2 left-0 right-0 z-20 flex gap-1 px-2" aria-hidden="true">

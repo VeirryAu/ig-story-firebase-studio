@@ -1,17 +1,50 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import type { Story } from '@/types/story';
 import { StoryViewer } from '@/components/story-viewer';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { stories as storyData } from '@/lib/story-data.tsx';
+import config from '@/lib/const.json';
 
 export default function Home() {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showStories, setShowStories] = useState(false);
+  const audioPreloadRef = useRef<HTMLAudioElement | null>(null);
+
+  // Preload audio as early as possible for offline mode
+  useEffect(() => {
+    // Start preloading background music immediately
+    const audio = new Audio(config.backgroundMusic);
+    audio.preload = 'auto';
+    audio.muted = true; // Muted during preload to avoid any autoplay issues
+    audio.volume = 0;
+    
+    // Also prefetch using link element for better caching
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.as = 'audio';
+    link.href = config.backgroundMusic;
+    document.head.appendChild(link);
+    
+    // Start loading
+    audio.load();
+    audioPreloadRef.current = audio;
+    
+    return () => {
+      if (audioPreloadRef.current) {
+        audioPreloadRef.current.pause();
+        audioPreloadRef.current = null;
+      }
+      const existingLink = document.head.querySelector(`link[href="${config.backgroundMusic}"]`);
+      if (existingLink) {
+        existingLink.remove();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if ('serviceWorker' in navigator) {
