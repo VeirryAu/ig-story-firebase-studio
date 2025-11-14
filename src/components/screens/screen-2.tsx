@@ -68,25 +68,21 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
       >
 
         {/* Bottom half of card - Second text */}
-        <div className="justify-center px-6 py-8">
+        <div className="flex items-center justify-center px-6 pt-8 pb-6">
           <p className="text-white font-bold text-center text-lg md:text-xl leading-relaxed">
             Tidak hanya membeli kopi berkualitas, terima kasih selalu mendukung para petani lokal 🌟
           </p>
         </div>
 
-        {/* Button at the bottom */}
-        <div className="w-full flex justify-center pb-6 pt-2">
-          
-          <div
-            className="px-8 py-3 rounded-full font-bold text-sm md:text-base transition-transform active:scale-95 mb-32"
-          >
-            <Image
-              src="/stories-asset/slides02/slide-2-decoration.svg"
-              alt="Coffee journey decoration"
-              fill
-              priority
-            />
-          </div>
+        {/* Coffee journey decoration image below the text */}
+        <div className="flex-1 relative w-full px-6 pb-6">
+          <Image
+            src="/stories-asset/slides02/slide-2-decoration.svg"
+            alt="Coffee journey decoration"
+            fill
+            className="object-contain object-center"
+            priority
+          />
         </div>
       </div>
 
