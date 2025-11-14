@@ -254,10 +254,30 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
 
-  const currentStory = stories[currentStoryIndex];
+  // Development-only: Limit slides to specific index for development convenience
+  const devMaxSlide = process.env.NODE_ENV === 'development' ? config.devMaxSlide : null;
+  
+  // Filter slides in development mode if devMaxSlide is set
+  const originalStory = stories[currentStoryIndex];
+  const limitedSlides = (devMaxSlide !== null && devMaxSlide !== undefined)
+    ? originalStory?.slides.slice(0, devMaxSlide + 1) 
+    : originalStory?.slides;
+  
+  const currentStory = originalStory ? { ...originalStory, slides: limitedSlides || [] } : originalStory;
   const currentSlide = currentStory?.slides[currentSlideIndex];
   const totalSlides = currentStory?.slides.length || 0;
   const isLastSlide = currentSlideIndex === totalSlides - 1;
+  
+  // Development-only: Auto-pause on specific slide for development convenience
+  const devPauseOnSlide = process.env.NODE_ENV === 'development' ? config.devPauseOnSlide : null;
+  const shouldAutoPause = devPauseOnSlide !== null && devPauseOnSlide !== undefined && currentSlideIndex === devPauseOnSlide;
+  
+  // Development mode warning
+  useEffect(() => {
+    if (devMaxSlide !== null && devMaxSlide !== undefined && process.env.NODE_ENV === 'development') {
+      console.log(`[StoryViewer] Development mode: Limited to slide ${devMaxSlide} (0-based index)`);
+    }
+  }, [devMaxSlide]);
   
   // Check if current slide is video (slide 14) - no background music for videos
   const isVideoSlide = currentSlide?.type === 'video';
@@ -349,6 +369,14 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
       container.removeEventListener('touchstart', handleFirstInteraction);
     };
   }, [isVideoSlide, isMuted, playAudio]);
+
+  // Development-only: Auto-pause when reaching the specified slide
+  useEffect(() => {
+    if (shouldAutoPause && !isPaused) {
+      console.log(`[StoryViewer] Development mode: Auto-pausing on slide ${currentSlideIndex}`);
+      setIsPaused(true);
+    }
+  }, [shouldAutoPause, currentSlideIndex, isPaused]);
 
   // Auto-unmute when reaching the last slide (video) for the first time
   useEffect(() => {
