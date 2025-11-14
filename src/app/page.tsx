@@ -16,9 +16,21 @@ export default function Home() {
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(
+        navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' }).then(
           (registration) => {
             console.log('Service Worker registration successful with scope: ', registration.scope);
+            
+            // Check for updates periodically (every hour)
+            setInterval(() => {
+              registration.update();
+            }, 60 * 60 * 1000);
+            
+            // Also check for updates when the page becomes visible
+            document.addEventListener('visibilitychange', () => {
+              if (!document.hidden) {
+                registration.update();
+              }
+            });
           },
           (err) => {
             console.log('Service Worker registration failed: ', err);
