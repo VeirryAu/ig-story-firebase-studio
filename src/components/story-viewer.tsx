@@ -256,9 +256,14 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
 
   const currentStory = stories[currentStoryIndex];
   const currentSlide = currentStory?.slides[currentSlideIndex];
+  const totalSlides = currentStory?.slides.length || 0;
+  const isLastSlide = currentSlideIndex === totalSlides - 1;
   
   // Check if current slide is video (slide 14) - no background music for videos
   const isVideoSlide = currentSlide?.type === 'video';
+  
+  // Track if we've auto-unmuted on the last slide
+  const hasAutoUnmutedOnLastSlideRef = useRef(false);
   
   // Preload background music starting from slide 1
   useAudioPreload(config.backgroundMusic, currentSlideIndex >= 0);
@@ -345,10 +350,29 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose }: StoryVi
     };
   }, [isVideoSlide, isMuted, playAudio]);
 
-  // Ensure audio plays when conditions change
+  // Auto-unmute when reaching the last slide (video) for the first time
+  useEffect(() => {
+    if (isLastSlide && isVideoSlide && !hasAutoUnmutedOnLastSlideRef.current) {
+      console.log('[StoryViewer] Last slide (video) detected - auto-unmuting audio');
+      setIsMuted(false);
+      hasAutoUnmutedOnLastSlideRef.current = true;
+    }
+    
+    // Reset the flag when leaving the last slide
+    if (!isLastSlide) {
+      hasAutoUnmutedOnLastSlideRef.current = false;
+    }
+  }, [isLastSlide, isVideoSlide]);
+
+  // Ensure audio plays when conditions change (but don't restart - let it continue)
   useEffect(() => {
     if (audioReady && !isPaused && !isVideoSlide && currentSlideIndex >= 0 && !isMuted) {
-      playAudio();
+      // Only call playAudio if audio is paused - if it's already playing, let it continue
+      // This ensures continuous playback across stories without restarting
+      const audio = document.querySelector('audio');
+      if (audio && audio.paused) {
+        playAudio();
+      }
     }
   }, [audioReady, isPaused, isVideoSlide, currentSlideIndex, isMuted, playAudio]);
 

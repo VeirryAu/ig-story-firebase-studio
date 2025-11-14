@@ -15,11 +15,27 @@ export function useAudioPreload(src: string, startPreload: boolean = false) {
       return;
     }
 
-    // Create a hidden audio element for preloading
+    // Create a hidden audio element for preloading with progressive loading
     const audio = new Audio(src);
-    audio.preload = 'auto';
+    audio.preload = 'metadata'; // Start with metadata for faster initial load
     audio.muted = true; // Muted during preload
     audio.volume = 0; // Silent during preload
+    audio.crossOrigin = 'anonymous'; // Better caching support
+
+    // Progressive preloading: Load metadata first, then buffer
+    const handleMetadataLoaded = () => {
+      // Once metadata is loaded, switch to auto to start buffering
+      audio.preload = 'auto';
+      // Trigger buffering by seeking
+      if (audio.duration > 0) {
+        audio.currentTime = Math.min(1, audio.duration * 0.1);
+        setTimeout(() => {
+          audio.currentTime = 0;
+        }, 50);
+      }
+    };
+    
+    audio.addEventListener('loadedmetadata', handleMetadataLoaded, { once: true });
 
     // Start preloading
     audio.load();

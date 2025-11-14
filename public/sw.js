@@ -88,16 +88,21 @@ function addCacheTimestamp(response) {
   });
 }
 
-// Fetch event - implement cache with TTL
+// Fetch event - implement cache with TTL and Range request support for progressive loading
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     (async () => {
       const request = event.request;
+      const url = new URL(request.url);
+      
+      // Support Range requests for audio/video progressive loading
+      const isMediaRequest = url.pathname.match(/\.(mp3|mp4|aac|webm|ogg|wav|m4a)$/i);
+      const rangeHeader = request.headers.get('range');
       
       // Check if we have a cached response
       const cachedResponse = await caches.match(request);
       
-      if (cachedResponse) {
+      if (cachedResponse && !rangeHeader) {
         // Check if cache is still valid (not expired)
         const expired = await isCacheExpired(request);
         
@@ -115,10 +120,16 @@ self.addEventListener('fetch', (event) => {
       // Fetch from network
       try {
         const fetchRequest = request.clone();
-        const response = await fetch(fetchRequest);
+        let response = await fetch(fetchRequest);
 
-        // Only cache successful responses
-        if (response && response.status === 200) {
+        // Handle Range requests for progressive loading (audio/video)
+        if (isMediaRequest && rangeHeader && response.status === 206) {
+          // Partial content response - return as-is for progressive loading
+          return response;
+        }
+
+        // Only cache successful responses (not partial/range requests)
+        if (response && response.status === 200 && !rangeHeader) {
           const responseToCache = addCacheTimestamp(response.clone());
           const cache = await caches.open(CACHE_NAME);
           await cache.put(request, responseToCache);
@@ -135,7 +146,7 @@ self.addEventListener('fetch', (event) => {
       } catch (error) {
         console.error('Fetch failed:', error);
         // If fetch fails and we have a stale cache, return it
-        if (cachedResponse) {
+        if (cachedResponse && !rangeHeader) {
           console.log('Fetch failed, returning stale cache:', request.url);
           return cachedResponse;
         }

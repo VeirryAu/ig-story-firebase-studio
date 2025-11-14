@@ -15,13 +15,28 @@ export default function Home() {
   const [showStories, setShowStories] = useState(false);
   const audioPreloadRef = useRef<HTMLAudioElement | null>(null);
 
-  // Preload audio as early as possible for offline mode
+  // Preload audio as early as possible for offline mode with progressive loading
   useEffect(() => {
-    // Start preloading background music immediately
+    // Start preloading background music immediately with progressive loading
     const audio = new Audio(config.backgroundMusic);
-    audio.preload = 'auto';
+    audio.preload = 'metadata'; // Start with metadata for faster initial load
     audio.muted = true; // Muted during preload to avoid any autoplay issues
     audio.volume = 0;
+    audio.crossOrigin = 'anonymous'; // Better caching support
+    
+    // Progressive loading: Load metadata first, then buffer
+    const handleMetadataLoaded = () => {
+      audio.preload = 'auto'; // Switch to auto after metadata loads
+      // Trigger progressive buffering
+      if (audio.duration > 0) {
+        audio.currentTime = Math.min(1, audio.duration * 0.1);
+        setTimeout(() => {
+          audio.currentTime = 0;
+        }, 50);
+      }
+    };
+    
+    audio.addEventListener('loadedmetadata', handleMetadataLoaded, { once: true });
     
     // Also prefetch using link element for better caching
     const link = document.createElement('link');

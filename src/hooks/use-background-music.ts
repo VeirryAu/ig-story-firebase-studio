@@ -25,6 +25,7 @@ export function useBackgroundMusic({
   const [hasError, setHasError] = useState(false);
   const hasUserInteractedRef = useRef(false);
   const audioUnlockedRef = useRef(false);
+  const hasStartedPlayingRef = useRef(false);
 
   // Keep ref in sync with prop
   useEffect(() => {
@@ -65,7 +66,7 @@ export function useBackgroundMusic({
     };
   }, []);
 
-  // Initialize audio element
+  // Initialize audio element with progressive loading
   useEffect(() => {
     if (!src) {
       console.warn('[BackgroundMusic] No src provided');
@@ -74,17 +75,25 @@ export function useBackgroundMusic({
 
     console.log('[BackgroundMusic] Initializing audio', { src, isMuted, isPlaying: isPlayingRef.current });
     const audio = new Audio(src);
-    audio.preload = 'auto';
+    
+    // Use 'metadata' preload for faster initial load - browser will load metadata first
+    // then progressively load audio data as needed
+    audio.preload = 'metadata'; // Changed from 'auto' to 'metadata' for faster initial load
+    
     audio.loop = loop;
     audio.volume = 1.0;
     audio.muted = isMuted;
+    
+    // Enable crossOrigin for better caching and CDN support
+    audio.crossOrigin = 'anonymous';
 
     const handleCanPlay = () => {
       console.log('[BackgroundMusic] canplay event fired', {
         paused: audio.paused,
         muted: audio.muted,
         readyState: audio.readyState,
-        shouldPlay: isPlayingRef.current
+        shouldPlay: isPlayingRef.current,
+        currentTime: audio.currentTime
       });
       setIsReady(true);
       setHasError(false);
@@ -92,7 +101,11 @@ export function useBackgroundMusic({
       // Use a small timeout to ensure state is synced
       setTimeout(() => {
         if (isPlayingRef.current && audio.paused) {
-          audio.currentTime = 0; // Start from beginning
+          // Only reset to beginning if this is the first time (audio hasn't started yet)
+          // Otherwise, continue from where it is
+          if (audio.currentTime === 0 && !hasStartedPlayingRef.current) {
+            audio.currentTime = 0; // Start from beginning only on first play
+          }
           // Ensure muted state matches
           audio.muted = isMuted;
           // Try to play
@@ -101,7 +114,10 @@ export function useBackgroundMusic({
             const playPromise = audio.play();
             if (playPromise !== undefined) {
               playPromise
-                .then(() => console.log('[BackgroundMusic] Auto-play succeeded'))
+                .then(() => {
+                  console.log('[BackgroundMusic] Auto-play succeeded');
+                  hasStartedPlayingRef.current = true;
+                })
                 .catch((error) => {
                   if (error.name === 'NotAllowedError') {
                     console.warn('[BackgroundMusic] Autoplay blocked for background music');
@@ -137,16 +153,24 @@ export function useBackgroundMusic({
       // Use a small timeout to ensure state is synced
       setTimeout(() => {
         if (isPlayingRef.current && audio.paused) {
-          audio.currentTime = 0; // Start from beginning
-          // Ensure not muted
+          // Only reset to beginning if this is the first time
+          if (audio.currentTime === 0 && !hasStartedPlayingRef.current) {
+            audio.currentTime = 0; // Start from beginning only on first play
+          }
+          // Ensure muted state matches
+          audio.muted = isMuted;
           if (!audio.muted) {
             const playPromise = audio.play();
             if (playPromise !== undefined) {
-              playPromise.catch((error) => {
-                if (error.name === 'NotAllowedError') {
-                  console.warn('Autoplay blocked for background music');
-                }
-              });
+              playPromise
+                .then(() => {
+                  hasStartedPlayingRef.current = true;
+                })
+                .catch((error) => {
+                  if (error.name === 'NotAllowedError') {
+                    console.warn('Autoplay blocked for background music');
+                  }
+                });
             }
           }
         }
@@ -158,8 +182,32 @@ export function useBackgroundMusic({
     audio.addEventListener('loadeddata', handleLoadedData);
     audio.addEventListener('error', handleError);
 
-    // Load the audio
-    audio.load();
+    // Progressive loading: Start loading metadata first, then buffer progressively
+    // This allows playback to start before the entire file is downloaded
+    const startProgressiveLoad = () => {
+      // Load metadata first (fast)
+      audio.load();
+      
+      // Once metadata is loaded, start buffering progressively
+      const handleLoadedMetadata = () => {
+        console.log('[BackgroundMusic] Metadata loaded, starting progressive buffering');
+        // Set preload to auto after metadata is loaded to start buffering
+        audio.preload = 'auto';
+        // Trigger additional buffering by seeking slightly (forces buffer)
+        if (audio.duration > 0) {
+          const seekTime = Math.min(1, audio.duration * 0.1); // Seek to 10% or 1 second
+          audio.currentTime = seekTime;
+          // Reset to beginning after buffering starts
+          setTimeout(() => {
+            audio.currentTime = 0;
+          }, 100);
+        }
+      };
+      
+      audio.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
+    };
+    
+    startProgressiveLoad();
 
     audioRef.current = audio;
     
@@ -180,7 +228,7 @@ export function useBackgroundMusic({
     };
   }, [src, loop]); // Only recreate when src or loop changes
 
-  // Handle play/pause
+  // Handle play/pause - don't reset audio, just play/pause
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -188,20 +236,19 @@ export function useBackgroundMusic({
     // If audio is ready, handle play/pause immediately
     if (isReady) {
       if (isPlaying) {
-        // Reset to beginning if starting fresh (currentTime is 0 or near end)
-        if (audio.currentTime === 0 || (audio.duration > 0 && audio.currentTime >= audio.duration - 0.1)) {
-          audio.currentTime = 0;
-        }
-        // Try to play - use a small delay to ensure state is synced
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise.catch((error) => {
-            if (error.name === 'NotAllowedError') {
-              console.warn('Autoplay blocked for background music');
-            } else {
-              console.warn('Failed to play background music:', error);
-            }
-          });
+        // Don't reset currentTime - let it continue playing from where it is
+        // Only play if it's paused
+        if (audio.paused) {
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((error) => {
+              if (error.name === 'NotAllowedError') {
+                console.warn('Autoplay blocked for background music');
+              } else {
+                console.warn('Failed to play background music:', error);
+              }
+            });
+          }
         }
       } else {
         audio.pause();
@@ -219,17 +266,21 @@ export function useBackgroundMusic({
     audio.muted = isMuted;
   }, [isMuted]);
 
-  // Reset audio to start when story first opens (when isPlaying becomes true from false)
-  const wasPlayingRef = useRef(false);
+  // Track if audio has ever started playing (for initial reset only)
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !isReady) return;
 
-    // If we're starting to play for the first time (wasn't playing before), reset to start
-    if (isPlaying && !wasPlayingRef.current) {
+    // Only reset to start the very first time we start playing
+    // After that, let it continue playing continuously across stories
+    if (isPlaying && !hasStartedPlayingRef.current && audio.paused) {
+      // This is the first time starting - reset to beginning
       audio.currentTime = 0;
+      hasStartedPlayingRef.current = true;
+    } else if (isPlaying) {
+      // Audio is already playing or has played before - don't reset
+      hasStartedPlayingRef.current = true;
     }
-    wasPlayingRef.current = isPlaying;
   }, [isPlaying, isReady]);
 
   // Expose a method to force play (useful for user interaction)
@@ -248,7 +299,8 @@ export function useBackgroundMusic({
       src: audio.src,
       currentTime: audio.currentTime,
       hasUserInteracted: hasUserInteractedRef.current,
-      audioUnlocked: audioUnlockedRef.current
+      audioUnlocked: audioUnlockedRef.current,
+      hasStartedPlaying: hasStartedPlayingRef.current
     });
     
     // Mark that we've had user interaction (if called from user event)
@@ -265,7 +317,15 @@ export function useBackgroundMusic({
     audio.muted = isMuted;
     
     if (audio.paused) {
-      audio.currentTime = 0;
+      // Only reset to beginning if this is the very first time playing
+      // Otherwise, continue from where it is (for continuous playback across stories)
+      if (!hasStartedPlayingRef.current) {
+        audio.currentTime = 0;
+        console.log('[BackgroundMusic] First time playing - starting from beginning');
+      } else {
+        console.log('[BackgroundMusic] Resuming playback - continuing from current position');
+      }
+      
       console.log('[BackgroundMusic] Attempting to play audio');
       const playPromise = audio.play();
       if (playPromise !== undefined) {
@@ -274,9 +334,11 @@ export function useBackgroundMusic({
             console.log('[BackgroundMusic] Audio playing successfully', {
               paused: audio.paused,
               muted: audio.muted,
-              volume: audio.volume
+              volume: audio.volume,
+              currentTime: audio.currentTime
             });
             audioUnlockedRef.current = true;
+            hasStartedPlayingRef.current = true;
           })
           .catch((error) => {
             console.error('[BackgroundMusic] Failed to play audio:', error.name, error.message);
@@ -290,7 +352,7 @@ export function useBackgroundMusic({
           });
       }
     } else {
-      console.log('[BackgroundMusic] Audio is already playing');
+      console.log('[BackgroundMusic] Audio is already playing - continuing');
     }
   }, [isMuted]);
 
