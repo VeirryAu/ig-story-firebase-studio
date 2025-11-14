@@ -144,8 +144,8 @@ export default function Home() {
       <div className="text-center">
         {isLoading && (
           <div className="flex flex-col items-center justify-center gap-6">
-            <div className="text-white text-lg md:text-xl leading-relaxed whitespace-pre-line">
-              Take a seat, have a sip!{"\n"}
+            <div className="text-white font-bold text-3xl md:text-3xl leading-relaxed whitespace-pre-line">
+              Take a seat, have a sip!<br />
               While we're doing the math for you!
             </div>
             <LoadingSpinner />
