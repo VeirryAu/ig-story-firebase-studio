@@ -101,7 +101,7 @@ export default function Home() {
         // Set trxCount to any number > 0 to show all slides
         return {
           userName: 'John',
-          variantCount: 5,
+          variantCount: 4,
           trxCount: config.devTrxCount, // Change to 0 to test limited slides
           listProductFavorite: [
             { 

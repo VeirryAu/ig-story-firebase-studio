@@ -75,7 +75,7 @@ export function Screen6() {
         <div 
           className="relative rounded-full overflow-hidden"
           style={{
-            border: `10px solid ${config.secondaryColor}`,
+            border: `14px solid ${config.secondaryColor}`,
             width: '280px',
             height: '280px',
           }}

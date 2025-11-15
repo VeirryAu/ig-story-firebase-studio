@@ -18,13 +18,19 @@ export function Screen4({ serverResponse }: Screen4Props) {
     ? '/stories-asset/slides04/slide04-more-five.jpg'
     : '/stories-asset/slides04/slide04-less-five.jpg';
   
-  const buttonText = isMoreThanFive 
+  const buttonTextDescription = isMoreThanFive 
     ? 'The Taste Curator'
     : 'The Signature Seeker';
   
   const descriptionText = isMoreThanFive
     ? 'Si paling berani menjadi pertama untuk coba beragam rasa'
     : 'Si paling setia dengan menu sempurna andalannya!';
+
+    const buttonText = isMoreThanFive
+    ? 'Si paling berani menjadi pertama untuk coba beragam rasa'
+    : 'Si paling setia dengan menu sempurna andalannya!';
+
+    const secondaryColor = '#00556c'
 
   return (
     <div 
@@ -41,7 +47,7 @@ export function Screen4({ serverResponse }: Screen4Props) {
         <div 
           className="relative rounded-full overflow-hidden"
           style={{
-            border: '10px solid rgba(0, 84, 107, 1)',
+            border: '14px solid rgba(0, 84, 107, 1)',
             width: '280px',
             height: '280px',
           }}
@@ -54,6 +60,16 @@ export function Screen4({ serverResponse }: Screen4Props) {
             priority
           />
         </div>
+      </div>
+
+      {/* Button with Title */}
+      <div 
+        className="px-6 py-3 rounded-full mb-4"
+        style={{ backgroundColor: secondaryColor }}
+      >
+        <p className="text-white font-bold text-base md:text-lg text-center">
+          {buttonTextDescription}
+        </p>
       </div>
 
       {/* Description Text */}
