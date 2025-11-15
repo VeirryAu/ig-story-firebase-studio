@@ -1,72 +1,84 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import type { ServerResponse } from "@/types/server";
 
-export function Screen5() {
-  const [isVisible, setIsVisible] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
+interface Screen5Props {
+  serverResponse?: ServerResponse;
+}
 
-  useEffect(() => {
-    setIsVisible(true);
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % 3);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const achievements = [
-    { title: "Innovation", description: "Pushed boundaries", icon: "💡" },
-    { title: "Excellence", description: "Raised the bar", icon: "⭐" },
-    { title: "Impact", description: "Made a difference", icon: "🌟" },
-  ];
+export function Screen5({ serverResponse }: Screen5Props) {
+  const totalPoint = serverResponse?.totalPoint || 0;
+  const totalPointDescription = serverResponse?.totalPointDescription || '';
+  const totalPointPossibleRedeem = serverResponse?.totalPointPossibleRedeem || 0;
+  const totalPointImage = serverResponse?.totalPointImage || 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=400&fit=crop&crop=center';
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 flex items-center justify-center overflow-hidden">
-      {/* Animated rays */}
-      <div className="absolute inset-0">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-full bg-white/20 origin-center"
-            style={{
-              left: "50%",
-              top: "50%",
-              transform: `translate(-50%, -50%) rotate(${i * 30}deg)`,
-              animation: `pulse 2s ease-in-out infinite`,
-              animationDelay: `${i * 0.1}s`,
-            }}
-          />
-        ))}
+    <div 
+      className="relative w-full h-full flex flex-col items-center px-6"
+      style={{ backgroundColor: '#84913C' }}
+    >
+      {/* Top Text */}
+      <p className="text-white font-bold text-center text-lg md:text-xl mb-4 mt-24 px-4">
+        Kami menghitung poin yang sudah kamu kumpulkan, dan wow! Kamu sudah mencapai
+      </p>
+
+      {/* Infographic circle - similar to screen-2 but without logo */}
+      <div className="relative mb-8">
+        <div 
+          className="relative w-52 h-52 md:w-52 md:h-52 rounded-full flex flex-col items-center justify-center"
+          style={{ backgroundColor: '#2DB288' }}
+        >
+          {/* Number and Poin text */}
+          <div className="text-center z-10">
+            <div className="text-white font-bold text-7xl leading-none">
+              {totalPoint}
+            </div>
+            <div className="text-white font-bold text-3xl mt-1">
+              Poin
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="relative z-10 w-full px-8">
-        <h2 className="text-4xl md:text-6xl font-bold text-white text-center mb-12 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-          Achievements
-        </h2>
+      <div 
+        className="absolute bottom-0 left-0 right-0 w-full h-1/2 flex flex-col"
+        style={{ 
+          height: '33%',
+          backgroundColor: 'rgba(92, 99, 54, 1)',
+          borderTopLeftRadius: '24px',
+          borderTopRightRadius: '24px'
+        }}
+      >
 
-        <div className="max-w-2xl mx-auto space-y-6">
-          {achievements.map((achievement, index) => (
+        {/* Description Text */}
+        <div className="w-full max-w-md mt-8 mb-6">
+          <p className="text-white font-bold text-center text-lg md:text-xl leading-relaxed px-4">
+            {totalPointDescription}
+          </p>
+        </div>
+
+        {/* Bubble circles - coffee latte images - horizontally stacked with 50% overlap */}
+        <div className="flex justify-center items-center px-4">
+          {Array.from({ length: totalPointPossibleRedeem }).map((_, index) => (
             <div
               key={index}
-              className={`bg-white/25 backdrop-blur-lg rounded-2xl p-6 transform transition-all duration-500 ${
-                activeIndex === index
-                  ? "opacity-100 scale-105 translate-x-0 shadow-2xl"
-                  : "opacity-60 scale-100 translate-x-[-20px]"
-              }`}
+              className="relative rounded-full overflow-hidden"
+              style={{ 
+                backgroundColor: 'rgba(92, 99, 54, 1)',
+                border: '4px solid rgba(92, 99, 54, 1)',
+                width: '50px',
+                height: '50px',
+                marginLeft: index === 0 ? '0' : '-18px', // Overlap by half (negative margin)
+                zIndex: totalPointPossibleRedeem - index, // Later items on top
+              }}
             >
-              <div className="flex items-center gap-6">
-                <div className="text-6xl md:text-7xl animate-spin-slow">
-                  {achievement.icon}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-lg">
-                    {achievement.title}
-                  </h3>
-                  <p className="text-xl md:text-2xl text-white/90 drop-shadow-md">
-                    {achievement.description}
-                  </p>
-                </div>
-              </div>
+              <Image
+                src={totalPointImage}
+                alt={`Coffee ${index + 1}`}
+                fill
+                className="object-cover"
+              />
             </div>
           ))}
         </div>
@@ -74,4 +86,3 @@ export function Screen5() {
     </div>
   );
 }
-

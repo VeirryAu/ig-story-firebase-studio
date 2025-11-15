@@ -1,8 +1,8 @@
 {
   "slideDuration": 10000,
   "backgroundMusic": "/stories-asset/main/sunset-in-bali-audio.aac",
-  "devPauseOnSlide": 4,
-  "devMaxSlide": 4,
+  "devPauseOnSlide": 5,
+  "devMaxSlide": 5,
   "devTrxCount": 100
 }
 

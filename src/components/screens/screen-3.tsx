@@ -70,6 +70,7 @@ export function Screen3({ serverResponse }: Screen3Props) {
                 </p>
               </div>
 
+              {/* TODO: Styling Star of Rank #1 */}
               {/* Ranking with star only on Rank #1 */}
               <div className="flex-shrink-0 flex items-center gap-2">
                 {isFirstRank && (

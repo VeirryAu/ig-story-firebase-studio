@@ -57,7 +57,7 @@ export function Screen4({ serverResponse }: Screen4Props) {
       </div>
 
       {/* Description Text */}
-      <p className="text-white font-bold text-center text-sm md:text-base px-4">
+      <p className="text-white font-bold text-center text-lg md:text-xl px-4">
         {descriptionText}
       </p>
     </div>
