@@ -703,8 +703,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             <X size={36} />
         </button>
 
-        {/* Share Button - only show on screen-2, screen-3, screen-4, and screen-5 */}
-        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5') && (
+        {/* Share Button - only show on screen-2, screen-3, screen-4, screen-5, and screen-6 */}
+        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6') && (
           <ShareButton
             onClick={() => {
               // TODO: Add share functionality
