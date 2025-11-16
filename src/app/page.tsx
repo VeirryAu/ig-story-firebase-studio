@@ -214,6 +214,19 @@ export default function Home() {
           });
         }
 
+        // Preload screen-4 images (both variants since we don't know which will be used)
+        imageUrls.push('/stories-asset/slides04/slide04-more-five.jpg');
+        imageUrls.push('/stories-asset/slides04/slide04-less-five.jpg');
+
+        // Preload screen-5 image from serverResponse
+        if (serverData?.totalPointImage) {
+          imageUrls.push(serverData.totalPointImage);
+        }
+
+        // Preload screen-8 and screen-9 images (both variants since we don't know which will be used)
+        imageUrls.push('/stories-asset/slides08/slide-8-delivery.jpg');
+        imageUrls.push('/stories-asset/slides08/slide-8-pickup.jpg');
+
         const imagePromises = imageUrls.map(url => {
           return new Promise((resolve, reject) => {
             const img = new Image();
