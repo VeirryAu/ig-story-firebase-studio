@@ -1,53 +1,123 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import type { ServerResponse } from "@/types/server";
 
-export function Screen12() {
-  const [isVisible, setIsVisible] = useState(false);
+interface Screen12Props {
+  serverResponse?: ServerResponse;
+}
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
+export function Screen12({ serverResponse }: Screen12Props) {
+  // Get circular images from serverResponse, default to 10 placeholder images
+  const circularImages = serverResponse?.listCircularImages || Array(10).fill(null).map((_, i) => 
+    `https://images.unsplash.com/photo-${1500000000000 + i}?w=200&h=200&fit=crop&crop=center`
+  );
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 flex items-center justify-center overflow-hidden">
-      {/* Animated confetti */}
-      <div className="absolute inset-0">
-        {[...Array(30)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-3 h-3 rounded-full animate-confetti"
-            style={{
-              backgroundColor: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8'][Math.floor(Math.random() * 6)],
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`,
-              animationDuration: `${3 + Math.random() * 2}s`,
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="relative z-10 text-center text-white px-8">
-        <div
-          className={`transition-all duration-1000 ${
-            isVisible
-              ? "opacity-100 scale-100 rotate-0"
-              : "opacity-0 scale-90 rotate-6"
-          }`}
-        >
-          <div className="text-7xl md:text-9xl mb-8 animate-bounce drop-shadow-2xl">
-            🎊
-          </div>
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-2xl animate-in fade-in zoom-in-50 duration-1000 delay-300">
-            Until Next Time
-          </h2>
-          <p className="text-2xl md:text-3xl font-light drop-shadow-lg animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
-            Here's to another great year!
+    <div 
+      className="relative w-full h-full flex flex-col overflow-hidden"
+      style={{ backgroundColor: '#C83E2B' }}
+    >
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col flex-1 pt-8 pb-4 mt-16">
+        {/* Top Text */}
+        <div className="text-center mb-8">
+          <p className="text-white font-bold text-xl md:text-2xl mb-2">
+            Coffee core boleh beda,
+          </p>
+          <p className="text-white font-bold text-xl md:text-2xl">
+            semangatnya tetap sama!
           </p>
         </div>
+
+        
+
+      {/* Bottom Card */}
+        <div 
+        className="absolute bottom-0 left-0 right-0 w-full flex flex-col"
+        style={{ 
+          height: '50%',
+          backgroundColor: '#8d351a',
+          borderTopLeftRadius: '24px',
+          borderTopRightRadius: '24px',
+          zIndex: 10,
+        }}
+      >
+        <div className="flex-1 flex flex-col items-center justify-center py-10">
+
+          {/* Animated Circular Images Container */}
+        <div className="relative w-full h-32 md:h-36 -mt-24 mb-8 overflow-hidden">
+          <div className="absolute flex items-center gap-4 animate-slide-left">
+            {/* First set of images */}
+            {circularImages.map((imageUrl, index) => (
+              <div
+                key={`first-${index}`}
+                className="relative flex-shrink-0"
+                style={{
+                  width: '120px',
+                  height: '120px',
+                }}
+              >
+                <div 
+                  className="relative w-full h-full rounded-full overflow-hidden"
+                  style={{
+                    border: '8px solid rgba(0, 0, 0, 0.2)',
+                  }}
+                >
+                  <Image
+                    src={imageUrl}
+                    alt={`Circular image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    priority={index < 4}
+                  />
+                </div>
+              </div>
+            ))}
+            {/* Duplicate set for seamless loop */}
+            {circularImages.map((imageUrl, index) => (
+              <div
+                key={`second-${index}`}
+                className="relative flex-shrink-0"
+                style={{
+                  width: '120px',
+                  height: '120px',
+                }}
+              >
+                <div 
+                  className="relative w-full h-full rounded-full overflow-hidden"
+                  style={{
+                  border: '8px solid rgba(0, 0, 0, 0.2)',
+                  }}
+                >
+                  <Image
+                    src={imageUrl}
+                    alt={`Circular image ${index + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+         {/* Bottom Text */}
+        <div className="text-center mt-auto mb-32">
+          <p className="text-white font-bold text-lg md:text-xl mb-1">
+            Yuk, tingkatkan transaksi di Fore Coffee
+          </p>
+          <p className="text-white font-bold text-lg md:text-xl mb-1">
+            App karena 2026 bakal banyak kejutan
+          </p>
+          <p className="text-white font-bold text-lg md:text-xl">
+            rasa!
+          </p>
+        </div>
+        </div>
+      </div>
+
+        
       </div>
     </div>
   );
 }
-

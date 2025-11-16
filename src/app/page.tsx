@@ -134,6 +134,18 @@ export default function Home() {
           cheaperSubsDesc: '325rb Rupiah', // Savings description
           cheaperSubsAmount: 325500, // Savings amount in rupiah
           topRanking: 50, // Top ranking position
+          listCircularImages: [
+            'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=200&h=200&fit=crop&crop=center',
+            'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=200&h=200&fit=crop&crop=center',
+          ], // Array of circular image URLs for screen-12
           listFavoriteStore: [
             {
               storeName: 'Fore Coffee Grand Indonesia',
@@ -193,12 +205,26 @@ export default function Home() {
           });
         });
 
+        // Add circular images from serverResponse for screen-12
+        if (serverData?.listCircularImages && Array.isArray(serverData.listCircularImages)) {
+          serverData.listCircularImages.forEach(imageUrl => {
+            if (imageUrl) {
+              imageUrls.push(imageUrl);
+            }
+          });
+        }
+
         const imagePromises = imageUrls.map(url => {
           return new Promise((resolve, reject) => {
             const img = new Image();
             img.src = url;
             img.onload = resolve;
-            img.onerror = () => reject(new Error(`Failed to load image: ${url}`));
+            img.onerror = () => {
+              // Log error but don't fail the entire preload process
+              console.warn(`Failed to preload image: ${url}`);
+              // Resolve instead of reject to allow other images to continue loading
+              resolve(null);
+            };
           });
         });
 

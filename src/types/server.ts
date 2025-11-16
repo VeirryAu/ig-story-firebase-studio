@@ -25,5 +25,6 @@ export interface ServerResponse {
   cheaperSubsDesc?: string; // Savings description (e.g., "325rb Rupiah")
   cheaperSubsAmount?: number; // Savings amount in rupiah (e.g., 325500)
   topRanking?: number; // Top ranking position (e.g., 50)
+  listCircularImages?: string[]; // Array of image URLs for circular graphics (screen-12)
 }
 
