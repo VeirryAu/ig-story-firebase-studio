@@ -192,10 +192,39 @@ export default function Home() {
         const storiesData: Story[] = storyData;
 
         const imageUrls: string[] = [];
-        // Preload the logo
-        imageUrls.push('/stories-asset/main/fore-logo.svg');
-        // Preload first slide logo
-        imageUrls.push('/stories-asset/slides01/slide1-logo.png');
+        
+        // Preload all static image assets from stories-asset directory
+        const staticAssets = [
+          // Main assets
+          '/stories-asset/main/fore-logo.svg',
+          // Slide 1
+          '/stories-asset/slides01/slide1-logo.png',
+          // Slide 2
+          '/stories-asset/slides02/fore-cup-logo.svg',
+          '/stories-asset/slides02/slide-2-decoration.svg',
+          // Slide 4 (both variants)
+          '/stories-asset/slides04/slide04-more-five.jpg',
+          '/stories-asset/slides04/slide04-less-five.jpg',
+          // Slide 6 (all time-based variants)
+          '/stories-asset/slides06/slide6-daybreakcatcher.jpg',
+          '/stories-asset/slides06/slide6-sunchaser.jpg',
+          '/stories-asset/slides06/slide6-twilightseeker.jpg',
+          // Slide 8 (both variants)
+          '/stories-asset/slides08/slide-8-delivery.jpg',
+          '/stories-asset/slides08/slide-8-pickup.jpg',
+          // Slide 10
+          '/stories-asset/slide10/slide10-myforeplan.png',
+          // Slide 11
+          '/stories-asset/slides11/slide11-bgasset.png',
+          // Slide 14 (banner images)
+          '/stories-asset/slides14/app-banner.jpg',
+          '/stories-asset/slides14/app-banner-smaller.jpg',
+        ];
+        
+        // Add all static assets to preload list
+        staticAssets.forEach(asset => imageUrls.push(asset));
+        
+        // Preload story user avatars
         storiesData.forEach(story => {
           imageUrls.push(story.user.avatar);
           story.slides.forEach(slide => {
@@ -214,18 +243,28 @@ export default function Home() {
           });
         }
 
-        // Preload screen-4 images (both variants since we don't know which will be used)
-        imageUrls.push('/stories-asset/slides04/slide04-more-five.jpg');
-        imageUrls.push('/stories-asset/slides04/slide04-less-five.jpg');
-
         // Preload screen-5 image from serverResponse
         if (serverData?.totalPointImage) {
           imageUrls.push(serverData.totalPointImage);
         }
-
-        // Preload screen-8 and screen-9 images (both variants since we don't know which will be used)
-        imageUrls.push('/stories-asset/slides08/slide-8-delivery.jpg');
-        imageUrls.push('/stories-asset/slides08/slide-8-pickup.jpg');
+        
+        // Preload product favorite images from serverResponse
+        if (serverData?.listProductFavorite && Array.isArray(serverData.listProductFavorite)) {
+          serverData.listProductFavorite.forEach(product => {
+            if (product.productImage) {
+              imageUrls.push(product.productImage);
+            }
+          });
+        }
+        
+        // Preload favorite store images from serverResponse
+        if (serverData?.listFavoriteStore && Array.isArray(serverData.listFavoriteStore)) {
+          serverData.listFavoriteStore.forEach(store => {
+            if (store.storeImage) {
+              imageUrls.push(store.storeImage);
+            }
+          });
+        }
 
         const imagePromises = imageUrls.map(url => {
           return new Promise((resolve, reject) => {
