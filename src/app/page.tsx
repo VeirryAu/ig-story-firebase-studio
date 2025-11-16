@@ -217,8 +217,8 @@ export default function Home() {
           // Slide 11
           '/stories-asset/slides11/slide11-bgasset.png',
           // Slide 14 (banner images)
-          '/stories-asset/slides14/app-banner.jpg',
-          '/stories-asset/slides14/app-banner-smaller.jpg',
+          '/stories-asset/slides13/app-banner.jpg',
+          '/stories-asset/slides13/app-banner-smaller.jpg',
         ];
         
         // Add all static assets to preload list

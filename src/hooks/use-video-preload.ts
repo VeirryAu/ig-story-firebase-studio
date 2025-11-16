@@ -20,7 +20,7 @@ export function useVideoPreload(videoSources: VideoSource[], startPreload: boole
       return;
     }
 
-    // Group sources by video (for screen-14, we have 3 sources for the same video)
+    // Group sources by video (for screen-13, we have 3 sources for the same video)
     // We'll create one video element per unique video, but prefetch all formats
     const videoGroups = new Map<string, VideoSource[]>();
     videoSources.forEach((source) => {

@@ -145,11 +145,11 @@ export const stories: Story[] = [
         component: <Screen12 />,
       },
       {
-        id: 'screen-14',
+        id: 'screen-13',
         type: 'video',
         duration: 0, // Will be set dynamically from video duration
         alt: 'Barista video showcase',
-        url: '/stories-asset/slides14/forecap-video-barista-h264.mp4', // Fallback URL
+        url: '/stories-asset/slides13/forecap-video-barista-h264.mp4', // Fallback URL
       },
     ],
   }

@@ -134,7 +134,7 @@ The application displays 14 different slides with dynamic content:
 ### 2. Background Music
 
 - Continuous playback across all slides
-- Auto-unmute on video slide (screen-14)
+- Auto-unmute on video slide (screen-13)
 - Progressive loading for faster initial load
 - Offline support with Service Worker caching
 

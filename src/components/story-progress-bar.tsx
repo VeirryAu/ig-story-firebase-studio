@@ -29,7 +29,7 @@ export function StoryProgressBar({
 
   // Use video duration if available (for slide 14), otherwise use slide duration
   const slide = currentStory.slides[currentSlideIndex];
-  const isVideoSlide = slide?.type === 'video' && slide?.id === 'screen-14';
+  const isVideoSlide = slide?.type === 'video' && slide?.id === 'screen-13';
   const duration = (isVideoSlide && videoDuration) ? videoDuration : (slide?.duration ?? 10000);
 
   return (

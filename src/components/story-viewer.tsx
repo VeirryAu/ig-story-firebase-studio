@@ -37,8 +37,8 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
   const [canPlay, setCanPlay] = useState(false);
   const [needsUserInteraction, setNeedsUserInteraction] = useState(false);
   
-  // For screen-14, we need to handle multiple sources
-  const isScreen14 = slideId === 'screen-14';
+  // For screen-13, we need to handle multiple sources
+  const isScreen14 = slideId === 'screen-13';
 
   useEffect(() => {
     const video = videoRef.current;
@@ -169,7 +169,7 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
   // Get video duration for slide 14
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || slideId !== 'screen-14') return;
+    if (!video || slideId !== 'screen-13') return;
 
     const handleLoadedMetadata = () => {
       if (video.duration && !isNaN(video.duration) && isFinite(video.duration)) {
@@ -232,9 +232,9 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
       >
         {isScreen14 ? (
           <>
-            <source src="/stories-asset/slides14/forecap-video-barista-av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
-            <source src="/stories-asset/slides14/forecap-video-barista.webm" type='video/webm; codecs="vp9"' />
-            <source src="/stories-asset/slides14/forecap-video-barista-h264.mp4" type='video/mp4; codecs="avc1.42E01E"' />
+            <source src="/stories-asset/slides13/forecap-video-barista-av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
+            <source src="/stories-asset/slides13/forecap-video-barista.webm" type='video/webm; codecs="vp9"' />
+            <source src="/stories-asset/slides13/forecap-video-barista-h264.mp4" type='video/mp4; codecs="avc1.42E01E"' />
           </>
         ) : (
           <source src={src} type="video/mp4" />
@@ -446,12 +446,12 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   // Find video slides and preload them starting from slide 1
   const videoSlides = currentStory?.slides.filter(slide => slide.type === 'video') || [];
   const videoSources = videoSlides.map(slide => {
-    // For screen-14, we have multiple sources - preload all formats
-    if (slide.id === 'screen-14') {
+    // For screen-13, we have multiple sources - preload all formats
+    if (slide.id === 'screen-13') {
       return [
-        { src: '/stories-asset/slides14/forecap-video-barista-av1.mp4', type: 'video/mp4; codecs="av01.0.05M.08"' },
-        { src: '/stories-asset/slides14/forecap-video-barista.webm', type: 'video/webm; codecs="vp9"' },
-        { src: '/stories-asset/slides14/forecap-video-barista-h264.mp4', type: 'video/mp4; codecs="avc1.42E01E"' },
+        { src: '/stories-asset/slides13/forecap-video-barista-av1.mp4', type: 'video/mp4; codecs="av01.0.05M.08"' },
+        { src: '/stories-asset/slides13/forecap-video-barista.webm', type: 'video/webm; codecs="vp9"' },
+        { src: '/stories-asset/slides13/forecap-video-barista-h264.mp4', type: 'video/mp4; codecs="avc1.42E01E"' },
       ];
     }
     return slide.url ? [{ src: slide.url, type: 'video/mp4' }] : [];
@@ -465,7 +465,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   useEffect(() => {
     const handleVideoDuration = (event: CustomEvent<{ duration: number }>) => {
       // Only set duration if we're on slide 14
-      if (currentSlide?.id === 'screen-14') {
+      if (currentSlide?.id === 'screen-13') {
         setVideoDuration(event.detail.duration);
       }
     };
@@ -478,7 +478,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
 
   // Reset video duration when leaving slide 14
   useEffect(() => {
-    if (currentSlide?.id !== 'screen-14') {
+    if (currentSlide?.id !== 'screen-13') {
       setVideoDuration(null);
     }
   }, [currentSlide?.id]);
@@ -496,8 +496,24 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
     // Do nothing when the last story finishes, to stay on the last slide.
   }, [currentStoryIndex, stories.length, resetAnimation]);
 
-  const goToNextSlide = useCallback(() => {
+  const goToNextSlide = useCallback((e?: React.MouseEvent) => {
+    // Don't allow navigation if on last slide
+    const totalSlides = currentStory?.slides.length || 0;
+    const isLastSlide = currentSlideIndex === totalSlides - 1;
+    if (isLastSlide) {
+      // Prevent event propagation to avoid triggering video pause/resume
+      if (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      }
+      isNavigatingRef.current = true;
+      setTimeout(() => {
+        isNavigatingRef.current = false;
+      }, 300);
+      return;
+    }
     if (isNavigatingRef.current) return; // Prevent rapid-fire navigation
+    
     isNavigatingRef.current = true;
     
     if (currentStory && currentSlideIndex < currentStory.slides.length - 1) {
@@ -541,16 +557,20 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') goToNextSlide();
+      if (e.key === 'ArrowRight' && !isLastSlide) goToNextSlide();
       if (e.key === 'ArrowLeft') goToPrevSlide();
       if (e.key === 'Escape') onClose();
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [goToNextSlide, goToPrevSlide, onClose]);
+  }, [goToNextSlide, goToPrevSlide, onClose, isLastSlide]);
 
   const handlePointerDown = () => {
+    // Don't pause on the last slide (video slide) to prevent video restart
+    if (isLastSlide && isVideoSlide) {
+      return;
+    }
     setIsPaused(true);
     // Pause current video if playing
     const currentVideo = videoRefs.current.get(currentSlide?.id || '');
@@ -564,6 +584,10 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   };
 
   const handlePointerUp = () => {
+    // Don't resume on the last slide (video slide) to prevent video restart
+    if (isLastSlide && isVideoSlide) {
+      return;
+    }
     setIsPaused(false);
     // Resume current video if it's a video slide
     const currentVideo = videoRefs.current.get(currentSlide?.id || '');
@@ -702,7 +726,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             currentSlideIndex={currentSlideIndex}
             isPaused={isPaused}
             animationKey={animationKey}
-            onAnimationEnd={goToNextSlide}
+            onAnimationEnd={isLastSlide ? () => {} : goToNextSlide}
             videoDuration={videoDuration}
             currentStory={currentStory}
           />
@@ -716,9 +740,26 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
           </div>
 
           {/* Clickable tap zones for navigation */}
-          <div className="flex-grow flex">
-            <div className="w-1/3 h-full" onClick={goToPrevSlide} aria-label="Previous slide"></div>
-            <div className="w-2/3 h-full" onClick={goToNextSlide} aria-label="Next slide"></div>
+          <div className="flex-grow flex relative">
+            <div 
+              className="w-1/3 h-full" 
+              onClick={goToPrevSlide} 
+              aria-label="Previous slide"
+            />
+              <div 
+                className="w-2/3 h-full" 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  goToNextSlide(e);
+                }} 
+                onPointerDown={(e) => {
+                  e.stopPropagation();
+                }}
+                onPointerUp={(e) => {
+                  e.stopPropagation();
+                }}
+                aria-label="Next slide"
+              />
           </div>
         </div>
 
@@ -726,9 +767,21 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
         <button onClick={goToPrevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" aria-label="Previous Story">
             <ChevronLeft size={32} />
         </button>
-        <button onClick={goToNextSlide} className="absolute right-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" aria-label="Next Story">
-            <ChevronRight size={32} />
-        </button>
+        {!isLastSlide && (
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              goToNextSlide(e);
+            }} 
+            onPointerDown={(e) => {
+              e.stopPropagation();
+            }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" 
+            aria-label="Next Story"
+          >
+              <ChevronRight size={32} />
+          </button>
+        )}
         {/* Mute/Unmute button - show on all slides */}
         <button 
           onClick={() => setIsMuted(!isMuted)} 
@@ -741,7 +794,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             <X size={36} />
         </button>
 
-        {/* Share Button - show on screen-2 through screen-12 (excluding screen-1 and screen-14) */}
+        {/* Share Button - show on screen-2 through screen-12 (excluding screen-1 and screen-13) */}
         {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-7' || currentSlide?.id === 'screen-8' || currentSlide?.id === 'screen-9' || currentSlide?.id === 'screen-10' || currentSlide?.id === 'screen-11' || currentSlide?.id === 'screen-12') && (
           <ShareButton
             onClick={() => {

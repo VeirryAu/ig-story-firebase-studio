@@ -18,15 +18,15 @@ export function Screen14({ onVideoReady }: Screen14Props) {
     // Video sources in order of preference (browser will choose best supported)
     const videoSources = [
       {
-        src: '/stories-asset/slides14/forecap-video-barista-av1.mp4',
+        src: '/stories-asset/slides13/forecap-video-barista-av1.mp4',
         type: 'video/mp4; codecs="av01.0.05M.08"',
       },
       {
-        src: '/stories-asset/slides14/forecap-video-barista.webm',
+        src: '/stories-asset/slides13/forecap-video-barista.webm',
         type: 'video/webm; codecs="vp9"',
       },
       {
-        src: '/stories-asset/slides14/forecap-video-barista-h264.mp4',
+        src: '/stories-asset/slides13/forecap-video-barista-h264.mp4',
         type: 'video/mp4; codecs="avc1.42E01E"',
       },
     ];
