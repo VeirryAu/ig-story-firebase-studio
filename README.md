@@ -85,7 +85,7 @@ forecap-2025/
 ├── public/
 │   └── stories-asset/          # Static assets (images, videos, audio)
 │       ├── main/               # Main assets (logo, background music)
-│       ├── slides01-14/        # Slide-specific assets
+│       ├── slides01-13/        # Slide-specific assets
 │       └── ...
 ├── src/
 │   ├── app/                    # Next.js App Router
@@ -129,21 +129,24 @@ The application displays 14 different slides with dynamic content:
 - **Screen 10**: MyFore Plan savings
 - **Screen 11**: Year summary recap
 - **Screen 12**: Motivational message with animated images
-- **Screen 14**: Final video showcase
+- **Screen 13**: Final video showcase
 
 ### 2. Background Music
 
 - Continuous playback across all slides
-- Auto-unmute on video slide (screen-13)
+- Auto-unmute on video slide (screen-13) when first reached
 - Progressive loading for faster initial load
 - Offline support with Service Worker caching
+- User interaction unlock for autoplay policies
 
 ### 3. Video Playback
 
 - Multiple video format support (AV1, WebM, H.264)
-- Full-screen display
+- Full-screen display on screen-13
 - Auto-play functionality
 - Fallback handling for autoplay restrictions
+- Video continues playing on last slide without restarting
+- No next navigation on last slide (prevents video interruption)
 
 ### 4. Offline Support
 
@@ -249,10 +252,12 @@ Main component that manages the story experience.
 
 **Features:**
 - Slide navigation (next/prev, keyboard, touch)
-- Progress bar with auto-advance
+- Progress bar with auto-advance (disabled on last slide)
 - Background music management
 - Video playback control
 - Mute/unmute functionality
+- Last slide protection (no next navigation, video doesn't restart)
+- Event propagation prevention for video stability
 
 ### Screen Components
 
@@ -276,7 +281,7 @@ All screen components follow a similar pattern:
 - **Screen10**: MyFore Plan savings with ranking
 - **Screen11**: Year summary with background image
 - **Screen12**: Motivational message with animated images
-- **Screen14**: Video showcase
+- **Screen13**: Video showcase (final slide, no next navigation)
 
 ### ShareButton
 
@@ -307,9 +312,9 @@ Manages background music playback.
 
 **Features:**
 - Progressive loading
-- Continuous playback across slides
-- User interaction unlock
-- Auto-unmute on video slide
+- Continuous playback across slides (doesn't restart)
+- User interaction unlock for autoplay policies
+- Auto-unmute on video slide (screen-13) when first reached
 
 ## 📊 Data Structure
 
@@ -419,6 +424,14 @@ Update `src/lib/const.json`:
 1. Ensure video element has `absolute inset-0` classes
 2. Check parent container has `relative` positioning
 3. Verify `object-cover` class is applied
+4. Check that video is on screen-13 (final slide)
+
+### Video Restarting on Last Slide
+
+1. **Check navigation**: Next button and tap zone should be hidden on last slide
+2. **Check event handlers**: `handlePointerDown` and `handlePointerUp` should return early on last slide
+3. **Check event propagation**: Next tap zone should use `stopPropagation()` to prevent bubbling
+4. **Verify `goToNextSlide` guard**: Function should return early if `isLastSlide` is true
 
 ### Images Not Loading
 
@@ -475,6 +488,17 @@ Update `src/lib/const.json`:
 - [ ] No sensitive data committed
 
 ## 📝 Additional Notes
+
+### Last Slide Behavior
+
+On the final slide (screen-13, video slide):
+- **No next navigation**: Next button, next tap zone, and right arrow key are disabled
+- **Video protection**: Video continues playing without restarting when clicking/touching
+- **Event handling**: Pointer events are prevented from triggering video pause/resume
+- **Progress bar**: Auto-advance is disabled (no-op function)
+- **Previous navigation**: Still available to go back
+
+This ensures the video plays continuously without interruption on the final slide.
 
 ### Browser Support
 
