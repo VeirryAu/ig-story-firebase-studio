@@ -19,7 +19,7 @@ export function Screen3({ serverResponse }: Screen3Props) {
     >
       {/* Header Text */}
       <div className="px-6 pt-8 pb-4 mt-20 mb-10">
-        <p className="text-white font-bold text-center text-lg md:text-xl leading-relaxed">
+        <p className="text-white font-bold text-center text-lg leading-relaxed">
           Dari {trxCount} cup yang kamu beli, favoritmu adalah
         </p>
       </div>
@@ -40,7 +40,7 @@ export function Screen3({ serverResponse }: Screen3Props) {
               {/* Image circle on left */}
               <div className="flex-shrink-0">
                 {product.productImage ? (
-                  <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden">
+                  <div className="relative w-16 h-16 rounded-full overflow-hidden">
                     <Image
                       src={product.productImage}
                       alt={product.productName}
@@ -50,7 +50,7 @@ export function Screen3({ serverResponse }: Screen3Props) {
                   </div>
                 ) : (
                   <div 
-                    className="w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center"
+                    className="w-16 h-16 rounded-full flex items-center justify-center"
                     style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)' }}
                   >
                     <span className="text-white font-bold text-xl">
@@ -62,10 +62,10 @@ export function Screen3({ serverResponse }: Screen3Props) {
 
               {/* Product Name and Number of Cups */}
               <div className="flex-1 min-w-0">
-                <p className="text-white font-bold text-base md:text-lg truncate">
+                <p className="text-white font-bold text-base truncate">
                   {product.productName}
                 </p>
-                <p className="text-white/90 text-sm md:text-base">
+                <p className="text-white/90 text-sm">
                   {product.countCups} cup
                 </p>
               </div>
@@ -74,9 +74,9 @@ export function Screen3({ serverResponse }: Screen3Props) {
               {/* Ranking with star only on Rank #1 */}
               <div className="flex-shrink-0 flex items-center gap-2">
                 {isFirstRank && (
-                  <Star className="w-6 h-6 md:w-8 md:h-8 text-yellow-300 fill-yellow-300" />
+                  <Star className="w-6 h-6 text-yellow-300 fill-yellow-300" />
                 )}
-                <span className="text-white font-bold text-xl md:text-2xl">
+                <span className="text-white font-bold text-xl">
                   #{rank}
                 </span>
               </div>

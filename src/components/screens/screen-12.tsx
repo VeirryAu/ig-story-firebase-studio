@@ -22,10 +22,10 @@ export function Screen12({ serverResponse }: Screen12Props) {
       <div className="relative z-10 flex flex-col flex-1 pt-8 pb-4 mt-16">
         {/* Top Text */}
         <div className="text-center mb-8">
-          <p className="text-white font-bold text-xl md:text-2xl mb-2">
+          <p className="text-white font-bold text-xl mb-2">
             Coffee core boleh beda,
           </p>
-          <p className="text-white font-bold text-xl md:text-2xl">
+          <p className="text-white font-bold text-xl">
             semangatnya tetap sama!
           </p>
         </div>
@@ -46,7 +46,7 @@ export function Screen12({ serverResponse }: Screen12Props) {
         <div className="flex-1 flex flex-col items-center justify-center py-10">
 
           {/* Animated Circular Images Container */}
-        <div className="relative w-full h-32 md:h-36 -mt-24 mb-8 overflow-hidden">
+        <div className="relative w-full h-32 -mt-24 mb-8 overflow-hidden">
           <div className="absolute flex items-center gap-4 animate-slide-left">
             {/* First set of images */}
             {circularImages.map((imageUrl, index) => (
@@ -103,13 +103,13 @@ export function Screen12({ serverResponse }: Screen12Props) {
         </div>
          {/* Bottom Text */}
         <div className="text-center mt-auto mb-32">
-          <p className="text-white font-bold text-lg md:text-xl mb-1">
+          <p className="text-white font-bold text-lg mb-1">
             Yuk, tingkatkan transaksi di Fore Coffee
           </p>
-          <p className="text-white font-bold text-lg md:text-xl mb-1">
+          <p className="text-white font-bold text-lg mb-1">
             App karena 2026 bakal banyak kejutan
           </p>
-          <p className="text-white font-bold text-lg md:text-xl">
+          <p className="text-white font-bold text-lg">
             rasa!
           </p>
         </div>

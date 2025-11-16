@@ -30,7 +30,7 @@ export function ShareButton({ onClick }: ShareButtonProps) {
         onPointerUp={handlePointerUp}
       >
         <Upload className="w-5 h-5 text-white" />
-        <span className="text-white font-bold text-sm md:text-base">Share</span>
+        <span className="text-white font-bold text-sm">Share</span>
       </button>
     </div>
   );

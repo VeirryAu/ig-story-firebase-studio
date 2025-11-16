@@ -79,7 +79,7 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
     >
       {/* Top Text */}
       <div className="px-6 pt-8 pb-4 mt-16 relative z-10">
-        <p className="text-white font-bold text-center text-lg md:text-xl mb-6">
+        <p className="text-white font-bold text-center text-lg mb-6">
           {config.topText}
         </p>
 
@@ -90,7 +90,7 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
               className="px-6 py-3 rounded-full"
               style={{ backgroundColor: config.secondaryColor }}
             >
-              <p className="text-white font-bold text-base md:text-lg">
+              <p className="text-white font-bold text-base">
                 {config.buttonText}
               </p>
             </div>
@@ -111,8 +111,8 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
           className="relative rounded-full overflow-hidden"
           style={{
             border: '10px solid rgba(0, 0, 0, 0.2)',
-            width: '240px',
-            height: '240px',
+            width: '200px',
+            height: '200px',
           }}
         >
           <Image
@@ -139,14 +139,14 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-10">
           {/* Card Text 1 */}
           {config.cardText1 && (
-            <p className="text-white font-bold text-center text-lg md:text-xl mb-4 leading-relaxed">
+            <p className="text-white font-bold text-center text-lg mb-4 leading-relaxed">
               {config.cardText1}
             </p>
           )}
 
           {/* Card Text 2 */}
           {config.cardText2 && (
-            <p className="text-white font-bold text-center text-base md:text-lg leading-relaxed">
+            <p className="text-white font-bold text-center text-base leading-relaxed">
               {config.cardText2}
             </p>
           )}
@@ -154,7 +154,7 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
           {/* Additional Text (for screen-9) */}
           {config.additionalText && (
             <p 
-              className="font-bold text-center text-base md:text-lg mt-4"
+              className="font-bold text-center text-base mt-4"
               style={{ color: 'rgba(208, 215, 132, 1)' }}
             >
               {config.additionalText}

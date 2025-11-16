@@ -21,12 +21,12 @@ export function Screen1({ userName = "John" }: Screen1Props) {
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
       }`}>
         {/* Greeting */}
-        <h1 className="text-lg md:text-xl font-bold text-white mb-4 drop-shadow-lg">
+        <h1 className="text-lg font-bold text-white mb-4 drop-shadow-lg">
           Hai {userName}!
         </h1>
         
         {/* First paragraph */}
-        <p className="text-lg md:text-xl font-bold text-white mb-6 max-w-md leading-relaxed drop-shadow-md">
+        <p className="text-lg font-bold text-white mb-6 max-w-md leading-relaxed drop-shadow-md">
           Tak terasa sudah di penghujung tahun. Sudah siap cek persona kopi kamu?
         </p>
         
@@ -35,7 +35,7 @@ export function Screen1({ userName = "John" }: Screen1Props) {
           className="mb-40 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-lg"
           style={{ transform: 'rotate(-1.4deg)' }}
         >
-          <p className="text-lg md:text-xl font-bold text-white drop-shadow-md">
+          <p className="text-lg font-bold text-white drop-shadow-md">
             Here is your coffee core!
           </p>
         </div>
@@ -53,7 +53,7 @@ export function Screen1({ userName = "John" }: Screen1Props) {
         </div>
         
         {/* Date range */}
-        <p className="text-base md:text-lg text-white/90 drop-shadow-sm">
+        <p className="text-base text-white/90 drop-shadow-sm">
           (January-November)
         </p>
       </div>

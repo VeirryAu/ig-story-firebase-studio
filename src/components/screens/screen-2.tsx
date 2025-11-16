@@ -19,14 +19,14 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
         }}
       >
         {/* Top text */}
-        <p className="text-white font-bold text-center text-lg md:text-xl mt-16 mb-6">
+        <p className="text-white font-bold text-center text-lg mt-16 mb-6">
           Sepanjang 2025, kamu telah membeli
         </p>
 
         {/* Infographic circle with overflow logo */}
         <div className="relative mb-4">
           <div 
-            className="relative w-52 h-52 md:w-52 md:h-52 rounded-full flex flex-col items-center justify-center"
+            className="relative w-52 h-52 rounded-full flex flex-col items-center justify-center"
             style={{ backgroundColor: '#2DB288' }}
           >
             {/* Number and Cups text */}
@@ -47,13 +47,13 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
               alt="Fore Cup Logo"
               width={80}
               height={80}
-              className="w-16 h-16 md:w-20 md:h-20"
+              className="w-16 h-16"
             />
           </div>
         </div>
 
         {/* Bottom text */}
-        <p className="text-white font-bold text-center text-sm md:text-base px-4">
+        <p className="text-white font-bold text-center text-sm px-4">
         </p>
       </div>
 
@@ -69,7 +69,7 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
 
         {/* Bottom half of card - Second text */}
         <div className="flex items-center justify-center px-6 pt-8 pb-6">
-          <p className="text-white font-bold text-center text-lg md:text-xl leading-relaxed">
+          <p className="text-white font-bold text-center text-lg leading-relaxed">
             Tidak hanya membeli kopi berkualitas, terima kasih selalu mendukung para petani lokal 🌟
           </p>
         </div>

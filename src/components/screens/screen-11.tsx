@@ -45,7 +45,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col flex-1 px-6 pt-8 pb-4 mt-16">
         {/* Title */}
-        <h1 className="text-white font-bold text-center text-md md:text-lg mb-8">
+        <h1 className="text-white font-bold text-center text-md mb-8">
           Rangkuman #FOREcap 2025 kamu
         </h1>
 
@@ -58,11 +58,11 @@ export function Screen11({ serverResponse }: Screen11Props) {
               className="rounded-2xl p-4 flex flex-col"
               style={{ backgroundColor: '#006041' }}
             >
-              <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+              <p className="text-white font-bold text-xs text-center mb-2">
                 Total Cup Dibeli
               </p>
               <p 
-                className="text-xl md:text-2xl font-bold text-center"
+                className="text-xl font-bold text-center"
                 style={{ color: '#FFD700' }}
               >
                 {trxCount}
@@ -74,11 +74,11 @@ export function Screen11({ serverResponse }: Screen11Props) {
               className="rounded-2xl p-4 flex flex-col"
               style={{ backgroundColor: '#006041' }}
             >
-              <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+              <p className="text-white font-bold text-xs text-center mb-2">
                 Total Poin Didapat
               </p>
               <p 
-                className="text-xl md:text-2xl font-bold text-center"
+                className="text-xl font-bold text-center"
                 style={{ color: '#FFD700' }}
               >
                 {totalPoint}
@@ -91,11 +91,11 @@ export function Screen11({ serverResponse }: Screen11Props) {
             className="rounded-2xl p-4 flex flex-col"
             style={{ backgroundColor: '#006041' }}
           >
-            <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+            <p className="text-white font-bold text-xs text-center mb-2">
               Menu Terfavorit
             </p>
             <p 
-              className="text-xl md:text-2xl font-bold text-center"
+              className="text-xl font-bold text-center"
               style={{ color: '#FFD700' }}
             >
               {favoriteProduct}
@@ -109,11 +109,11 @@ export function Screen11({ serverResponse }: Screen11Props) {
               className="rounded-2xl p-4 flex flex-col"
               style={{ backgroundColor: '#006041' }}
             >
-              <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+              <p className="text-white font-bold text-xs text-center mb-2">
                 Store Terfavorit
               </p>
               <p 
-                className="text-md md:text-lg font-bold text-center"
+                className="text-md font-bold text-center"
                 style={{ color: '#FFD700' }}
               >
                 {favoriteStore}
@@ -125,11 +125,11 @@ export function Screen11({ serverResponse }: Screen11Props) {
               className="rounded-2xl p-4 flex flex-col"
               style={{ backgroundColor: '#006041' }}
             >
-              <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+              <p className="text-white font-bold text-xs text-center mb-2">
                 Total Saving
               </p>
               <p 
-                className="text-md md:text-lg font-bold text-center"
+                className="text-md font-bold text-center"
                 style={{ color: '#FFD700' }}
               >
                 {formatSaving(totalSaving)}
@@ -140,7 +140,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
 
         {/* Concluding Message */}
         <div className="w-full max-w-md mx-auto mt-4 mb-6">
-          <p className="text-white font-bold text-center text-base md:text-lg">
+          <p className="text-white font-bold text-center text-base">
             Terima kasih sudah menjalani 2025 penuh warna bersama Fore Coffee
           </p>
         </div>

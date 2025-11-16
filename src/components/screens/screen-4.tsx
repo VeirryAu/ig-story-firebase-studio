@@ -37,7 +37,7 @@ export function Screen4({ serverResponse }: Screen4Props) {
       style={{ backgroundColor: '#006A87' }}
     >
       {/* Top Text */}
-      <p className="text-white font-bold text-center text-lg md:text-xl mb-8 mt-16">
+      <p className="text-white font-bold text-center text-lg mb-8 mt-16">
         Tidak banyak yang tahu bahwa kamu adalah
       </p>
 
@@ -66,13 +66,13 @@ export function Screen4({ serverResponse }: Screen4Props) {
         className="px-6 py-3 rounded-full mb-4"
         style={{ backgroundColor: secondaryColor }}
       >
-        <p className="text-white font-bold text-base md:text-lg text-center">
+        <p className="text-white font-bold text-base text-center">
           {buttonTextDescription}
         </p>
       </div>
 
       {/* Description Text */}
-      <p className="text-white font-bold text-center text-lg md:text-xl px-4">
+      <p className="text-white font-bold text-center text-lg px-4">
         {descriptionText}
       </p>
     </div>

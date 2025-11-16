@@ -95,7 +95,7 @@ export default function Home() {
       
       // For development, you can use a mock response
       // Change trxCount to 0 to test the limited slides scenario
-      if (process.env.NODE_ENV === 'development') {
+      // if (process.env.NODE_ENV === 'development') {
         // Mock response for development
         // Set trxCount to 0 to test limited slides (only slide1 and slide2)
         // Set trxCount to any number > 0 to show all slides
@@ -164,7 +164,7 @@ export default function Home() {
             },
           ],
         };
-      }
+      // }
       
       // Production: Fetch from your backend
       try {
@@ -321,7 +321,7 @@ export default function Home() {
                 className="w-12 h-12"
               />
             </div>
-            <div className="text-white text-lg md:text-xl font-bold leading-relaxed whitespace-pre-line">
+            <div className="text-white text-lg font-bold leading-relaxed whitespace-pre-line">
               Take a seat, have a sip!{"\n"}
               While we're doing the math for you!
             </div>

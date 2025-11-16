@@ -21,7 +21,7 @@ export function Screen7({ serverResponse }: Screen7Props) {
       style={{ backgroundColor: 'rgba(26, 64, 52, 1)' }}
     >
       {/* Top Text */}
-      <p className="text-white font-bold text-center text-lg md:text-xl mb-8 mt-16 px-4">
+      <p className="text-white font-bold text-center text-lg mb-8 mt-16 px-4">
         Dari 300 store yang tersebar di Indonesia dan Singapura, berikut 3 tempat yang jadi favorit kamu
       </p>
 

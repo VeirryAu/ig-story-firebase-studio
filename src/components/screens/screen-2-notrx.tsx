@@ -16,7 +16,7 @@ export function Screen2NoTrx() {
     >
         {/* Top half of card - First text */}
         <div className="flex-1 flex items-center justify-center px-6 py-8 mb-80">
-          <p className="text-white font-bold text-center text-lg md:text-xl leading-relaxed">
+          <p className="text-white font-bold text-center text-lg leading-relaxed">
             Wah, sayang sekali..<br />
             Kamu belum ada recap karena selama 2025 kamu belum melakukan pembelian cup Fore apapun 😔
           </p>
@@ -33,7 +33,7 @@ export function Screen2NoTrx() {
 
         {/* Bottom half of card - Second text */}
         <div className="flex-1 flex items-center justify-center px-6 py-8">
-          <p className="text-white font-bold text-center text-lg md:text-xl leading-relaxed">
+          <p className="text-white font-bold text-center text-lg leading-relaxed">
             Yuk belanja sekarang dan rasain keuntungan menggunakan aplikasi Fore Coffee bareng jutaan Fore Friends lainnya!
           </p>
         </div>
@@ -41,7 +41,7 @@ export function Screen2NoTrx() {
         {/* Button at the bottom */}
         <div className="w-full flex justify-center pb-6 pt-2">
           <button
-            className="px-8 py-3 rounded-full font-bold text-sm md:text-base transition-transform active:scale-95 mb-32"
+            className="px-8 py-3 rounded-full font-bold text-sm transition-transform active:scale-95 mb-32"
             style={{ 
               backgroundColor: '#FFFFFF',
               color: '#006041'

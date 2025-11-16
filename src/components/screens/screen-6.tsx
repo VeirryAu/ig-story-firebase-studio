@@ -66,7 +66,7 @@ export function Screen6() {
       style={{ backgroundColor: config.primaryBg }}
     >
       {/* Top Text */}
-      <p className="text-white font-bold text-center text-lg md:text-xl mb-8 mt-16 px-4">
+      <p className="text-white font-bold text-center text-lg mb-8 mt-16 px-4">
         {config.topText}
       </p>
 
@@ -95,13 +95,13 @@ export function Screen6() {
         className="px-6 py-3 rounded-full mb-4"
         style={{ backgroundColor: config.secondaryColor }}
       >
-        <p className="text-white font-bold text-base md:text-lg text-center">
+        <p className="text-white font-bold text-base text-center">
           {config.buttonText}
         </p>
       </div>
 
       {/* Description Text */}
-      <p className="text-white font-bold text-center text-lg md:text-xl px-4 whitespace-pre-line">
+      <p className="text-white font-bold text-center text-lg px-4 whitespace-pre-line">
         {config.descriptionText}
       </p>
     </div>

@@ -19,14 +19,14 @@ export function Screen5({ serverResponse }: Screen5Props) {
       style={{ backgroundColor: '#84913C' }}
     >
       {/* Top Text */}
-      <p className="text-white font-bold text-center text-lg md:text-xl mb-4 mt-24 px-4">
+      <p className="text-white font-bold text-center text-lg mb-4 mt-24 px-4">
         Kami menghitung poin yang sudah kamu kumpulkan, dan wow! Kamu sudah mencapai
       </p>
 
       {/* Infographic circle - similar to screen-2 but without logo */}
       <div className="relative mb-8">
         <div 
-          className="relative w-52 h-52 md:w-52 md:h-52 rounded-full flex flex-col items-center justify-center"
+          className="relative w-52 h-52 rounded-full flex flex-col items-center justify-center"
           style={{ backgroundColor: '#2DB288' }}
         >
           {/* Number and Poin text */}
@@ -53,7 +53,7 @@ export function Screen5({ serverResponse }: Screen5Props) {
 
         {/* Description Text */}
         <div className="w-full max-w-md mt-8 mb-6">
-          <p className="text-white font-bold text-center text-lg md:text-xl leading-relaxed px-4">
+          <p className="text-white font-bold text-center text-lg leading-relaxed px-4">
             {totalPointDescription}
           </p>
         </div>

@@ -27,21 +27,21 @@ export function Screen10({ serverResponse }: Screen10Props) {
       <div className="px-6 pt-8 pb-4 mt-16 relative z-10">
         {/* Pakai my FORE Plan */}
         <div className="flex items-center justify-center gap-2 mb-4">
-          <p className="text-white font-bold text-lg md:text-xl">Pakai</p>
+          <p className="text-white font-bold text-lg">Pakai</p>
           <div className="relative">
             <Image
               src="/stories-asset/slides10/slide10-myforeplan.png"
               alt="my FORE Plan"
               width={70}
               height={23.3}
-              className="h-6 md:h-7 w-auto"
+              className="h-6 w-auto"
               priority
             />
           </div>
         </div>
 
         {/* bikin kamu hemat sebanyak */}
-        <p className="text-white font-bold text-center text-lg md:text-xl mb-6">
+        <p className="text-white font-bold text-center text-lg mb-6">
           bikin kamu hemat sebanyak
         </p>
 
@@ -51,7 +51,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
             className="px-8 py-4 rounded-full"
             style={{ backgroundColor: '#15a6ab' }}
           >
-            <p className="text-white font-bold text-2xl md:text-3xl">
+            <p className="text-white font-bold text-2xl">
               {cheaperSubsDesc}
             </p>
           </div>
@@ -79,10 +79,10 @@ export function Screen10({ serverResponse }: Screen10Props) {
             style={{ backgroundColor: '#15a6ab' }}
           >
             <div className="flex justify-between items-center">
-              <p className="text-white font-bold text-base md:text-lg">
+              <p className="text-white font-bold text-base">
                 {userName}
               </p>
-              <p className="text-white font-bold text-base md:text-lg">
+              <p className="text-white font-bold text-base">
                 Hemat Rp {formatAmount(cheaperSubsAmount)}
               </p>
             </div>
@@ -115,7 +115,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
         }}
       >
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-6">
-          <p className="text-white font-bold text-center text-base md:text-lg leading-relaxed">
+          <p className="text-white font-bold text-center text-base leading-relaxed">
             Wow! Kamu berada di{' '}
             <span 
               className="px-2 py-1 inline-block"
