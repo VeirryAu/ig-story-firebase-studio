@@ -129,6 +129,8 @@ export default function Home() {
           totalPointDescription: 'Poin itu bisa kamu tukarkan dengan 10 cup Butterscotch Sea Salt Latte di FOREwards lho!',
           totalPointPossibleRedeem: 10, // Number of items that can be redeemed
           totalPointImage: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=400&fit=crop&crop=center', // Coffee latte image
+          deliveryCount: 10, // Number of delivery transactions
+          pickupCount: 20, // Number of pickup transactions
           listFavoriteStore: [
             {
               storeName: 'Fore Coffee Grand Indonesia',

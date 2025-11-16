@@ -644,6 +644,10 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                       ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
                       : slide.id === 'screen-7' && serverResponse
                       ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
+                      : slide.id === 'screen-8' && serverResponse
+                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
+                      : slide.id === 'screen-9' && serverResponse
+                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
                       : slide.id === 'screen-1' && currentStory?.user?.name
                       ? React.cloneElement(slide.component as React.ReactElement, { userName: currentStory.user.name || 'John' })
                       : slide.component

@@ -20,5 +20,7 @@ export interface ServerResponse {
   totalPointPossibleRedeem?: number; // Number of items that can be redeemed
   totalPointImage?: string; // Image URL for the redeemable item (coffee latte)
   listFavoriteStore?: FavoriteStore[]; // Optional array of favorite stores (max 3)
+  deliveryCount?: number; // Number of delivery transactions
+  pickupCount?: number; // Number of pickup transactions
 }
 
