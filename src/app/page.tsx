@@ -131,6 +131,9 @@ export default function Home() {
           totalPointImage: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=400&fit=crop&crop=center', // Coffee latte image
           deliveryCount: 10, // Number of delivery transactions
           pickupCount: 20, // Number of pickup transactions
+          cheaperSubsDesc: '325rb Rupiah', // Savings description
+          cheaperSubsAmount: 325500, // Savings amount in rupiah
+          topRanking: 50, // Top ranking position
           listFavoriteStore: [
             {
               storeName: 'Fore Coffee Grand Indonesia',

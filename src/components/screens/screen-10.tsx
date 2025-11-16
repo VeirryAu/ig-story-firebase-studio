@@ -1,54 +1,132 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import type { ServerResponse } from "@/types/server";
 
-export function Screen10() {
-  const [isVisible, setIsVisible] = useState(false);
+interface Screen10Props {
+  serverResponse?: ServerResponse;
+}
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
+export function Screen10({ serverResponse }: Screen10Props) {
+  const userName = serverResponse?.userName || 'User';
+  const cheaperSubsDesc = serverResponse?.cheaperSubsDesc || '325rb Rupiah';
+  const cheaperSubsAmount = serverResponse?.cheaperSubsAmount || 325500;
+  const topRanking = serverResponse?.topRanking || 50;
+
+  // Format the amount for display
+  const formatAmount = (amount: number) => {
+    return new Intl.NumberFormat('id-ID').format(amount);
+  };
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-400 flex items-center justify-center overflow-hidden">
-      {/* Animated bubbles */}
-      <div className="absolute inset-0">
-        {[...Array(10)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white/20 animate-bubble"
-            style={{
-              width: `${20 + Math.random() * 60}px`,
-              height: `${20 + Math.random() * 60}px`,
-              left: `${Math.random() * 100}%`,
-              bottom: "-50px",
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${4 + Math.random() * 3}s`,
-            }}
-          />
-        ))}
+    <div 
+      className="relative w-full h-full flex flex-col"
+      style={{ backgroundColor: '#006A87' }}
+    >
+      {/* Top Section with Headline */}
+      <div className="px-6 pt-8 pb-4 mt-16 relative z-10">
+        {/* Pakai my FORE Plan */}
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <p className="text-white font-bold text-xl md:text-2xl">Pakai</p>
+          <div className="relative">
+            <Image
+              src="/stories-asset/slide10/slide10-myforeplan.png"
+              alt="my FORE Plan"
+              width={70}
+              height={23.3}
+              className="h-6 md:h-7 w-auto"
+              priority
+            />
+          </div>
+        </div>
+
+        {/* bikin kamu hemat sebanyak */}
+        <p className="text-white font-bold text-center text-lg md:text-xl mb-6">
+          bikin kamu hemat sebanyak
+        </p>
+
+        {/* Savings Button */}
+        <div className="flex justify-center mb-8">
+          <div 
+            className="px-8 py-4 rounded-lg"
+            style={{ backgroundColor: '#15a6ab' }}
+          >
+            <p className="text-white font-bold text-2xl md:text-3xl">
+              {cheaperSubsDesc}
+            </p>
+          </div>
+        </div>
+
+        {/* User List Section */}
+        <div className="w-full max-w-md mx-auto space-y-2 mb-6">
+          {/* Blurred entries (other users) */}
+          {[...Array(3)].map((_, index) => (
+            <div
+              key={`blurred-${index}`}
+              className="w-full rounded-lg p-3 opacity-30 blur-sm"
+              style={{ backgroundColor: '#15a6ab' }}
+            >
+              <div className="flex justify-between items-center">
+                <div className="w-24 h-4 bg-white/50 rounded"></div>
+                <div className="w-32 h-4 bg-white/50 rounded"></div>
+              </div>
+            </div>
+          ))}
+
+          {/* Highlighted User Entry */}
+          <div 
+            className="w-full rounded-lg p-4"
+            style={{ backgroundColor: '#15a6ab' }}
+          >
+            <div className="flex justify-between items-center">
+              <p className="text-white font-bold text-base md:text-lg">
+                {userName}
+              </p>
+              <p className="text-white font-bold text-base md:text-lg">
+                Hemat Rp {formatAmount(cheaperSubsAmount)}
+              </p>
+            </div>
+          </div>
+
+          {/* More blurred entries */}
+          {[...Array(2)].map((_, index) => (
+            <div
+              key={`blurred-bottom-${index}`}
+              className="w-full rounded-lg p-3 opacity-30 blur-sm"
+              style={{ backgroundColor: '#15a6ab' }}
+            >
+              <div className="flex justify-between items-center">
+                <div className="w-24 h-4 bg-white/50 rounded"></div>
+                <div className="w-32 h-4 bg-white/50 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="relative z-10 text-center text-white px-8">
-        <div
-          className={`transition-all duration-1000 ${
-            isVisible
-              ? "opacity-100 scale-100 rotate-0"
-              : "opacity-0 scale-75 rotate-12"
-          }`}
-        >
-          <div className="text-8xl md:text-9xl mb-8 animate-bounce drop-shadow-2xl">
-            🙏
-          </div>
-          <h2 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-            Thank You
-          </h2>
-          <p className="text-2xl md:text-3xl font-light drop-shadow-lg animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
-            For an amazing year together
+      {/* Bottom Card with Congratulatory Message */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 w-full flex flex-col"
+        style={{ 
+          height: '20%',
+          borderTopLeftRadius: '24px',
+          borderTopRightRadius: '24px',
+          zIndex: 10,
+        }}
+      >
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-6">
+          <p className="text-white font-bold text-center text-base md:text-lg leading-relaxed">
+            Wow! Kamu berada di{' '}
+            <span 
+              className="px-2 py-1 rounded"
+              style={{ backgroundColor: '#006A87' }}
+            >
+              top {topRanking}
+            </span>
+            {' '}most saving dari puluhan ribu pengguna MyFore Plan lainnya.
           </p>
         </div>
       </div>
     </div>
   );
 }
-

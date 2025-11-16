@@ -22,5 +22,8 @@ export interface ServerResponse {
   listFavoriteStore?: FavoriteStore[]; // Optional array of favorite stores (max 3)
   deliveryCount?: number; // Number of delivery transactions
   pickupCount?: number; // Number of pickup transactions
+  cheaperSubsDesc?: string; // Savings description (e.g., "325rb Rupiah")
+  cheaperSubsAmount?: number; // Savings amount in rupiah (e.g., 325500)
+  topRanking?: number; // Top ranking position (e.g., 50)
 }
 
