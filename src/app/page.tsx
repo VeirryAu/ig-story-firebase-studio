@@ -286,7 +286,7 @@ export default function Home() {
 
         {!isLoading && !error && !showStories && (
             <div className="flex items-center justify-center gap-2">
-                <p className="text-white">Finished viewing stories.</p>
+                <p className="text-white"></p>
             </div>
         )}
       </div>

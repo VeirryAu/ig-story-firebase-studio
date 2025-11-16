@@ -72,8 +72,6 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
     }
   })();
 
-  console.log('config.buttonText', isReversed, config.imageSrc);
-
   return (
     <div 
       className="relative w-full h-full flex flex-col"

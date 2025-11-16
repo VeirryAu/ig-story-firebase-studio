@@ -10,7 +10,6 @@ interface Screen4Props {
 
 export function Screen4({ serverResponse }: Screen4Props) {
   const variantCount = serverResponse?.variantCount || 0;
-  console.log('variantCount', variantCount);
   const isMoreThanFive = variantCount >= 5;
 
   // Determine image and text based on variantCount

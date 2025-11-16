@@ -110,7 +110,7 @@ export function Screen14({ onVideoReady }: Screen14Props) {
     <div className="relative w-full h-full bg-black flex items-center justify-center overflow-hidden">
       <video
         ref={videoRef}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
         playsInline
         autoPlay
         preload="auto"

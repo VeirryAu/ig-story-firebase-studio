@@ -59,12 +59,26 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
       setHasError(false);
       // Auto-play when active and not paused (Instagram-like: play as soon as possible)
       if (isActive && !isPaused) {
-        video.play().catch((error) => {
-          // Autoplay with sound might be blocked - show play button
-          if (error.name === 'NotAllowedError') {
-            setNeedsUserInteraction(true);
+        // Force play with multiple attempts
+        const attemptPlay = () => {
+          const playPromise = video.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                // Autoplay started successfully
+                setNeedsUserInteraction(false);
+              })
+              .catch((error) => {
+                // Autoplay with sound might be blocked - show play button
+                if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
+                  setNeedsUserInteraction(true);
+                }
+              });
           }
-        });
+        };
+        attemptPlay();
+        // Also try after a small delay in case the first attempt fails
+        setTimeout(attemptPlay, 100);
       }
     };
 
@@ -188,19 +202,31 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
     if (isActive) {
       video.currentTime = 0;
       if (!isPaused && canPlay) {
-        video.play().catch(() => {
-          // Auto-play might be blocked
-        });
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              // Video started playing
+              setNeedsUserInteraction(false);
+            })
+            .catch((error) => {
+              // Auto-play might be blocked
+              if (error.name === 'NotAllowedError' || error.name === 'NotSupportedError') {
+                setNeedsUserInteraction(true);
+              }
+            });
+        }
       }
     }
   }, [isActive, isPaused, canPlay]);
 
   return (
-    <>
+    <div className="absolute inset-0 w-full h-full">
       <video
         ref={videoRef}
-        className="w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover"
         playsInline
+        autoPlay
         preload="auto"
         aria-label={alt}
       >
@@ -245,7 +271,7 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
@@ -715,8 +741,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             <X size={36} />
         </button>
 
-        {/* Share Button - only show on screen-2, screen-3, screen-4, screen-5, screen-6, screen-10, and screen-11 */}
-        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-10' || currentSlide?.id === 'screen-11') && (
+        {/* Share Button - show on screen-2 through screen-12 (excluding screen-1 and screen-14) */}
+        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-7' || currentSlide?.id === 'screen-8' || currentSlide?.id === 'screen-9' || currentSlide?.id === 'screen-10' || currentSlide?.id === 'screen-11' || currentSlide?.id === 'screen-12') && (
           <ShareButton
             onClick={() => {
               // TODO: Add share functionality
