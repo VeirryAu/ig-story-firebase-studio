@@ -30,7 +30,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
           <p className="text-white font-bold text-lg md:text-xl">Pakai</p>
           <div className="relative">
             <Image
-              src="/stories-asset/slide10/slide10-myforeplan.png"
+              src="/stories-asset/slides10/slide10-myforeplan.png"
               alt="my FORE Plan"
               width={70}
               height={23.3}

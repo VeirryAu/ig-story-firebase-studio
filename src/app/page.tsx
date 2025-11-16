@@ -213,7 +213,7 @@ export default function Home() {
           '/stories-asset/slides08/slide-8-delivery.jpg',
           '/stories-asset/slides08/slide-8-pickup.jpg',
           // Slide 10
-          '/stories-asset/slide10/slide10-myforeplan.png',
+          '/stories-asset/slides10/slide10-myforeplan.png',
           // Slide 11
           '/stories-asset/slides11/slide11-bgasset.png',
           // Slide 14 (banner images)
