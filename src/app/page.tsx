@@ -8,6 +8,7 @@ import { StoryViewer } from '@/components/story-viewer';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { stories as storyData } from '@/lib/story-data';
 import config from '@/lib/const.json';
+import { checkDateRestriction, validateAuthHeaders } from '@/lib/auth';
 
 export default function Home() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -15,7 +16,60 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [showStories, setShowStories] = useState(false);
   const [serverResponse, setServerResponse] = useState<ServerResponse | null>(null);
+  const [fullscreenSlide, setFullscreenSlide] = useState<string | null>(null);
   const audioPreloadRef = useRef<HTMLAudioElement | null>(null);
+
+  // Check URL parameters for fullscreen mode
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const fullscreenParam = params.get('fullscreen');
+      if (fullscreenParam) {
+        setFullscreenSlide(fullscreenParam);
+      }
+    }
+  }, []);
+
+  // Check date restriction and authentication
+  useEffect(() => {
+    // Check date restriction
+    const dateCheck = checkDateRestriction();
+    if (!dateCheck.valid) {
+      setError(dateCheck.error || 'Access denied');
+      setIsLoading(false);
+      return;
+    }
+
+    // Check authentication headers in production
+    if (process.env.NODE_ENV === 'production') {
+      // Note: In Next.js client-side, we can't access request headers directly
+      // The native app should pass these via URL params or postMessage
+      // For now, we'll validate if they're passed via URL params
+      const params = new URLSearchParams(window.location.search);
+      const timestamp = params.get('timestamp');
+      const userId = params.get('user_id');
+      const sign = params.get('sign');
+
+      if (timestamp && userId && sign) {
+        const headers = {
+          timestamp,
+          user_id: userId,
+          sign,
+        };
+        const authCheck = validateAuthHeaders(headers);
+        if (!authCheck.valid) {
+          setError(authCheck.error || 'Authentication failed');
+          setIsLoading(false);
+          return;
+        }
+      } else {
+        // In production, require auth headers
+        setError('Authentication required');
+        setIsLoading(false);
+        return;
+      }
+    }
+  }, []);
   // Preload audio as early as possible for offline mode with progressive loading
   useEffect(() => {
     // Start preloading background music immediately with progressive loading
@@ -303,7 +357,14 @@ export default function Home() {
   };
   
   if (showStories) {
-    return <StoryViewer stories={stories} onClose={handleClose} serverResponse={serverResponse || undefined} />;
+    return (
+      <StoryViewer 
+        stories={stories} 
+        onClose={handleClose} 
+        serverResponse={serverResponse || undefined}
+        fullscreenSlide={fullscreenSlide || undefined}
+      />
+    );
   }
 
   return (

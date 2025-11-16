@@ -12,13 +12,17 @@ import { useBackgroundMusic } from '@/hooks/use-background-music';
 import { useAudioPreload } from '@/hooks/use-audio-preload';
 import { Screen2NoTrx } from '@/components/screens/screen-2-notrx';
 import { ShareButton } from '@/components/share-button';
+import { ShareModal } from '@/components/share-modal';
 import config from '@/lib/const.json';
+import { closeWebView, shareImageUrl } from '@/lib/native-bridge';
+import { captureScreenshotAsBlobUrl } from '@/lib/screenshot';
 
 interface StoryViewerProps {
   stories: Story[];
   initialStoryIndex?: number;
   onClose: () => void;
   serverResponse?: ServerResponse;
+  fullscreenSlide?: string; // e.g., "screen-01" or "screen-1"
 }
 
 interface VideoSlideProps {
@@ -275,15 +279,20 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
   );
 }
 
-export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverResponse }: StoryViewerProps) {
+export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverResponse, fullscreenSlide }: StoryViewerProps) {
   const [currentStoryIndex, setCurrentStoryIndex] = useState(initialStoryIndex);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const isNavigatingRef = useRef(false); // Prevent rapid-fire navigation
+  const storyViewerRef = useRef<HTMLDivElement>(null);
+  
+  // Check if we're in fullscreen mode (no navigation buttons)
+  const isFullscreenMode = !!fullscreenSlide;
 
   // Development-only: Limit slides to specific index for development convenience
   const devMaxSlide = process.env.NODE_ENV === 'development' ? config.devMaxSlide : null;
@@ -385,7 +394,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   }, [audioReady, isVideoSlide, isMuted, playAudio]);
 
   // Add a one-time click handler on the entire story viewer to unlock audio
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Use storyViewerRef for both container and screenshot purposes
+  const containerRef = storyViewerRef;
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -617,6 +627,62 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
     }
   }, [isVideoSlide, isMuted, audioReady, playAudio]);
 
+  // Handle share functionality
+  const handleShare = async () => {
+    try {
+      const container = storyViewerRef.current || document.querySelector('.story-viewer-container') as HTMLElement;
+      if (!container) {
+        console.error('Story viewer container not found');
+        return;
+      }
+      
+      const imageUrl = await captureScreenshotAsBlobUrl(container);
+      shareImageUrl(imageUrl);
+    } catch (error) {
+      console.error('Error capturing screenshot:', error);
+      alert('Failed to capture screenshot. Please try again.');
+    }
+  };
+
+  // Handle share modal for last slide
+  const handleShareModalOpen = () => {
+    setShowShareModal(true);
+  };
+
+  // Capture specific slide for share modal
+  const handleCaptureSlide = async (slideId: string): Promise<string> => {
+    // Navigate to the slide first
+    const slideIndex = currentStory?.slides.findIndex(slide => slide.id === slideId);
+    if (slideIndex !== undefined && slideIndex >= 0) {
+      setCurrentSlideIndex(slideIndex);
+      // Wait for slide to render
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    // Capture screenshot
+    const container = storyViewerRef.current || document.querySelector('.story-viewer-container') as HTMLElement;
+    if (!container) {
+      throw new Error('Story viewer container not found');
+    }
+    
+    return await captureScreenshotAsBlobUrl(container);
+  };
+
+  // Get slide list for share modal
+  const getSlideList = () => {
+    if (!currentStory) return [];
+    return currentStory.slides.map((slide, index) => ({
+      id: slide.id,
+      label: `Screen ${index + 1}`,
+    }));
+  };
+
+  // Handle close with native bridge
+  const handleClose = () => {
+    closeWebView();
+    onClose();
+  };
+
   if (!currentStory || !currentSlide) {
     onClose();
     return null;
@@ -625,8 +691,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   return (
     <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center font-body backdrop-blur-sm">
       <div 
-        ref={containerRef}
-        className="relative w-full max-w-[430px] aspect-[9/16] bg-primary rounded-lg overflow-hidden shadow-2xl select-none touch-pan-y"
+        ref={storyViewerRef}
+        className="relative w-full max-w-[430px] aspect-[9/16] bg-primary rounded-lg overflow-hidden shadow-2xl select-none touch-pan-y story-viewer-container"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
@@ -739,15 +805,42 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             <span className="text-white font-semibold text-sm drop-shadow-md">{currentStory.user.name}</span>
           </div>
 
-          {/* Clickable tap zones for navigation */}
-          <div className="flex-grow flex relative">
-            <div 
-              className="w-1/3 h-full" 
-              onClick={goToPrevSlide} 
-              aria-label="Previous slide"
-            />
+          {/* Clickable tap zones for navigation - hidden in fullscreen mode */}
+          {!isFullscreenMode && (
+            <div className="flex-grow flex relative">
               <div 
-                className="w-2/3 h-full" 
+                className="w-1/3 h-full" 
+                onClick={goToPrevSlide} 
+                aria-label="Previous slide"
+              />
+              {!isLastSlide && (
+                <div 
+                  className="w-2/3 h-full" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToNextSlide(e);
+                  }} 
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                  }}
+                  onPointerUp={(e) => {
+                    e.stopPropagation();
+                  }}
+                  aria-label="Next slide"
+                />
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Standalone navigation buttons - hidden in fullscreen mode */}
+        {!isFullscreenMode && (
+          <>
+            <button onClick={goToPrevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" aria-label="Previous Story">
+                <ChevronLeft size={32} />
+            </button>
+            {!isLastSlide && (
+              <button 
                 onClick={(e) => {
                   e.stopPropagation();
                   goToNextSlide(e);
@@ -755,32 +848,13 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                 onPointerDown={(e) => {
                   e.stopPropagation();
                 }}
-                onPointerUp={(e) => {
-                  e.stopPropagation();
-                }}
-                aria-label="Next slide"
-              />
-          </div>
-        </div>
-
-        {/* Standalone navigation buttons for non-touch devices and accessibility */}
-        <button onClick={goToPrevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" aria-label="Previous Story">
-            <ChevronLeft size={32} />
-        </button>
-        {!isLastSlide && (
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              goToNextSlide(e);
-            }} 
-            onPointerDown={(e) => {
-              e.stopPropagation();
-            }}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" 
-            aria-label="Next Story"
-          >
-              <ChevronRight size={32} />
-          </button>
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" 
+                aria-label="Next Story"
+              >
+                  <ChevronRight size={32} />
+              </button>
+            )}
+          </>
         )}
         {/* Mute/Unmute button - show on all slides */}
         <button 
@@ -790,19 +864,31 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
         >
           {isMuted ? <VolumeX size={36} /> : <Volume2 size={36} />}
         </button>
-        <button onClick={onClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors p-2 drop-shadow-none" aria-label="Close stories">
+        <button onClick={handleClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors p-2 drop-shadow-none" aria-label="Close stories">
             <X size={36} />
         </button>
 
-        {/* Share Button - show on screen-2 through screen-12 (excluding screen-1 and screen-13) */}
+        {/* Share Button - show on screen-2 through screen-12 (excluding screen-1) */}
         {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-7' || currentSlide?.id === 'screen-8' || currentSlide?.id === 'screen-9' || currentSlide?.id === 'screen-10' || currentSlide?.id === 'screen-11' || currentSlide?.id === 'screen-12') && (
           <ShareButton
-            onClick={() => {
-              // TODO: Add share functionality
-              console.log('Share clicked');
-            }}
+            onClick={handleShare}
           />
         )}
+
+        {/* Share Button on last slide (screen-13) - opens modal */}
+        {isLastSlide && currentSlide?.id === 'screen-13' && (
+          <ShareButton
+            onClick={handleShareModalOpen}
+          />
+        )}
+
+        {/* Share Modal for last slide */}
+        <ShareModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          slides={getSlideList()}
+          onCaptureSlide={handleCaptureSlide}
+        />
       </div>
     </div>
   );
