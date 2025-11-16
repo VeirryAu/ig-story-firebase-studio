@@ -650,6 +650,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                       ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
                       : slide.id === 'screen-10' && serverResponse
                       ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
+                      : slide.id === 'screen-11' && serverResponse
+                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
                       : slide.id === 'screen-1' && currentStory?.user?.name
                       ? React.cloneElement(slide.component as React.ReactElement, { userName: currentStory.user.name || 'John' })
                       : slide.component
@@ -711,8 +713,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             <X size={36} />
         </button>
 
-        {/* Share Button - only show on screen-2, screen-3, screen-4, screen-5, screen-6, and screen-10 */}
-        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-10') && (
+        {/* Share Button - only show on screen-2, screen-3, screen-4, screen-5, screen-6, screen-10, and screen-11 */}
+        {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-10' || currentSlide?.id === 'screen-11') && (
           <ShareButton
             onClick={() => {
               // TODO: Add share functionality

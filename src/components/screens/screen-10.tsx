@@ -27,7 +27,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
       <div className="px-6 pt-8 pb-4 mt-16 relative z-10">
         {/* Pakai my FORE Plan */}
         <div className="flex items-center justify-center gap-2 mb-4">
-          <p className="text-white font-bold text-xl md:text-2xl">Pakai</p>
+          <p className="text-white font-bold text-lg md:text-xl">Pakai</p>
           <div className="relative">
             <Image
               src="/stories-asset/slide10/slide10-myforeplan.png"
@@ -48,7 +48,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
         {/* Savings Button */}
         <div className="flex justify-center mb-8">
           <div 
-            className="px-8 py-4 rounded-lg"
+            className="px-8 py-4 rounded-full"
             style={{ backgroundColor: '#15a6ab' }}
           >
             <p className="text-white font-bold text-2xl md:text-3xl">
@@ -118,8 +118,11 @@ export function Screen10({ serverResponse }: Screen10Props) {
           <p className="text-white font-bold text-center text-base md:text-lg leading-relaxed">
             Wow! Kamu berada di{' '}
             <span 
-              className="px-2 py-1 rounded"
-              style={{ backgroundColor: '#006A87' }}
+              className="px-2 py-1 inline-block"
+              style={{ 
+                backgroundColor: 'rgba(39, 181, 200, 1)',
+                transform: 'rotate(-5.28deg)',
+              }}
             >
               top {topRanking}
             </span>

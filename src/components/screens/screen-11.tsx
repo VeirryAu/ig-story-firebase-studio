@@ -1,54 +1,150 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
+import type { ServerResponse } from "@/types/server";
 
-export function Screen11() {
-  const [isVisible, setIsVisible] = useState(false);
-  const nextYear = new Date().getFullYear() + 1;
+interface Screen11Props {
+  serverResponse?: ServerResponse;
+}
 
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
+export function Screen11({ serverResponse }: Screen11Props) {
+  const trxCount = serverResponse?.trxCount || 70;
+  const totalPoint = serverResponse?.totalPoint || 450;
+  const favoriteProduct = serverResponse?.listProductFavorite?.[0]?.productName || 'Aren Latte';
+  const favoriteStore = serverResponse?.listFavoriteStore?.[0]?.storeName || 'Cikini';
+  const totalSaving = serverResponse?.cheaperSubsDesc || 'Rp325rb';
+
+  // Format the saving amount to remove "Rp" prefix if present and format it
+  const formatSaving = (saving: string) => {
+    return saving.replace(/^Rp\s*/i, '');
+  };
 
   return (
-    <div className="relative w-full h-full bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 flex items-center justify-center overflow-hidden">
-      {/* Animated sun rays */}
-      <div className="absolute inset-0">
-        {[...Array(16)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1/2 bg-white/30 origin-bottom"
-            style={{
-              left: "50%",
-              bottom: "50%",
-              transform: `translateX(-50%) rotate(${i * 22.5}deg)`,
-              animation: `pulse 2s ease-in-out infinite`,
-              animationDelay: `${i * 0.1}s`,
-            }}
-          />
-        ))}
+    <div 
+      className="relative w-full h-full flex flex-col overflow-hidden"
+      style={{ backgroundColor: '#1A4034' }}
+    >
+      {/* Background Image - Always at bottom */}
+      <div 
+        className="absolute bottom-0 left-0 right-0 w-full"
+        style={{ 
+          height: '50%',
+          zIndex: 1,
+          opacity: 0.1,
+        }}
+      >
+        <Image
+          src="/stories-asset/slides11/slide11-bgasset.png"
+          alt="Coffee journey background"
+          fill
+          className="object-contain object-bottom"
+          priority
+        />
       </div>
 
-      <div className="relative z-10 text-center text-white px-8">
-        <div
-          className={`transition-all duration-1000 ${
-            isVisible
-              ? "opacity-100 scale-100"
-              : "opacity-0 scale-50"
-          }`}
-        >
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 drop-shadow-2xl animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            Looking Forward
-          </h2>
-          <div className="text-7xl md:text-9xl font-black mb-8 drop-shadow-2xl animate-in zoom-in-50 duration-1000 delay-300">
-            {nextYear}
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col flex-1 px-6 pt-8 pb-4 mt-16">
+        {/* Title */}
+        <h1 className="text-white font-bold text-center text-md md:text-lg mb-8">
+          Rangkuman #FOREcap 2025 kamu
+        </h1>
+
+        {/* Data Cards Grid */}
+        <div className="w-full max-w-md mx-auto space-y-4 mb-6">
+          {/* Row 1: Total Cup and Total Poin */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Total Cup Dibeli */}
+            <div 
+              className="rounded-2xl p-4 flex flex-col"
+              style={{ backgroundColor: '#006041' }}
+            >
+              <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+                Total Cup Dibeli
+              </p>
+              <p 
+                className="text-xl md:text-2xl font-bold text-center"
+                style={{ color: '#FFD700' }}
+              >
+                {trxCount}
+              </p>
+            </div>
+
+            {/* Total Poin Didapat */}
+            <div 
+              className="rounded-2xl p-4 flex flex-col"
+              style={{ backgroundColor: '#006041' }}
+            >
+              <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+                Total Poin Didapat
+              </p>
+              <p 
+                className="text-xl md:text-2xl font-bold text-center"
+                style={{ color: '#FFD700' }}
+              >
+                {totalPoint}
+              </p>
+            </div>
           </div>
-          <p className="text-2xl md:text-3xl font-light drop-shadow-lg animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
-            New adventures await
+
+          {/* Row 2: Menu Terfavorit (Full Width) */}
+          <div 
+            className="rounded-2xl p-4 flex flex-col"
+            style={{ backgroundColor: '#006041' }}
+          >
+            <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+              Menu Terfavorit
+            </p>
+            <p 
+              className="text-xl md:text-2xl font-bold text-center"
+              style={{ color: '#FFD700' }}
+            >
+              {favoriteProduct}
+            </p>
+          </div>
+
+          {/* Row 3: Store Terfavorit and Total Saving */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Store Terfavorit */}
+            <div 
+              className="rounded-2xl p-4 flex flex-col"
+              style={{ backgroundColor: '#006041' }}
+            >
+              <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+                Store Terfavorit
+              </p>
+              <p 
+                className="text-md md:text-lg font-bold text-center"
+                style={{ color: '#FFD700' }}
+              >
+                {favoriteStore}
+              </p>
+            </div>
+
+            {/* Total Saving */}
+            <div 
+              className="rounded-2xl p-4 flex flex-col"
+              style={{ backgroundColor: '#006041' }}
+            >
+              <p className="text-white font-bold text-xs md:text-sm text-center mb-2">
+                Total Saving
+              </p>
+              <p 
+                className="text-md md:text-lg font-bold text-center"
+                style={{ color: '#FFD700' }}
+              >
+                {formatSaving(totalSaving)}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Concluding Message */}
+        <div className="w-full max-w-md mx-auto mt-4 mb-6">
+          <p className="text-white font-bold text-center text-base md:text-lg">
+            Terima kasih sudah menjalani 2025 penuh warna bersama Fore Coffee
           </p>
         </div>
       </div>
     </div>
   );
 }
-
