@@ -3,6 +3,8 @@
  * Functions to communicate with Android and iOS native apps via WebView
  */
 
+import { isDevMode } from './env';
+
 declare global {
   interface Window {
     AndroidBridge?: {
@@ -47,7 +49,7 @@ export function closeWebView(): void {
   }
 
   // Fallback for browser (debug mode)
-  if (process.env.NODE_ENV === 'development') {
+  if (isDevMode()) {
     console.log('[NativeBridge] closeWebView() called - not supported in browser');
     // In development, we might want to show an alert or just log
     // alert("closeWebView() not supported in this environment.");
@@ -77,7 +79,7 @@ export function shareImageUrl(url: string): void {
   }
 
   // Fallback for browser (debug mode)
-  if (process.env.NODE_ENV === 'development') {
+  if (isDevMode()) {
     console.log('[NativeBridge] shareImageUrl() called with URL:', url);
     // In development, we might want to open the image in a new tab
     window.open(url, '_blank');
@@ -108,7 +110,7 @@ export function track(eventName: string, eventValue: string): void {
   }
 
   // Fallback for browser (debug mode)
-  if (process.env.NODE_ENV === 'development') {
+  if (isDevMode()) {
     console.log('[NativeBridge] track() called:', { eventName, eventValue });
   }
 }
@@ -136,7 +138,7 @@ export function handleDeeplink(deeplinkUrl: string): void {
   }
 
   // Fallback for browser (debug mode)
-  if (process.env.NODE_ENV === 'development') {
+  if (isDevMode()) {
     console.log('[NativeBridge] handleDeeplink() called with URL:', deeplinkUrl);
     // In development, we might want to show an alert
     // alert(`handleDeeplink() not supported in this environment. URL: ${deeplinkUrl}`);

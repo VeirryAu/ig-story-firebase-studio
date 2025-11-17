@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/components/loading-spinner';
 import { stories as storyData } from '@/lib/story-data';
 import config from '@/lib/const.json';
 import { checkDateRestriction, validateAuthHeaders } from '@/lib/auth';
+import { isDevMode } from '@/lib/env';
 
 export default function Home() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -40,8 +41,8 @@ export default function Home() {
       return;
     }
 
-    // Check authentication headers in production
-    if (process.env.NODE_ENV === 'production') {
+    // Check authentication headers in production (skip if dev mode enabled)
+    if (!isDevMode()) {
       // Note: In Next.js client-side, we can't access request headers directly
       // The native app should pass these via URL params or postMessage
       // For now, we'll validate if they're passed via URL params
@@ -149,7 +150,7 @@ export default function Home() {
       
       // For development, you can use a mock response
       // Change trxCount to 0 to test the limited slides scenario
-      // if (process.env.NODE_ENV === 'development') {
+      if (isDevMode()) {
         // Mock response for development
         // Set trxCount to 0 to test limited slides (only slide1 and slide2)
         // Set trxCount to any number > 0 to show all slides
@@ -218,7 +219,7 @@ export default function Home() {
             },
           ],
         };
-      // }
+      }
       
       // Production: Fetch from your backend
       try {

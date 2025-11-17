@@ -16,6 +16,7 @@ import { ShareModal } from '@/components/share-modal';
 import config from '@/lib/const.json';
 import { closeWebView, shareImageUrl } from '@/lib/native-bridge';
 import { captureScreenshotAsBlobUrl } from '@/lib/screenshot';
+import { isDevMode } from '@/lib/env';
 
 interface StoryViewerProps {
   stories: Story[];
@@ -295,7 +296,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const isFullscreenMode = !!fullscreenSlide;
 
   // Development-only: Limit slides to specific index for development convenience
-  const devMaxSlide = process.env.NODE_ENV === 'development' ? config.devMaxSlide : null;
+  const devMaxSlide = isDevMode() ? config.devMaxSlide : null;
   
   // Filter slides based on trxCount: if trxCount is 0, only show slide1 and slide2
   const originalStory = stories[currentStoryIndex];
@@ -317,12 +318,12 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const isLastSlide = currentSlideIndex === totalSlides - 1;
   
   // Development-only: Auto-pause on specific slide for development convenience
-  const devPauseOnSlide = process.env.NODE_ENV === 'development' ? config.devPauseOnSlide : null;
+  const devPauseOnSlide = isDevMode() ? config.devPauseOnSlide : null;
   const shouldAutoPause = devPauseOnSlide !== null && devPauseOnSlide !== undefined && currentSlideIndex === devPauseOnSlide;
   
   // Development mode warning
   useEffect(() => {
-    if (devMaxSlide !== null && devMaxSlide !== undefined && process.env.NODE_ENV === 'development') {
+    if (devMaxSlide !== null && devMaxSlide !== undefined && isDevMode()) {
       console.log(`[StoryViewer] Development mode: Limited to slide ${devMaxSlide} (0-based index)`);
     }
   }, [devMaxSlide]);

@@ -3,6 +3,8 @@
  * Handles header validation and date restrictions
  */
 
+import { isDevMode } from './env';
+
 /**
  * Validates authentication headers for production
  * @param headers - Request headers object
@@ -10,7 +12,7 @@
  */
 export function validateAuthHeaders(headers: Headers | Record<string, string | null>): { valid: boolean; error?: string } {
   // Skip validation in development
-  if (process.env.NODE_ENV === 'development') {
+  if (isDevMode()) {
     return { valid: true };
   }
 
@@ -70,7 +72,7 @@ export function validateAuthHeaders(headers: Headers | Record<string, string | n
  */
 export function checkDateRestriction(): { valid: boolean; error?: string } {
   // Skip date restriction in development
-  if (process.env.NODE_ENV === 'development') {
+  if (isDevMode()) {
     return { valid: true };
   }
 

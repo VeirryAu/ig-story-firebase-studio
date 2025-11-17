@@ -212,7 +212,7 @@ export function useBackgroundMusic({
     audioRef.current = audio;
     
     // Expose audio element to window for debugging (development only)
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    if (typeof window !== 'undefined' && (process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_ENABLE_DEV_MODE === 'true')) {
       (window as any).__backgroundMusicAudio = audio;
       console.log('[BackgroundMusic] Audio element exposed to window.__backgroundMusicAudio for debugging');
     }
