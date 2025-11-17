@@ -145,6 +145,7 @@ export default function Home() {
 
     async function fetchServerResponse(): Promise<ServerResponse> {
       // TODO: Replace this with your actual backend API endpoint
+      // API Contract: See docs/api/openapi.yaml for OpenAPI/Swagger specification
       // Example: const response = await fetch('/api/user-data');
       // return await response.json();
       

@@ -1,0 +1,344 @@
+openapi: 3.0.3
+info:
+  title: Fore Coffee Year Recap API
+  description: |
+    API contract for the Fore Coffee Year Recap interactive story viewer.
+    This API provides personalized user data for the year-end recap experience.
+    
+    ## Authentication
+    
+    In production, all requests must include authentication headers:
+    - `timestamp`: ISO 8601 format timestamp (must be within 10 minutes of current time)
+    - `user_id`: Integer user ID
+    - `sign`: Base64 encoded signature = `base64(timestamp + "forecap2025" + user_id)`
+    
+    ## Date Restriction
+    
+    Content is only accessible until December 31, 2025 (production only).
+    Date restriction is bypassed in development mode.
+    
+    ## Development Mode
+    
+    Development mode can be enabled via:
+    - URL parameter: `?dev=true`
+    - LocalStorage: `dev_mode=true`
+    - Environment variable: `NEXT_PUBLIC_ENABLE_DEV_MODE=true`
+  version: 1.0.0
+  contact:
+    name: Fore Coffee Development Team
+  license:
+    name: Proprietary
+
+servers:
+  - url: https://api.forecoffee.com/v1
+    description: Production server
+  - url: https://api-staging.forecoffee.com/v1
+    description: Staging server
+  - url: http://localhost:9002
+    description: Local development server
+
+tags:
+  - name: User Data
+    description: User recap data endpoints
+
+paths:
+  /api/user-data:
+    get:
+      tags:
+        - User Data
+      summary: Get user year recap data
+      description: |
+        Retrieves personalized year-end recap data for a user.
+        This includes transaction statistics, favorite products, favorite stores,
+        points information, and other personalized data for the story viewer.
+      operationId: getUserRecapData
+      parameters:
+        - name: user_id
+          in: query
+          description: User ID (alternative to header, for client-side usage)
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: timestamp
+          in: query
+          description: ISO 8601 timestamp (alternative to header, for client-side usage)
+          required: false
+          schema:
+            type: string
+            format: date-time
+            example: "2025-11-10T20:00:00.000Z"
+        - name: sign
+          in: query
+          description: Base64 signature (alternative to header, for client-side usage)
+          required: false
+          schema:
+            type: string
+            example: "MjAyNS0xMS0xMFQyMDowMDowMC4wMDBaZm9yZWNhcDIwMjUxMjM0NQ=="
+        - name: fullscreen
+          in: query
+          description: Slide ID for fullscreen mode (e.g., "screen-01", "screen-1")
+          required: false
+          schema:
+            type: string
+            pattern: "^screen-\\d+$"
+            example: "screen-01"
+        - name: dev
+          in: query
+          description: Enable development mode (bypasses authentication and date restrictions)
+          required: false
+          schema:
+            type: boolean
+            default: false
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Successful response with user recap data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerResponse'
+              examples:
+                complete:
+                  summary: Complete user data
+                  value:
+                    userName: "John Doe"
+                    trxCount: 100
+                    variantCount: 8
+                    listProductFavorite:
+                      - productName: "Espresso"
+                        countCups: 25
+                        productImage: "https://example.com/images/espresso.jpg"
+                      - productName: "Cappuccino"
+                        countCups: 18
+                        productImage: "https://example.com/images/cappuccino.jpg"
+                    totalPoint: 1250
+                    totalPointDescription: "Poin itu bisa kamu tukarkan dengan 25 cup Butterscotch Sea Salt Latte di FOREwards lho!"
+                    totalPointPossibleRedeem: 25
+                    totalPointImage: "https://example.com/images/latte.jpg"
+                    deliveryCount: 45
+                    pickupCount: 55
+                    cheaperSubsDesc: "325rb Rupiah"
+                    cheaperSubsAmount: 325500
+                    topRanking: 50
+                    listCircularImages:
+                      - "https://example.com/images/circle1.jpg"
+                      - "https://example.com/images/circle2.jpg"
+                    listFavoriteStore:
+                      - storeName: "Fore Coffee Grand Indonesia"
+                        transactionCount: 30
+                        storeImage: "https://example.com/images/store1.jpg"
+                zero_transactions:
+                  summary: User with zero transactions
+                  value:
+                    userName: "Jane Doe"
+                    trxCount: 0
+        '400':
+          description: Bad request - Invalid parameters or missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Missing required headers: timestamp, user_id, or sign"
+        '401':
+          description: Unauthorized - Invalid authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid_signature:
+                  summary: Invalid signature
+                  value:
+                    error: "Invalid signature"
+                expired_timestamp:
+                  summary: Expired timestamp
+                  value:
+                    error: "Timestamp expired or too far in future (max 10 minutes)"
+        '403':
+          description: Forbidden - Date restriction or access denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "This content is no longer available after December 31, 2025"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "Internal server error"
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: sign
+      description: |
+        Authentication using headers. Requires:
+        - `timestamp`: ISO 8601 format (e.g., "2025-11-10T20:00:00.000Z")
+        - `user_id`: Integer user ID
+        - `sign`: Base64(timestamp + "forecap2025" + user_id)
+  
+  schemas:
+    ServerResponse:
+      type: object
+      required:
+        - userName
+        - trxCount
+      properties:
+        userName:
+          type: string
+          description: User's name to display in the recap
+          example: "John Doe"
+        trxCount:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Total number of transactions/cups purchased
+          example: 100
+        listProductFavorite:
+          type: array
+          description: List of favorite products ordered by popularity (ranked by countCups)
+          items:
+            $ref: '#/components/schemas/ProductFavorite'
+        variantCount:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Number of different product variants tried
+          example: 8
+        totalPoint:
+          type: integer
+          format: int64
+          minimum: 0
+          description: Total points accumulated by the user
+          example: 1250
+        totalPointDescription:
+          type: string
+          description: Description of what the points can be redeemed for
+          example: "Poin itu bisa kamu tukarkan dengan 25 cup Butterscotch Sea Salt Latte di FOREwards lho!"
+        totalPointPossibleRedeem:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Number of items that can be redeemed with current points
+          example: 25
+        totalPointImage:
+          type: string
+          format: uri
+          description: Image URL for the redeemable item (typically coffee latte image)
+          example: "https://example.com/images/latte.jpg"
+        listFavoriteStore:
+          type: array
+          maxItems: 3
+          description: List of top 3 favorite stores (ordered by transactionCount descending)
+          items:
+            $ref: '#/components/schemas/FavoriteStore'
+        deliveryCount:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Total number of delivery transactions
+          example: 45
+        pickupCount:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Total number of pickup transactions
+          example: 55
+        cheaperSubsDesc:
+          type: string
+          description: Savings description text (e.g., "325rb Rupiah")
+          example: "325rb Rupiah"
+        cheaperSubsAmount:
+          type: number
+          format: double
+          minimum: 0
+          description: Savings amount in Indonesian Rupiah
+          example: 325500
+        topRanking:
+          type: integer
+          format: int32
+          minimum: 1
+          description: User's ranking position (e.g., Top 50)
+          example: 50
+        listCircularImages:
+          type: array
+          description: Array of image URLs for circular graphics used in screen-12 (minimum 10 images recommended)
+          items:
+            type: string
+            format: uri
+          minItems: 10
+          example:
+            - "https://example.com/images/circle1.jpg"
+            - "https://example.com/images/circle2.jpg"
+            - "https://example.com/images/circle3.jpg"
+    
+    ProductFavorite:
+      type: object
+      required:
+        - productName
+        - countCups
+      properties:
+        productName:
+          type: string
+          description: Name of the product
+          example: "Espresso"
+        countCups:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Number of cups purchased for this product
+          example: 25
+        productImage:
+          type: string
+          format: uri
+          description: Optional product image URL
+          example: "https://example.com/images/espresso.jpg"
+    
+    FavoriteStore:
+      type: object
+      required:
+        - storeName
+        - transactionCount
+      properties:
+        storeName:
+          type: string
+          description: Name of the store
+          example: "Fore Coffee Grand Indonesia"
+        transactionCount:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Number of transactions at this store
+          example: 30
+        storeImage:
+          type: string
+          format: uri
+          description: Optional store image URL
+          example: "https://example.com/images/store1.jpg"
+    
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "Invalid signature"
+        code:
+          type: string
+          description: Optional error code
+          example: "AUTH_FAILED"
+        details:
+          type: object
+          description: Optional additional error details
+

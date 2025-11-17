@@ -293,6 +293,10 @@ Each screen component receives `serverResponse` as a prop. Check `src/types/serv
 
 See `docs/audio-optimization.md` for FFmpeg commands to compress audio files.
 
+### API Documentation
+
+See `docs/api/README.md` for OpenAPI/Swagger API documentation. The API contract is defined in `docs/api/openapi.yaml`.
+
 ## 📚 Component Documentation
 
 ### StoryViewer
