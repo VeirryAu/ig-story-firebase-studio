@@ -3,11 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "@/hooks/use-translations";
 
-interface Screen2NoTrxProps {
-  onShopClick?: () => void;
-}
-
-export function Screen2NoTrx({ onShopClick }: Screen2NoTrxProps) {
+export function Screen2NoTrx() {
   const [isVisible, setIsVisible] = useState(false);
   const { t } = useTranslations();
 
@@ -43,21 +39,7 @@ export function Screen2NoTrx({ onShopClick }: Screen2NoTrxProps) {
           </p>
         </div>
 
-        {/* Button at the bottom */}
-        <div className="w-full flex justify-center pb-6 pt-2">
-          <button
-            className="px-8 py-3 rounded-full font-bold text-sm transition-transform active:scale-95 mb-32"
-            style={{ 
-              backgroundColor: '#FFFFFF',
-              color: '#006041'
-            }}
-            onClick={() => {
-              onShopClick?.();
-            }}
-          >
-            {t('screen2Notrx.button')}
-          </button>
-        </div>
+        {/* Button removed - now handled in story-viewer.tsx */}
       </div>
     </div>
   );

@@ -16,6 +16,7 @@ import { ShareModal } from '@/components/share-modal';
 import config from '@/lib/const.json';
 import { closeWebView, shareImageUrl, track } from '@/lib/native-bridge';
 import { isDevMode } from '@/lib/env';
+import { useTranslations } from '@/hooks/use-translations';
 
 interface StoryViewerProps {
   stories: Story[];
@@ -281,6 +282,7 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
 }
 
 export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverResponse, fullscreenSlide, fullscreenDuration }: StoryViewerProps) {
+  const { t } = useTranslations();
   const [currentStoryIndex, setCurrentStoryIndex] = useState(initialStoryIndex);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -857,10 +859,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                     {slide.id === 'screen-1' && serverResponse?.userName
                       ? React.cloneElement(slide.component as React.ReactElement, { userName: serverResponse.userName })
                       : slide.id === 'screen-2' && serverResponse?.trxCount === 0
-                      ? <Screen2NoTrx onShopClick={() => {
-                          track('inviteShopping', 'deeplink');
-                          // TODO: Add navigation to shop page via handleDeeplink
-                        }} />
+                      ? <Screen2NoTrx />
                       : slide.id === 'screen-2' && serverResponse?.trxCount !== undefined
                       ? React.cloneElement(slide.component as React.ReactElement, { trxCount: serverResponse.trxCount })
                       : slide.id === 'screen-3' && serverResponse
@@ -997,6 +996,33 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
         {/* Share Button - hidden in fullscreen mode */}
         {!isFullscreenMode && (
           <>
+            {/* Belanja Sekarang Button - only for screen-2 when trxCount is 0, positioned above Share button */}
+            {currentSlide?.id === 'screen-2' && serverResponse?.trxCount === 0 && (
+              <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 z-[60] pointer-events-auto">
+                <button
+                  className="px-8 py-3 rounded-full font-bold text-sm transition-transform active:scale-95 pointer-events-auto"
+                  style={{ 
+                    backgroundColor: '#FFFFFF',
+                    color: '#006041'
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    track('inviteShopping', 'deeplink');
+                    // TODO: Add navigation to shop page via handleDeeplink
+                  }}
+                  onPointerDown={(e) => {
+                    e.stopPropagation();
+                  }}
+                  onPointerUp={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  {t('screen2Notrx.button')}
+                </button>
+              </div>
+            )}
+
             {/* Share Button - show on screen-2 through screen-12 (excluding screen-1) */}
             {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-7' || currentSlide?.id === 'screen-8' || currentSlide?.id === 'screen-9' || currentSlide?.id === 'screen-10' || currentSlide?.id === 'screen-11' || currentSlide?.id === 'screen-12') && (
               <ShareButton
