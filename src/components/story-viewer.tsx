@@ -17,6 +17,7 @@ import config from '@/lib/const.json';
 import { closeWebView, shareImageUrl, track } from '@/lib/native-bridge';
 import { isDevMode } from '@/lib/env';
 import { useTranslations } from '@/hooks/use-translations';
+import { captureScreenshot } from '@/lib/screenshot';
 
 interface StoryViewerProps {
   stories: Story[];
@@ -289,6 +290,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const [animationKey, setAnimationKey] = useState(0);
   const [isMuted, setIsMuted] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const isNavigatingRef = useRef(false); // Prevent rapid-fire navigation
@@ -687,7 +689,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   }, [isVideoSlide, isMuted, audioReady, playAudio]);
 
   // Get screen name from slide ID
-  const getScreenName = (slideId: string): string => {
+  const getScreenName = useCallback((slideId: string): string => {
     // For screen-6, determine screen name based on time period
     if (slideId === 'screen-6') {
       const now = new Date();
@@ -719,37 +721,48 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
     };
 
     return screenNameMap[slideId] || slideId;
-  };
+  }, []);
 
-  // Handle share functionality - generates fullscreen URL for current slide
-  const handleShare = () => {
-    if (!currentSlide) {
-      console.error('Current slide not found');
+  // Capture current slide and share as base64 image (no navigation/header chrome)
+  const shareCurrentSlide = useCallback(async () => {
+    if (!currentSlide || isFullscreenMode || isSharing) {
       return;
     }
 
-    // Get screen name and track the share event
     const screenName = getScreenName(currentSlide.id);
     track('in_place', screenName);
 
-    // For screen-13 (video slide), share the AV1 video URL directly
-    if (currentSlide.id === 'screen-13') {
-      const videoUrl = `${window.location.origin}/stories-asset/slides13/forecap-video-barista-av1.mp4`;
-      shareImageUrl(videoUrl);
+    const targetElement = storyViewerRef.current;
+    if (!targetElement) {
+      console.error('Story viewer container not found for screenshot capture');
       return;
     }
 
-    // For other slides, generate fullscreen URL
-    const currentUrl = window.location.origin + window.location.pathname;
-    const slideId = currentSlide.id;
-    const duration = 10; // 10 seconds default, can be made configurable
-    
-    // Build URL with fullscreen parameter and duration
-    const shareUrlString = `${currentUrl}?fullscreen=${slideId}&duration=${duration}`;
-    
-    // Share the URL to native app using shareImageUrl
-    shareImageUrl(shareUrlString);
-  };
+    setIsSharing(true);
+
+    try {
+      // For screen-13 (video slide), continue sharing the AV1 asset per requirements
+      if (currentSlide.id === 'screen-13') {
+        const videoUrl = `${window.location.origin}/stories-asset/slides13/forecap-video-barista-av1.mp4`;
+        shareImageUrl(videoUrl);
+        return;
+      }
+
+      const dataUrl = await captureScreenshot(targetElement);
+      shareImageUrl(dataUrl);
+    } catch (error) {
+      console.error('Failed to capture screenshot for sharing', error);
+      if (typeof window !== 'undefined') {
+        alert('Failed to capture screenshot. Please try again.');
+      }
+    } finally {
+      setIsSharing(false);
+    }
+  }, [currentSlide, getScreenName, isFullscreenMode, isSharing]);
+
+  const handleShareButtonClick = useCallback(() => {
+    void shareCurrentSlide();
+  }, [shareCurrentSlide]);
 
   // Handle share modal for last slide
   const handleShareModalOpen = () => {
@@ -916,7 +929,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
           
           {/* Header with avatar and name - hidden in fullscreen mode */}
           {!isFullscreenMode && (
-            <div className="pt-5 p-3 flex items-center gap-3">
+            <div className="pt-5 p-3 flex items-center gap-3" data-share-exclude="true">
               <Avatar className="h-11 w-11 bg-white p-1">
                 <AvatarImage src={currentStory.user.avatar} alt={currentStory.user.name} className="object-contain" />
               <AvatarFallback>{currentStory.user.name.charAt(0)}</AvatarFallback>
@@ -956,7 +969,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
         {/* Standalone navigation buttons - hidden in fullscreen mode */}
         {!isFullscreenMode && (
           <>
-            <button onClick={goToPrevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" aria-label="Previous Story">
+            <button onClick={goToPrevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" aria-label="Previous Story" data-share-exclude="true">
             <ChevronLeft size={32} />
         </button>
             {!isLastSlide && (
@@ -970,6 +983,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                 }}
                 className="absolute right-4 top-1/2 -translate-y-1/2 z-40 text-white/70 hover:text-white transition-colors bg-black/20 rounded-full p-2 backdrop-blur-sm" 
                 aria-label="Next Story"
+                data-share-exclude="true"
               >
             <ChevronRight size={32} />
         </button>
@@ -982,13 +996,14 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
           onClick={() => setIsMuted(!isMuted)} 
             className="absolute top-3 right-14 z-40 text-white/80 hover:text-white transition-colors p-2" 
           aria-label={isMuted ? 'Unmute' : 'Mute'}
+          data-share-exclude="true"
         >
             {isMuted ? <VolumeX size={36} /> : <Volume2 size={36} />}
         </button>
         )}
         {/* Close button - hidden in fullscreen mode */}
         {!isFullscreenMode && (
-          <button onClick={handleClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors p-2 drop-shadow-none" aria-label="Close stories">
+          <button onClick={handleClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors p-2 drop-shadow-none" aria-label="Close stories" data-share-exclude="true">
               <X size={36} />
         </button>
         )}
@@ -1026,7 +1041,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             {/* Share Button - show on screen-2 through screen-12 (excluding screen-1) */}
             {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-7' || currentSlide?.id === 'screen-8' || currentSlide?.id === 'screen-9' || currentSlide?.id === 'screen-10' || currentSlide?.id === 'screen-11' || currentSlide?.id === 'screen-12') && (
               <ShareButton
-                onClick={handleShare}
+                onClick={handleShareButtonClick}
               />
             )}
 

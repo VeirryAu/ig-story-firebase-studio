@@ -33,7 +33,11 @@ export function StoryProgressBar({
   const duration = (isVideoSlide && videoDuration) ? videoDuration : (slide?.duration ?? 10000);
 
   return (
-    <div className="absolute top-2 left-0 right-0 z-20 flex gap-1 px-2" aria-hidden="true">
+    <div
+      className="absolute top-2 left-0 right-0 z-20 flex gap-1 px-2 story-progress-bar"
+      aria-hidden="true"
+      data-share-exclude="true"
+    >
       {currentStory.slides.map((slide, index) => (
         <div
           key={slide.id}

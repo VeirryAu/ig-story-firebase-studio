@@ -1,7 +1,57 @@
+import html2canvas from 'html2canvas';
+
 /**
  * Screenshot Utilities
  * Functions to capture screenshots of the current slide
  */
+
+const DEFAULT_EXCLUDE_SELECTORS = [
+  'button[aria-label="Previous Story"]',
+  'button[aria-label="Next Story"]',
+  'button[aria-label="Close stories"]',
+  'button[aria-label*="Mute"]',
+  'button[aria-label*="Unmute"]',
+  '[aria-label="Previous slide"]',
+  '[aria-label="Next slide"]',
+  '.story-progress-bar',
+  '.share-button-container',
+  '[data-share-exclude="true"]',
+];
+
+interface HiddenElementState {
+  element: HTMLElement;
+  previousVisibility: string;
+}
+
+function hideElements(targetElement: HTMLElement, selectors: string[]): HiddenElementState[] {
+  const hiddenElements: HiddenElementState[] = [];
+
+  selectors.forEach((selector) => {
+    const elements = targetElement.querySelectorAll<HTMLElement>(selector);
+    elements.forEach((element) => {
+      // Avoid duplicates
+      const alreadyHidden = hiddenElements.find((entry) => entry.element === element);
+      if (alreadyHidden) {
+        return;
+      }
+
+      hiddenElements.push({
+        element,
+        previousVisibility: element.style.visibility,
+      });
+
+      element.style.visibility = 'hidden';
+    });
+  });
+
+  return hiddenElements;
+}
+
+function restoreElements(hiddenElements: HiddenElementState[]) {
+  hiddenElements.forEach(({ element, previousVisibility }) => {
+    element.style.visibility = previousVisibility;
+  });
+}
 
 /**
  * Captures a screenshot of a specific element, excluding navigation buttons
@@ -11,95 +61,33 @@
  */
 export async function captureScreenshot(
   element?: HTMLElement,
-  excludeSelectors: string[] = [
-    'button[aria-label="Previous Story"]',
-    'button[aria-label="Next Story"]',
-    'button[aria-label="Close stories"]',
-    'button[aria-label*="Mute"]',
-    'button[aria-label*="Unmute"]',
-    '[aria-label="Previous slide"]',
-    '[aria-label="Next slide"]',
-    '.story-progress-bar', // Progress bar
-  ]
+  excludeSelectors: string[] = DEFAULT_EXCLUDE_SELECTORS
 ): Promise<string> {
-  return new Promise((resolve, reject) => {
-    try {
-      // Find the story viewer container if not provided
-      const targetElement = element || document.querySelector('.story-viewer-container') as HTMLElement;
-      
-      if (!targetElement) {
-        reject(new Error('Target element not found'));
-        return;
-      }
+  const targetElement = element || (document.querySelector('.story-viewer-container') as HTMLElement | null);
 
-      // Hide navigation elements temporarily
-      const hiddenElements: HTMLElement[] = [];
-      excludeSelectors.forEach(selector => {
-        const elements = targetElement.querySelectorAll(selector);
-        elements.forEach((el) => {
-          const htmlEl = el as HTMLElement;
-          if (htmlEl.style.display !== 'none') {
-            htmlEl.style.visibility = 'hidden';
-            hiddenElements.push(htmlEl);
-          }
-        });
-      });
+  if (!targetElement) {
+    throw new Error('Target element not found');
+  }
 
-      // Use html2canvas if available, otherwise use native canvas
-      if (typeof window !== 'undefined' && (window as any).html2canvas) {
-        (window as any).html2canvas(targetElement, {
-          backgroundColor: null,
-          scale: 2, // Higher quality
-          useCORS: true,
-          logging: false,
-        }).then((canvas: HTMLCanvasElement) => {
-          // Restore hidden elements
-          hiddenElements.forEach(el => {
-            el.style.visibility = '';
-          });
-          
-          const dataUrl = canvas.toDataURL('image/png');
-          resolve(dataUrl);
-        }).catch((error: Error) => {
-          // Restore hidden elements on error
-          hiddenElements.forEach(el => {
-            el.style.visibility = '';
-          });
-          reject(error);
-        });
-      } else {
-        // Fallback: Use native canvas API (limited functionality)
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        if (!ctx) {
-          hiddenElements.forEach(el => {
-            el.style.visibility = '';
-          });
-          reject(new Error('Canvas context not available'));
-          return;
-        }
+  const selectors = Array.from(new Set([...DEFAULT_EXCLUDE_SELECTORS, ...excludeSelectors]));
+  const hiddenElements = hideElements(targetElement, selectors);
 
-        canvas.width = targetElement.offsetWidth;
-        canvas.height = targetElement.offsetHeight;
+  try {
+    const pixelRatio =
+      typeof window !== 'undefined' ? Math.min(Math.max(window.devicePixelRatio || 1, 2), 3) : 2;
 
-        // Note: This fallback method has limitations and may not capture all content
-        // For production, html2canvas library should be used
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const canvas = await html2canvas(targetElement, {
+      backgroundColor: '#000000',
+      scale: pixelRatio,
+      useCORS: true,
+      logging: false,
+      removeContainer: true,
+    });
 
-        // Restore hidden elements
-        hiddenElements.forEach(el => {
-          el.style.visibility = '';
-        });
-
-        const dataUrl = canvas.toDataURL('image/png');
-        resolve(dataUrl);
-      }
-    } catch (error) {
-      reject(error);
-    }
-  });
+    return canvas.toDataURL('image/png', 1.0);
+  } finally {
+    restoreElements(hiddenElements);
+  }
 }
 
 /**
