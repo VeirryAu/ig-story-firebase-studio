@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import type { ServerResponse } from "@/types/server";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen5Props {
   serverResponse?: ServerResponse;
 }
 
 export function Screen5({ serverResponse }: Screen5Props) {
+  const { t } = useTranslations();
   const totalPoint = serverResponse?.totalPoint || 0;
   const totalPointDescription = serverResponse?.totalPointDescription || '';
   const totalPointPossibleRedeem = serverResponse?.totalPointPossibleRedeem || 0;
@@ -20,7 +22,7 @@ export function Screen5({ serverResponse }: Screen5Props) {
     >
       {/* Top Text */}
       <p className="text-white font-bold text-center text-lg mb-4 mt-24 px-4">
-        Kami menghitung poin yang sudah kamu kumpulkan, dan wow! Kamu sudah mencapai
+        {t('screen5.topText')}
       </p>
 
       {/* Infographic circle - similar to screen-2 but without logo */}
@@ -35,7 +37,7 @@ export function Screen5({ serverResponse }: Screen5Props) {
               {totalPoint}
             </div>
             <div className="text-white font-bold text-3xl mt-1">
-              Poin
+              {t('screen5.points')}
             </div>
           </div>
         </div>

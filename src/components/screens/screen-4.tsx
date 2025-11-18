@@ -2,13 +2,14 @@
 
 import Image from "next/image";
 import type { ServerResponse } from "@/types/server";
-import { log } from "console";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen4Props {
   serverResponse?: ServerResponse;
 }
 
 export function Screen4({ serverResponse }: Screen4Props) {
+  const { t } = useTranslations();
   const variantCount = serverResponse?.variantCount || 0;
   const isMoreThanFive = variantCount >= 5;
 
@@ -18,18 +19,14 @@ export function Screen4({ serverResponse }: Screen4Props) {
     : '/stories-asset/slides04/slide04-less-five.jpg';
   
   const buttonTextDescription = isMoreThanFive 
-    ? 'The Taste Curator'
-    : 'The Signature Seeker';
+    ? t('screen4.tasteCurator')
+    : t('screen4.signatureSeeker');
   
   const descriptionText = isMoreThanFive
-    ? 'Si paling berani menjadi pertama untuk coba beragam rasa'
-    : 'Si paling setia dengan menu sempurna andalannya!';
+    ? t('screen4.tasteCuratorDesc')
+    : t('screen4.signatureSeekerDesc');
 
-    const buttonText = isMoreThanFive
-    ? 'Si paling berani menjadi pertama untuk coba beragam rasa'
-    : 'Si paling setia dengan menu sempurna andalannya!';
-
-    const secondaryColor = '#00556c'
+  const secondaryColor = '#00556c'
 
   return (
     <div 
@@ -38,7 +35,7 @@ export function Screen4({ serverResponse }: Screen4Props) {
     >
       {/* Top Text */}
       <p className="text-white font-bold text-center text-lg mb-8 mt-16">
-        Tidak banyak yang tahu bahwa kamu adalah
+        {t('screen4.topText')}
       </p>
 
       {/* Circle Image with Border */}

@@ -2,8 +2,11 @@
 
 import { useMemo } from "react";
 import Image from "next/image";
+import { useTranslations } from "@/hooks/use-translations";
 
 export function Screen6() {
+  const { t } = useTranslations();
+  
   // Determine time period based on local computer time
   const timePeriod = useMemo(() => {
     const now = new Date();
@@ -25,40 +28,40 @@ export function Screen6() {
         return {
           primaryBg: '#15a6ab',
           secondaryColor: '#118589',
-          topText: 'Always your go-to, day or night. kamu suka memesan sebelum jam 12 siang, itu artinya kamu…',
+          topText: t('screen6.morning.topText'),
           imageSrc: '/stories-asset/slides06/slide6-daybreakcatcher.jpg',
-          buttonText: 'Daybreak Catcher',
-          descriptionText: 'Energi fresh di pagi hari jadi bekal buat aktivitas seharian.\nJust rise and sip!',
+          buttonText: t('screen6.morning.buttonText'),
+          descriptionText: t('screen6.morning.description'),
         };
       case 'afternoon':
         return {
           primaryBg: '#c8831c',
           secondaryColor: '#a06916',
-          topText: 'Always your go-to, day or night. kamu suka memesan sesudah jam 12 siang, itu artinya kamu…',
+          topText: t('screen6.afternoon.topText'),
           imageSrc: '/stories-asset/slides06/slide6-sunchaser.jpg',
-          buttonText: 'Sun Chaser',
-          descriptionText: 'Kopi selalu jadi teman ngejar semangat siang sampai sore.\nStay glowing all day!',
+          buttonText: t('screen6.afternoon.buttonText'),
+          descriptionText: t('screen6.afternoon.description'),
         };
       case 'evening':
         return {
           primaryBg: '#533f8a',
           secondaryColor: '#42326e',
-          topText: 'Always your go-to, day or night. kamu suka memesan sesudah jam 6 sore, itu artinya kamu…',
+          topText: t('screen6.evening.topText'),
           imageSrc: '/stories-asset/slides06/slide6-twilightseeker.jpg',
-          buttonText: 'Twilight Seeker',
-          descriptionText: 'Ngopi buatmu jadi ritual penutup hari.  Chill mode: ON',
+          buttonText: t('screen6.evening.buttonText'),
+          descriptionText: t('screen6.evening.description'),
         };
       default:
         return {
           primaryBg: '#15a6ab',
           secondaryColor: '#118589',
-          topText: 'Always your go-to, day or night. kamu suka memesan sebelum jam 12 siang, itu artinya kamu…',
+          topText: t('screen6.morning.topText'),
           imageSrc: '/stories-asset/slides06/slide6-daybreakcatcher.jpg',
-          buttonText: 'Daybreak Catcher',
-          descriptionText: 'Energi fresh di pagi hari jadi bekal buat aktivitas seharian.\nJust rise and sip!',
+          buttonText: t('screen6.morning.buttonText'),
+          descriptionText: t('screen6.morning.description'),
         };
     }
-  }, [timePeriod]);
+  }, [timePeriod, t]);
 
   return (
     <div 

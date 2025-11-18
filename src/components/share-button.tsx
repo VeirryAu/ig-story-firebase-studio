@@ -1,12 +1,15 @@
 "use client";
 
 import { Upload } from "lucide-react";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface ShareButtonProps {
   onClick?: () => void;
 }
 
 export function ShareButton({ onClick }: ShareButtonProps) {
+  const { t } = useTranslations();
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     e.preventDefault();
@@ -30,7 +33,7 @@ export function ShareButton({ onClick }: ShareButtonProps) {
         onPointerUp={handlePointerUp}
       >
         <Upload className="w-5 h-5 text-white" />
-        <span className="text-white font-bold text-sm">Share</span>
+        <span className="text-white font-bold text-sm">{t('common.share')}</span>
       </button>
     </div>
   );

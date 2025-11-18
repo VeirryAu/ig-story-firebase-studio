@@ -1,0 +1,122 @@
+{
+  "common": {
+    "share": "Share",
+    "close": "Tutup",
+    "mute": "Bisukan",
+    "unmute": "Nyalakan suara",
+    "previous": "Sebelumnya",
+    "next": "Selanjutnya",
+    "loading": "Memuat...",
+    "error": "Terjadi kesalahan",
+    "januaryNovember": "(Januari-November)"
+  },
+  "loading": {
+    "title": "Duduk dulu, minum dulu!",
+    "subtitle": "Sambil kami menghitung untuk kamu!"
+  },
+  "screen1": {
+    "greeting": "Hai {userName}!",
+    "paragraph1": "Tak terasa sudah di penghujung tahun. Sudah siap cek persona kopi kamu?",
+    "coffeeCore": "Here is your coffee core!"
+  },
+  "screen2": {
+    "topText": "Sepanjang 2025, kamu telah membeli",
+    "cups": "Cups",
+    "bottomText": "Tidak hanya membeli kopi berkualitas, terima kasih selalu mendukung para petani lokal 🌟"
+  },
+  "screen2Notrx": {
+    "topText": "Wah, sayang sekali..\nKamu belum ada recap karena selama 2025 kamu belum melakukan pembelian cup Fore apapun 😔",
+    "bottomText": "Yuk belanja sekarang dan rasain keuntungan menggunakan aplikasi Fore Coffee bareng jutaan Fore Friends lainnya!",
+    "button": "Belanja Sekarang"
+  },
+  "screen3": {
+    "header": "Dari {trxCount} cup yang kamu beli, favoritmu adalah",
+    "cup": "cup"
+  },
+  "screen4": {
+    "topText": "Tidak banyak yang tahu bahwa kamu adalah",
+    "tasteCurator": "The Taste Curator",
+    "signatureSeeker": "The Signature Seeker",
+    "tasteCuratorDesc": "Si paling berani menjadi pertama untuk coba beragam rasa",
+    "signatureSeekerDesc": "Si paling setia dengan menu sempurna andalannya!"
+  },
+  "screen5": {
+    "topText": "Kami menghitung poin yang sudah kamu kumpulkan, dan wow! Kamu sudah mencapai",
+    "points": "Poin"
+  },
+  "screen6": {
+    "morning": {
+      "topText": "Always your go-to, day or night. kamu suka memesan sebelum jam 12 siang, itu artinya kamu…",
+      "buttonText": "Daybreak Catcher",
+      "description": "Energi fresh di pagi hari jadi bekal buat aktivitas seharian.\nJust rise and sip!"
+    },
+    "afternoon": {
+      "topText": "Always your go-to, day or night. kamu suka memesan sesudah jam 12 siang, itu artinya kamu…",
+      "buttonText": "Sun Chaser",
+      "description": "Kopi selalu jadi teman ngejar semangat siang sampai sore.\nStay glowing all day!"
+    },
+    "evening": {
+      "topText": "Always your go-to, day or night. kamu suka memesan sesudah jam 6 sore, itu artinya kamu…",
+      "buttonText": "Twilight Seeker",
+      "description": "Ngopi buatmu jadi ritual penutup hari.  Chill mode: ON"
+    }
+  },
+  "screen7": {
+    "topText": "Dari 300 store yang tersebar di Indonesia dan Singapura, berikut 3 tempat yang jadi favorit kamu",
+    "transactions": "x transaksi"
+  },
+  "screen8": {
+    "deliveryMore": {
+      "topText": "Selain pick up, ada opsi delivery yang gak kalah nyaman, lho!",
+      "buttonText": "Total {deliveryCount}x transaksi",
+      "cardText1": "Wah, kamu act of service banget, ya?",
+      "cardText2": "Memang, paling nyaman kalo ada yang bantu mengantarkan pesanan favoritmu!"
+    },
+    "pickupMore": {
+      "topText": "Kami tahu, kamu sering memilih pick up langsung di store!",
+      "buttonText": "Total {pickupCount}x transaksi",
+      "cardText1": "Kamu pasti perlu quality time, ya?",
+      "cardText2": "Store Fore memang nyaman buat kamu yang suka menghabiskan waktu berkualitas!"
+    }
+  },
+  "screen9": {
+    "deliveryMore": {
+      "topText": "Selain delivery, pick up juga gak kalah seru lho!",
+      "cardText1": "Pesan kopi tanpa antre di store yang nyaman dan barista kami yang ramah siap menyapamu!",
+      "additionalText": "2026 jangan lupa ke store Fore juga ya!"
+    },
+    "pickupMore": {
+      "topText": "Selain pick up, ada opsi delivery yang gak kalah nyaman, lho!",
+      "cardText1": "Ada mitra yang siap dan sigap mengantarkan kopi favoritmu tepat waktu sampai tujuan!",
+      "additionalText": "Sstt.. ada potongan harganya, lho!"
+    }
+  },
+  "screen10": {
+    "pakai": "Pakai",
+    "bikinHemat": "bikin kamu hemat sebanyak",
+    "hematRp": "Hemat Rp {amount}",
+    "bottomText": "Wow! Kamu berada di top {ranking} most saving dari puluhan ribu pengguna MyFore Plan lainnya.",
+    "bottomTextWithTop": "Wow! Kamu berada di {topRanking} most saving dari puluhan ribu pengguna MyFore Plan lainnya."
+  },
+  "screen11": {
+    "title": "Rangkuman #FOREcap 2025 kamu",
+    "totalCupDibeli": "Total Cup Dibeli",
+    "totalPoinDidapat": "Total Poin Didapat",
+    "menuTerfavorit": "Menu Terfavorit",
+    "storeTerfavorit": "Store Terfavorit",
+    "totalSaving": "Total Saving",
+    "conclusion": "Terima kasih sudah menjalani 2025 penuh warna bersama Fore Coffee"
+  },
+  "screen12": {
+    "topText1": "Coffee core boleh beda,",
+    "topText2": "semangatnya tetap sama!",
+    "bottomText1": "Yuk, tingkatkan transaksi di Fore Coffee",
+    "bottomText2": "App karena 2026 bakal banyak kejutan",
+    "bottomText3": "rasa!"
+  },
+  "shareModal": {
+    "title": "Bagikan Slide",
+    "subtitle": "Pilih slide yang ingin kamu bagikan"
+  }
+}
+

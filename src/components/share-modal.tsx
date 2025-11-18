@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { X } from 'lucide-react';
 import { captureScreenshotAsBlobUrl } from '@/lib/screenshot';
 import { shareImageUrl } from '@/lib/native-bridge';
+import { useTranslations } from '@/hooks/use-translations';
 
 interface ShareModalProps {
   isOpen: boolean;
@@ -13,6 +14,7 @@ interface ShareModalProps {
 }
 
 export function ShareModal({ isOpen, onClose, slides, onCaptureSlide }: ShareModalProps) {
+  const { t } = useTranslations();
   const [isCapturing, setIsCapturing] = useState(false);
   const [capturingSlideId, setCapturingSlideId] = useState<string | null>(null);
 
@@ -55,8 +57,8 @@ export function ShareModal({ isOpen, onClose, slides, onCaptureSlide }: ShareMod
 
         {/* Header */}
         <div className="mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Share Slide</h2>
-          <p className="text-gray-600 mt-1">Choose which slide you want to share</p>
+          <h2 className="text-2xl font-bold text-gray-900">{t('shareModal.title')}</h2>
+          <p className="text-gray-600 mt-1">{t('shareModal.subtitle')}</p>
         </div>
 
         {/* Slide list */}

@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "@/hooks/use-translations";
 
 export function Screen2NoTrx() {
   const [isVisible, setIsVisible] = useState(false);
+  const { t } = useTranslations();
 
   useEffect(() => {
     setIsVisible(true);
@@ -16,9 +18,8 @@ export function Screen2NoTrx() {
     >
         {/* Top half of card - First text */}
         <div className="flex-1 flex items-center justify-center px-6 py-8 mb-80">
-          <p className="text-white font-bold text-center text-lg leading-relaxed">
-            Wah, sayang sekali..<br />
-            Kamu belum ada recap karena selama 2025 kamu belum melakukan pembelian cup Fore apapun 😔
+          <p className="text-white font-bold text-center text-lg leading-relaxed whitespace-pre-line">
+            {t('screen2Notrx.topText')}
           </p>
         </div>
       {/* Card - half of the screen */}
@@ -34,7 +35,7 @@ export function Screen2NoTrx() {
         {/* Bottom half of card - Second text */}
         <div className="flex-1 flex items-center justify-center px-6 py-8">
           <p className="text-white font-bold text-center text-lg leading-relaxed">
-            Yuk belanja sekarang dan rasain keuntungan menggunakan aplikasi Fore Coffee bareng jutaan Fore Friends lainnya!
+            {t('screen2Notrx.bottomText')}
           </p>
         </div>
 
@@ -51,7 +52,7 @@ export function Screen2NoTrx() {
               console.log('Navigate to shop');
             }}
           >
-            Belanja Sekarang
+            {t('screen2Notrx.button')}
           </button>
         </div>
       </div>

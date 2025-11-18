@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import type { ServerResponse } from "@/types/server";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen7Props {
   serverResponse?: ServerResponse;
 }
 
 export function Screen7({ serverResponse }: Screen7Props) {
+  const { t } = useTranslations();
   const favoriteStores = serverResponse?.listFavoriteStore || [];
   // Limit to max 3 stores
   const displayStores = favoriteStores.slice(0, 3);
@@ -22,7 +24,7 @@ export function Screen7({ serverResponse }: Screen7Props) {
     >
       {/* Top Text */}
       <p className="text-white font-bold text-center text-lg mb-8 mt-16 px-4">
-        Dari 300 store yang tersebar di Indonesia dan Singapura, berikut 3 tempat yang jadi favorit kamu
+        {t('screen7.topText')}
       </p>
 
       {/* 3 bars of infographic - vertical bar graph style */}
@@ -97,7 +99,7 @@ export function Screen7({ serverResponse }: Screen7Props) {
                     {store.storeName}
                   </p>
                   <p className="text-white/90 text-xs text-center">
-                    {store.transactionCount}x transaksi
+                    {store.transactionCount} {t('screen7.transactions')}
                   </p>
                 </div>
               </div>

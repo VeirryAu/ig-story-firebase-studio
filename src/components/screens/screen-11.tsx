@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import type { ServerResponse } from "@/types/server";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen11Props {
   serverResponse?: ServerResponse;
 }
 
 export function Screen11({ serverResponse }: Screen11Props) {
+  const { t } = useTranslations();
   const trxCount = serverResponse?.trxCount || 70;
   const totalPoint = serverResponse?.totalPoint || 450;
   const favoriteProduct = serverResponse?.listProductFavorite?.[0]?.productName || 'Aren Latte';
@@ -46,7 +48,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
       <div className="relative z-10 flex flex-col flex-1 px-6 pt-8 pb-4 mt-16">
         {/* Title */}
         <h1 className="text-white font-bold text-center text-md mb-8">
-          Rangkuman #FOREcap 2025 kamu
+          {t('screen11.title')}
         </h1>
 
         {/* Data Cards Grid */}
@@ -59,7 +61,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
               style={{ backgroundColor: '#006041' }}
             >
               <p className="text-white font-bold text-xs text-center mb-2">
-                Total Cup Dibeli
+                {t('screen11.totalCupDibeli')}
               </p>
               <p 
                 className="text-xl font-bold text-center"
@@ -75,7 +77,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
               style={{ backgroundColor: '#006041' }}
             >
               <p className="text-white font-bold text-xs text-center mb-2">
-                Total Poin Didapat
+                {t('screen11.totalPoinDidapat')}
               </p>
               <p 
                 className="text-xl font-bold text-center"
@@ -92,7 +94,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
             style={{ backgroundColor: '#006041' }}
           >
             <p className="text-white font-bold text-xs text-center mb-2">
-              Menu Terfavorit
+              {t('screen11.menuTerfavorit')}
             </p>
             <p 
               className="text-xl font-bold text-center"
@@ -110,7 +112,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
               style={{ backgroundColor: '#006041' }}
             >
               <p className="text-white font-bold text-xs text-center mb-2">
-                Store Terfavorit
+                {t('screen11.storeTerfavorit')}
               </p>
               <p 
                 className="text-md font-bold text-center"
@@ -126,7 +128,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
               style={{ backgroundColor: '#006041' }}
             >
               <p className="text-white font-bold text-xs text-center mb-2">
-                Total Saving
+                {t('screen11.totalSaving')}
               </p>
               <p 
                 className="text-md font-bold text-center"
@@ -141,7 +143,7 @@ export function Screen11({ serverResponse }: Screen11Props) {
         {/* Concluding Message */}
         <div className="w-full max-w-md mx-auto mt-4 mb-6">
           <p className="text-white font-bold text-center text-base">
-            Terima kasih sudah menjalani 2025 penuh warna bersama Fore Coffee
+            {t('screen11.conclusion')}
           </p>
         </div>
       </div>

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen1Props {
   userName?: string;
@@ -9,6 +10,7 @@ interface Screen1Props {
 
 export function Screen1({ userName = "John" }: Screen1Props) {
   const [isVisible, setIsVisible] = useState(false);
+  const { t } = useTranslations();
 
   useEffect(() => {
     setIsVisible(true);
@@ -22,12 +24,12 @@ export function Screen1({ userName = "John" }: Screen1Props) {
       }`}>
         {/* Greeting */}
         <h1 className="text-lg font-bold text-white mb-4 drop-shadow-lg">
-          Hai {userName}!
+          {t('screen1.greeting', { userName })}
         </h1>
         
         {/* First paragraph */}
         <p className="text-lg font-bold text-white mb-6 max-w-md leading-relaxed drop-shadow-md">
-          Tak terasa sudah di penghujung tahun. Sudah siap cek persona kopi kamu?
+          {t('screen1.paragraph1')}
         </p>
         
         {/* "Here is your coffee core!" with rectangle background and rotation */}
@@ -36,7 +38,7 @@ export function Screen1({ userName = "John" }: Screen1Props) {
           style={{ transform: 'rotate(-1.4deg)' }}
         >
           <p className="text-lg font-bold text-white drop-shadow-md">
-            Here is your coffee core!
+            {t('screen1.coffeeCore')}
           </p>
         </div>
         
@@ -54,7 +56,7 @@ export function Screen1({ userName = "John" }: Screen1Props) {
         
         {/* Date range */}
         <p className="text-base text-white/90 drop-shadow-sm">
-          (January-November)
+          {t('common.januaryNovember')}
         </p>
       </div>
     </div>

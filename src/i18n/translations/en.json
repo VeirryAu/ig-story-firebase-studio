@@ -1,0 +1,122 @@
+{
+  "common": {
+    "share": "Share",
+    "close": "Close",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "previous": "Previous",
+    "next": "Next",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "januaryNovember": "(January-November)"
+  },
+  "loading": {
+    "title": "Take a seat, have a sip!",
+    "subtitle": "While we're doing the math for you!"
+  },
+  "screen1": {
+    "greeting": "Hi {userName}!",
+    "paragraph1": "Can't believe we're at the end of the year. Ready to check your coffee persona?",
+    "coffeeCore": "Here is your coffee core!"
+  },
+  "screen2": {
+    "topText": "Throughout 2025, you've purchased",
+    "cups": "Cups",
+    "bottomText": "Not just buying quality coffee, thank you for always supporting local farmers 🌟"
+  },
+  "screen2Notrx": {
+    "topText": "Oh, what a shame..\nYou don't have a recap yet because you haven't made any Fore cup purchases in 2025 😔",
+    "bottomText": "Let's shop now and experience the benefits of using the Fore Coffee app together with millions of other Fore Friends!",
+    "button": "Shop Now"
+  },
+  "screen3": {
+    "header": "From the {trxCount} cups you bought, your favorites are",
+    "cup": "cup"
+  },
+  "screen4": {
+    "topText": "Not many know that you are",
+    "tasteCurator": "The Taste Curator",
+    "signatureSeeker": "The Signature Seeker",
+    "tasteCuratorDesc": "The boldest to be the first to try various flavors",
+    "signatureSeekerDesc": "The most loyal to your perfect signature menu!"
+  },
+  "screen5": {
+    "topText": "We've calculated the points you've collected, and wow! You've reached",
+    "points": "Points"
+  },
+  "screen6": {
+    "morning": {
+      "topText": "Always your go-to, day or night. You like to order before 12 noon, which means you're…",
+      "buttonText": "Daybreak Catcher",
+      "description": "Fresh energy in the morning becomes fuel for your daily activities.\nJust rise and sip!"
+    },
+    "afternoon": {
+      "topText": "Always your go-to, day or night. You like to order after 12 noon, which means you're…",
+      "buttonText": "Sun Chaser",
+      "description": "Coffee is always your companion to chase the afternoon spirit until evening.\nStay glowing all day!"
+    },
+    "evening": {
+      "topText": "Always your go-to, day or night. You like to order after 6 PM, which means you're…",
+      "buttonText": "Twilight Seeker",
+      "description": "Coffee becomes your closing ritual for the day.  Chill mode: ON"
+    }
+  },
+  "screen7": {
+    "topText": "From 300 stores spread across Indonesia and Singapore, here are 3 places that are your favorites",
+    "transactions": "x transactions"
+  },
+  "screen8": {
+    "deliveryMore": {
+      "topText": "Besides pick up, there's a delivery option that's just as comfortable!",
+      "buttonText": "Total {deliveryCount}x transactions",
+      "cardText1": "Wow, you're really into acts of service, aren't you?",
+      "cardText2": "Indeed, it's most comfortable when someone helps deliver your favorite orders!"
+    },
+    "pickupMore": {
+      "topText": "We know, you often choose to pick up directly at the store!",
+      "buttonText": "Total {pickupCount}x transactions",
+      "cardText1": "You must need quality time, right?",
+      "cardText2": "Fore stores are indeed comfortable for you who like to spend quality time!"
+    }
+  },
+  "screen9": {
+    "deliveryMore": {
+      "topText": "Besides delivery, pick up is also just as exciting!",
+      "cardText1": "Order coffee without queuing at a comfortable store and our friendly baristas are ready to greet you!",
+      "additionalText": "2026 don't forget to visit Fore stores too!"
+    },
+    "pickupMore": {
+      "topText": "Besides pick up, there's a delivery option that's just as comfortable!",
+      "cardText1": "There are partners ready and quick to deliver your favorite coffee on time to your destination!",
+      "additionalText": "Psst.. there's a discount, you know!"
+    }
+  },
+  "screen10": {
+    "pakai": "Use",
+    "bikinHemat": "saves you as much as",
+    "hematRp": "Save Rp {amount}",
+    "bottomText": "Wow! You're in the top {ranking} most savings among tens of thousands of other MyFore Plan users.",
+    "bottomTextWithTop": "Wow! You're in the {topRanking} most savings among tens of thousands of other MyFore Plan users."
+  },
+  "screen11": {
+    "title": "Your #FOREcap 2025 Summary",
+    "totalCupDibeli": "Total Cups Purchased",
+    "totalPoinDidapat": "Total Points Earned",
+    "menuTerfavorit": "Favorite Menu",
+    "storeTerfavorit": "Favorite Store",
+    "totalSaving": "Total Savings",
+    "conclusion": "Thank you for going through 2025 full of color with Fore Coffee"
+  },
+  "screen12": {
+    "topText1": "Coffee core may differ,",
+    "topText2": "but the spirit remains the same!",
+    "bottomText1": "Come on, increase your transactions at Fore Coffee",
+    "bottomText2": "App because 2026 will have many flavor",
+    "bottomText3": "surprises!"
+  },
+  "shareModal": {
+    "title": "Share Slide",
+    "subtitle": "Choose which slide you want to share"
+  }
+}
+

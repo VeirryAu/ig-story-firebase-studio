@@ -3,12 +3,14 @@
 import Image from "next/image";
 import { Star } from "lucide-react";
 import type { ServerResponse } from "@/types/server";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen3Props {
   serverResponse?: ServerResponse;
 }
 
 export function Screen3({ serverResponse }: Screen3Props) {
+  const { t } = useTranslations();
   const trxCount = serverResponse?.trxCount || 0;
   const favoriteProducts = serverResponse?.listProductFavorite || [];
 
@@ -20,7 +22,7 @@ export function Screen3({ serverResponse }: Screen3Props) {
       {/* Header Text */}
       <div className="px-6 pt-8 pb-4 mt-20 mb-10">
         <p className="text-white font-bold text-center text-lg leading-relaxed">
-          Dari {trxCount} cup yang kamu beli, favoritmu adalah
+          {t('screen3.header', { trxCount })}
         </p>
       </div>
 
@@ -66,7 +68,7 @@ export function Screen3({ serverResponse }: Screen3Props) {
                   {product.productName}
                 </p>
                 <p className="text-white/90 text-sm">
-                  {product.countCups} cup
+                  {product.countCups} {t('screen3.cup')}
                 </p>
               </div>
 

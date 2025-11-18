@@ -10,8 +10,10 @@ import { stories as storyData } from '@/lib/story-data';
 import config from '@/lib/const.json';
 import { checkDateRestriction, validateAuthHeaders } from '@/lib/auth';
 import { isDevMode } from '@/lib/env';
+import { useTranslations } from '@/hooks/use-translations';
 
 export default function Home() {
+  const { t } = useTranslations();
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -385,8 +387,8 @@ export default function Home() {
               />
             </div>
             <div className="text-white text-lg font-bold leading-relaxed whitespace-pre-line">
-              Take a seat, have a sip!{"\n"}
-              While we're doing the math for you!
+              {t('loading.title')}{"\n"}
+              {t('loading.subtitle')}
             </div>
             <LoadingSpinner />
           </div>

@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import type { ServerResponse } from "@/types/server";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen12Props {
   serverResponse?: ServerResponse;
 }
 
 export function Screen12({ serverResponse }: Screen12Props) {
+  const { t } = useTranslations();
   // Get circular images from serverResponse, default to 10 placeholder images
   const circularImages = serverResponse?.listCircularImages || Array(10).fill(null).map((_, i) => 
     `https://images.unsplash.com/photo-${1500000000000 + i}?w=200&h=200&fit=crop&crop=center`
@@ -23,10 +25,10 @@ export function Screen12({ serverResponse }: Screen12Props) {
         {/* Top Text */}
         <div className="text-center mb-8">
           <p className="text-white font-bold text-xl mb-2">
-            Coffee core boleh beda,
+            {t('screen12.topText1')}
           </p>
           <p className="text-white font-bold text-xl">
-            semangatnya tetap sama!
+            {t('screen12.topText2')}
           </p>
         </div>
 
@@ -104,13 +106,13 @@ export function Screen12({ serverResponse }: Screen12Props) {
          {/* Bottom Text */}
         <div className="text-center mt-auto mb-32">
           <p className="text-white font-bold text-lg mb-1">
-            Yuk, tingkatkan transaksi di Fore Coffee
+            {t('screen12.bottomText1')}
           </p>
           <p className="text-white font-bold text-lg mb-1">
-            App karena 2026 bakal banyak kejutan
+            {t('screen12.bottomText2')}
           </p>
           <p className="text-white font-bold text-lg">
-            rasa!
+            {t('screen12.bottomText3')}
           </p>
         </div>
         </div>

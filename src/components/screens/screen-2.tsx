@@ -1,12 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen2Props {
   trxCount?: number;
 }
 
 export function Screen2({ trxCount = 0 }: Screen2Props) {
+  const { t } = useTranslations();
+
   return (
     <div 
       className="relative w-full h-full flex flex-col"
@@ -20,7 +23,7 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
       >
         {/* Top text */}
         <p className="text-white font-bold text-center text-lg mt-16 mb-6">
-          Sepanjang 2025, kamu telah membeli
+          {t('screen2.topText')}
         </p>
 
         {/* Infographic circle with overflow logo */}
@@ -35,7 +38,7 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
                 {trxCount}
               </div>
               <div className="text-white font-bold text-md mt-1">
-                Cups
+                {t('screen2.cups')}
               </div>
             </div>
           </div>
@@ -70,7 +73,7 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
         {/* Bottom half of card - Second text */}
         <div className="flex items-center justify-center px-6 pt-8 pb-6">
           <p className="text-white font-bold text-center text-lg leading-relaxed">
-            Tidak hanya membeli kopi berkualitas, terima kasih selalu mendukung para petani lokal 🌟
+            {t('screen2.bottomText')}
           </p>
         </div>
 

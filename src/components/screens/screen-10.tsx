@@ -2,12 +2,14 @@
 
 import Image from "next/image";
 import type { ServerResponse } from "@/types/server";
+import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen10Props {
   serverResponse?: ServerResponse;
 }
 
 export function Screen10({ serverResponse }: Screen10Props) {
+  const { t, locale } = useTranslations();
   const userName = serverResponse?.userName || 'User';
   const cheaperSubsDesc = serverResponse?.cheaperSubsDesc || '325rb Rupiah';
   const cheaperSubsAmount = serverResponse?.cheaperSubsAmount || 325500;
@@ -15,7 +17,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
 
   // Format the amount for display
   const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat('id-ID').format(amount);
+    return new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-SG').format(amount);
   };
 
   return (
@@ -27,7 +29,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
       <div className="px-6 pt-8 pb-4 mt-16 relative z-10">
         {/* Pakai my FORE Plan */}
         <div className="flex items-center justify-center gap-2 mb-4">
-          <p className="text-white font-bold text-lg">Pakai</p>
+          <p className="text-white font-bold text-lg">{t('screen10.pakai')}</p>
           <div className="relative">
             <Image
               src="/stories-asset/slides10/slide10-myforeplan.png"
@@ -42,7 +44,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
 
         {/* bikin kamu hemat sebanyak */}
         <p className="text-white font-bold text-center text-lg mb-6">
-          bikin kamu hemat sebanyak
+          {t('screen10.bikinHemat')}
         </p>
 
         {/* Savings Button */}
@@ -83,7 +85,7 @@ export function Screen10({ serverResponse }: Screen10Props) {
                 {userName}
               </p>
               <p className="text-white font-bold text-base">
-                Hemat Rp {formatAmount(cheaperSubsAmount)}
+                {t('screen10.hematRp', { amount: formatAmount(cheaperSubsAmount) })}
               </p>
             </div>
           </div>
@@ -116,17 +118,28 @@ export function Screen10({ serverResponse }: Screen10Props) {
       >
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-6">
           <p className="text-white font-bold text-center text-base leading-relaxed">
-            Wow! Kamu berada di{' '}
-            <span 
-              className="px-2 py-1 inline-block"
-              style={{ 
-                backgroundColor: 'rgba(39, 181, 200, 1)',
-                transform: 'rotate(-5.28deg)',
-              }}
-            >
-              top {topRanking}
-            </span>
-            {' '}most saving dari puluhan ribu pengguna MyFore Plan lainnya.
+            {(() => {
+              const text = t('screen10.bottomText', { ranking: topRanking });
+              const parts = text.split(`top ${topRanking}`);
+              if (parts.length === 2) {
+                return (
+                  <>
+                    {parts[0]}
+                    <span 
+                      className="px-2 py-1 inline-block"
+                      style={{ 
+                        backgroundColor: 'rgba(39, 181, 200, 1)',
+                        transform: 'rotate(-5.28deg)',
+                      }}
+                    >
+                      top {topRanking}
+                    </span>
+                    {parts[1]}
+                  </>
+                );
+              }
+              return text;
+            })()}
           </p>
         </div>
       </div>
