@@ -18,7 +18,7 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
       {/* Card - 1/3 of the screen */}
       <div 
         className="relative w-full flex flex-col items-center px-6 pt-8 pb-12 overflow-visible"
-        style={{
+            style={{
         }}
       >
         {/* Top text */}

@@ -10,6 +10,7 @@ declare global {
     AndroidBridge?: {
       closeWebView: () => void;
       shareImageUrl: (url: string) => void;
+      shareUrl: (url: string) => void;
       track: (eventName: string, eventValue: string) => void;
       handleDeeplink: (deeplinkUrl: string) => void;
     };
@@ -19,6 +20,9 @@ declare global {
           postMessage: (data: any) => void;
         };
         shareImageUrl?: {
+          postMessage: (data: { url: string }) => void;
+        };
+        shareUrl?: {
           postMessage: (data: { url: string }) => void;
         };
         track?: {
@@ -81,7 +85,35 @@ export function shareImageUrl(url: string): void {
   // Fallback for browser (debug mode)
   if (isDevMode()) {
     console.log('[NativeBridge] shareImageUrl() called with URL:', url);
-    // In development, we might want to open the image in a new tab
+    // In development, just log - don't open new tab
+  }
+}
+
+/**
+ * Shares a URL to native app for sharing (for fullscreen slide sharing)
+ * @param url - The URL to share
+ */
+export function shareUrl(url: string): void {
+  if (!url) {
+    console.error('[NativeBridge] shareUrl: URL is required');
+    return;
+  }
+
+  // Android
+  if (typeof window !== 'undefined' && (window as any).AndroidBridge?.shareUrl) {
+    (window as any).AndroidBridge.shareUrl(url);
+    return;
+  }
+
+  // iOS
+  if (typeof window !== 'undefined' && (window as any).webkit?.messageHandlers?.shareUrl) {
+    (window as any).webkit.messageHandlers.shareUrl.postMessage({ url });
+    return;
+  }
+
+  // Fallback for browser (debug mode)
+  if (isDevMode()) {
+    console.log('[NativeBridge] shareUrl() called with URL:', url);
     window.open(url, '_blank');
   }
 }

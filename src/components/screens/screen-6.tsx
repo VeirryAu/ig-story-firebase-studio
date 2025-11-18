@@ -77,12 +77,12 @@ export function Screen6() {
       <div className="relative mb-6">
         <div 
           className="relative rounded-full overflow-hidden"
-          style={{
+            style={{
             border: `14px solid ${config.secondaryColor}`,
             width: '280px',
             height: '280px',
-          }}
-        >
+            }}
+          >
           <Image
             src={config.imageSrc}
             alt={config.buttonText}
@@ -90,14 +90,14 @@ export function Screen6() {
             className="object-cover"
             priority
           />
-        </div>
+          </div>
       </div>
 
       {/* Button with Title */}
       <div 
         className="px-6 py-3 rounded-full mb-4"
         style={{ backgroundColor: config.secondaryColor }}
-      >
+            >
         <p className="text-white font-bold text-base text-center">
           {config.buttonText}
         </p>

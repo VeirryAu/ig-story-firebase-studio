@@ -42,7 +42,7 @@ export function Screen4({ serverResponse }: Screen4Props) {
       <div className="relative mb-6">
         <div 
           className="relative rounded-full overflow-hidden"
-          style={{
+            style={{
             border: '14px solid rgba(0, 84, 107, 1)',
             width: '280px',
             height: '280px',
@@ -62,7 +62,7 @@ export function Screen4({ serverResponse }: Screen4Props) {
       <div 
         className="px-6 py-3 rounded-full mb-4"
         style={{ backgroundColor: secondaryColor }}
-      >
+            >
         <p className="text-white font-bold text-base text-center">
           {buttonTextDescription}
         </p>

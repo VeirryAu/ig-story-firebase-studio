@@ -39,13 +39,13 @@ export function Screen7({ serverResponse }: Screen7Props) {
           const barHeight = minHeight + ((maxHeight - minHeight) * (barHeightPercentage / 100));
           
           return (
-            <div
+          <div
               key={index}
               className="flex flex-col items-center relative"
-              style={{ 
+            style={{
                 width: '100px',
                 height: `${barHeight}px`,
-              }}
+            }}
             >
               {/* Vertical Bar */}
               <div
@@ -71,8 +71,8 @@ export function Screen7({ serverResponse }: Screen7Props) {
                         alt={store.storeName}
                         fill
                         className="object-cover"
-                      />
-                    </div>
+              />
+            </div>
                   ) : (
                     <div 
                       className="relative rounded-full flex items-center justify-center"
@@ -88,7 +88,7 @@ export function Screen7({ serverResponse }: Screen7Props) {
                       </span>
                     </div>
                   )}
-                </div>
+          </div>
 
                 {/* Spacer to push content to bottom */}
                 <div className="flex-1"></div>
@@ -102,8 +102,8 @@ export function Screen7({ serverResponse }: Screen7Props) {
                     {store.transactionCount} {t('screen7.transactions')}
                   </p>
                 </div>
-              </div>
-            </div>
+          </div>
+        </div>
           );
         })}
       </div>

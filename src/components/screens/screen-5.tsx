@@ -27,7 +27,7 @@ export function Screen5({ serverResponse }: Screen5Props) {
 
       {/* Infographic circle - similar to screen-2 but without logo */}
       <div className="relative mb-8">
-        <div 
+          <div
           className="relative w-52 h-52 rounded-full flex flex-col items-center justify-center"
           style={{ backgroundColor: '#2DB288' }}
         >

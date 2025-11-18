@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
-import { captureScreenshotAsBlobUrl } from '@/lib/screenshot';
 import { shareImageUrl } from '@/lib/native-bridge';
 import { useTranslations } from '@/hooks/use-translations';
 
@@ -25,18 +24,17 @@ export function ShareModal({ isOpen, onClose, slides, onCaptureSlide }: ShareMod
       setIsCapturing(true);
       setCapturingSlideId(slideId);
       
-      // Navigate to the slide first (this should be handled by parent)
-      // Then capture screenshot
-      const imageUrl = await onCaptureSlide(slideId);
+      // Get the share URL for the slide
+      const shareUrlString = await onCaptureSlide(slideId);
       
-      // Share the image
-      shareImageUrl(imageUrl);
+      // Share the URL using shareImageUrl
+      shareImageUrl(shareUrlString);
       
       // Close modal after sharing
       onClose();
     } catch (error) {
-      console.error('Error capturing slide:', error);
-      alert('Failed to capture slide. Please try again.');
+      console.error('Error generating share URL:', error);
+      alert('Failed to generate share URL. Please try again.');
     } finally {
       setIsCapturing(false);
       setCapturingSlideId(null);
@@ -64,8 +62,8 @@ export function ShareModal({ isOpen, onClose, slides, onCaptureSlide }: ShareMod
         {/* Slide list */}
         <div className="space-y-2">
           {slides.map((slide) => {
-            const isCapturingThis = capturingSlideId === slide.id;
-            const isDisabled = isCapturing && !isCapturingThis;
+            const isGenerating = capturingSlideId === slide.id;
+            const isDisabled = isCapturing && !isGenerating;
 
             return (
               <button
@@ -73,7 +71,7 @@ export function ShareModal({ isOpen, onClose, slides, onCaptureSlide }: ShareMod
                 onClick={() => handleShareSlide(slide.id)}
                 disabled={isDisabled}
                 className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all ${
-                  isCapturingThis
+                  isGenerating
                     ? 'border-blue-500 bg-blue-50'
                     : isDisabled
                     ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
@@ -82,7 +80,7 @@ export function ShareModal({ isOpen, onClose, slides, onCaptureSlide }: ShareMod
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-gray-900">{slide.label}</span>
-                  {isCapturingThis && (
+                  {isGenerating && (
                     <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   )}
                 </div>

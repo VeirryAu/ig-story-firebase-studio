@@ -20,15 +20,25 @@ export default function Home() {
   const [showStories, setShowStories] = useState(false);
   const [serverResponse, setServerResponse] = useState<ServerResponse | null>(null);
   const [fullscreenSlide, setFullscreenSlide] = useState<string | null>(null);
+  const [fullscreenDuration, setFullscreenDuration] = useState<number | null>(null);
   const audioPreloadRef = useRef<HTMLAudioElement | null>(null);
 
-  // Check URL parameters for fullscreen mode
+  // Check URL parameters for fullscreen mode and duration
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const fullscreenParam = params.get('fullscreen');
+      const durationParam = params.get('duration');
+      
       if (fullscreenParam) {
         setFullscreenSlide(fullscreenParam);
+      }
+      
+      if (durationParam) {
+        const duration = parseInt(durationParam, 10);
+        if (!isNaN(duration) && duration > 0) {
+          setFullscreenDuration(duration);
+        }
       }
     }
   }, []);
@@ -367,8 +377,38 @@ export default function Home() {
         onClose={handleClose} 
         serverResponse={serverResponse || undefined}
         fullscreenSlide={fullscreenSlide || undefined}
+        fullscreenDuration={fullscreenDuration || undefined}
       />
     );
+  }
+
+  // In fullscreen mode, don't show loading page - just show blank screen while loading
+  if (fullscreenSlide) {
+    if (isLoading) {
+      // Show blank black screen while loading in fullscreen mode
+      return (
+        <main 
+          className="flex min-h-screen flex-col items-center justify-center"
+          style={{ backgroundColor: '#000000' }}
+        >
+          {/* Blank screen - no loading indicator */}
+        </main>
+      );
+    }
+    
+    if (error) {
+      return (
+        <main 
+          className="flex min-h-screen flex-col items-center justify-center p-8"
+          style={{ backgroundColor: '#000000' }}
+        >
+          <div className="text-center">
+            <p className="text-white mb-4">Error: {error}</p>
+            <p className="text-white/70">Could not load stories. Please try again later.</p>
+          </div>
+        </main>
+      );
+    }
   }
 
   return (

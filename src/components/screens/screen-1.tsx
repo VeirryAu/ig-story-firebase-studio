@@ -33,7 +33,7 @@ export function Screen1({ userName = "John" }: Screen1Props) {
         </p>
         
         {/* "Here is your coffee core!" with rectangle background and rotation */}
-        <div 
+          <div
           className="mb-40 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-lg"
           style={{ transform: 'rotate(-1.4deg)' }}
         >
@@ -52,8 +52,8 @@ export function Screen1({ userName = "John" }: Screen1Props) {
             className="object-contain drop-shadow-2xl"
             priority
           />
-        </div>
-        
+      </div>
+
         {/* Date range */}
         <p className="text-base text-white/90 drop-shadow-sm">
           {t('common.januaryNovember')}

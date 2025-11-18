@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "@/hooks/use-translations";
 
-export function Screen2NoTrx() {
+interface Screen2NoTrxProps {
+  onShopClick?: () => void;
+}
+
+export function Screen2NoTrx({ onShopClick }: Screen2NoTrxProps) {
   const [isVisible, setIsVisible] = useState(false);
   const { t } = useTranslations();
 
@@ -48,8 +52,7 @@ export function Screen2NoTrx() {
               color: '#006041'
             }}
             onClick={() => {
-              // TODO: Add navigation to shop page
-              console.log('Navigate to shop');
+              onShopClick?.();
             }}
           >
             {t('screen2Notrx.button')}

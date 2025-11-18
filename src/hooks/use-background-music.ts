@@ -186,7 +186,7 @@ export function useBackgroundMusic({
     // This allows playback to start before the entire file is downloaded
     const startProgressiveLoad = () => {
       // Load metadata first (fast)
-      audio.load();
+    audio.load();
       
       // Once metadata is loaded, start buffering progressively
       const handleLoadedMetadata = () => {
@@ -235,23 +235,23 @@ export function useBackgroundMusic({
 
     // If audio is ready, handle play/pause immediately
     if (isReady) {
-      if (isPlaying) {
+    if (isPlaying) {
         // Don't reset currentTime - let it continue playing from where it is
         // Only play if it's paused
         if (audio.paused) {
           const playPromise = audio.play();
           if (playPromise !== undefined) {
             playPromise.catch((error) => {
-              if (error.name === 'NotAllowedError') {
-                console.warn('Autoplay blocked for background music');
+        if (error.name === 'NotAllowedError') {
+          console.warn('Autoplay blocked for background music');
               } else {
                 console.warn('Failed to play background music:', error);
               }
             });
           }
         }
-      } else {
-        audio.pause();
+    } else {
+      audio.pause();
       }
     } else if (isPlaying) {
       // If not ready yet but should be playing, wait for ready state
