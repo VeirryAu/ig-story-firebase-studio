@@ -10,7 +10,7 @@ USE forecap_db;
 
 -- Single table for all user recap data
 CREATE TABLE IF NOT EXISTS user_recap_data (
-    user_id INT UNSIGNED NOT NULL PRIMARY KEY,
+    user_id BIGINT NOT NULL PRIMARY KEY,
     user_name VARCHAR(255) NOT NULL,
     trx_count INT UNSIGNED NOT NULL DEFAULT 0,
     variant_count INT UNSIGNED DEFAULT NULL,
@@ -27,13 +27,8 @@ CREATE TABLE IF NOT EXISTS user_recap_data (
     list_product_favorite JSON DEFAULT NULL,
     list_favorite_store JSON DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    -- Indexes for common queries
-    INDEX idx_trx_count (trx_count),
-    INDEX idx_updated_at (updated_at)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-PARTITION BY HASH(user_id) PARTITIONS 16;
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Optimize InnoDB settings (run these after table creation)
 -- SET GLOBAL innodb_buffer_pool_size = 24G;  -- Adjust based on available RAM

@@ -1,5 +1,5 @@
 # Multi-stage build for optimized Docker image
-FROM node:20-alpine AS builder
+FROM node:20 AS builder
 
 WORKDIR /app
 
@@ -9,7 +9,7 @@ COPY tsconfig.json ./
 COPY nest-cli.json ./
 
 # Install dependencies
-RUN npm ci
+RUN npm i
 
 # Copy source code
 COPY src ./src
@@ -18,22 +18,16 @@ COPY src ./src
 RUN npm run build
 
 # Production stage
-FROM node:20-alpine
+FROM node:20
 
 WORKDIR /app
 
 # Install only production dependencies
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm i --only=production
 
 # Copy built application
 COPY --from=builder /app/dist ./dist
-
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nestjs -u 1001
-
-USER nestjs
 
 # Expose port
 EXPOSE 3000

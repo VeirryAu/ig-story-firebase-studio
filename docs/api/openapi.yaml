@@ -30,12 +30,12 @@ info:
     name: Proprietary
 
 servers:
-  - url: https://api.forecoffee.com/v1
+  - url: https://api.forecoffee.com
     description: Production server
-  - url: https://api-staging.forecoffee.com/v1
+  - url: https://api-staging.forecoffee.com
     description: Staging server
-  - url: http://localhost:9002
-    description: Local development server
+  - url: http://localhost:3000
+    description: Local development server (Docker / npm run start:dev)
 
 tags:
   - name: User Data
@@ -53,43 +53,33 @@ paths:
         points information, and other personalized data for the story viewer.
       operationId: getUserRecapData
       parameters:
-        - name: user_id
-          in: query
-          description: User ID (alternative to header, for client-side usage)
-          required: false
-          schema:
-            type: integer
-            format: int64
         - name: timestamp
-          in: query
-          description: ISO 8601 timestamp (alternative to header, for client-side usage)
-          required: false
+          in: header
+          description: |
+            ISO 8601 timestamp used for request validation. Must be within ±10 minutes
+            of current server time.
+          required: true
           schema:
             type: string
             format: date-time
             example: "2025-11-10T20:00:00.000Z"
+        - name: user_id
+          in: header
+          description: User ID (integer) corresponding to the recap data to fetch.
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 12345
         - name: sign
-          in: query
-          description: Base64 signature (alternative to header, for client-side usage)
-          required: false
+          in: header
+          description: |
+            Base64 signature calculated as `base64(timestamp + "forecap2025" + user_id)`
+            where `timestamp` is the exact string sent in the `timestamp` header.
+          required: true
           schema:
             type: string
             example: "MjAyNS0xMS0xMFQyMDowMDowMC4wMDBaZm9yZWNhcDIwMjUxMjM0NQ=="
-        - name: fullscreen
-          in: query
-          description: Slide ID for fullscreen mode (e.g., "screen-01", "screen-1")
-          required: false
-          schema:
-            type: string
-            pattern: "^screen-\\d+$"
-            example: "screen-01"
-        - name: dev
-          in: query
-          description: Enable development mode (bypasses authentication and date restrictions)
-          required: false
-          schema:
-            type: boolean
-            default: false
       security:
         - ApiKeyAuth: []
       responses:

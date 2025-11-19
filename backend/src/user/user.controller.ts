@@ -1,7 +1,7 @@
 import {
   Controller,
   Get,
-  Header,
+  Headers,
   HttpCode,
   HttpStatus,
   UnauthorizedException,
@@ -26,9 +26,9 @@ export class UserController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 404, description: 'User not found' })
   async getUserData(
-    @Header('timestamp') timestamp: string,
-    @Header('user_id') userId: string,
-    @Header('sign') sign: string,
+    @Headers('timestamp') timestamp: string,
+    @Headers('user_id') userId: string,
+    @Headers('sign') sign: string,
   ) {
     // Validate authentication
     const authResult = validateAuthHeaders({

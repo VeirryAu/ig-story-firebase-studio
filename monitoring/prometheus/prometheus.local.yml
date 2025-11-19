@@ -22,16 +22,15 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  # NestJS Application Metrics (from EC2)
-  # IMPORTANT: Replace YOUR_EC2_IP with your actual EC2 public IP address
-  # Example: targets: ['54.123.45.67:3000']
+  # NestJS Application Metrics (Local Docker Backend)
+  # This targets the backend API running in Docker on your MacBook
   - job_name: 'forecap-api'
     scrape_interval: 5s
     metrics_path: '/metrics'
     static_configs:
-      - targets: ['YOUR_EC2_IP:3000']  # Replace YOUR_EC2_IP with actual IP
+      - targets: ['host.docker.internal:3000']  # Local Docker backend
         labels:
           service: 'forecap-api'
-          environment: 'load-test'
-          instance: 'ec2-t3-medium'
+          environment: 'local'
+          instance: 'macbook-docker'
 
