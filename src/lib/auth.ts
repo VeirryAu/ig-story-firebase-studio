@@ -4,6 +4,54 @@
  */
 
 import { isDevMode } from './env';
+import config from './const.json';
+
+type DateRestrictionConfig = {
+  enabled?: boolean;
+  expirationDate?: string;
+  enforceInDev?: boolean;
+  devOverrideDate?: string | null;
+};
+
+const DEFAULT_EXPIRATION = '2025-12-31T23:59:59.999Z';
+const dateRestrictionConfig: DateRestrictionConfig =
+  config.dateRestriction || { enabled: true, expirationDate: DEFAULT_EXPIRATION };
+
+function parseDate(value?: string | null): Date | null {
+  if (!value) {
+    return null;
+  }
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function getEffectiveExpirationDate(): Date | null {
+  const enabled = dateRestrictionConfig.enabled !== false;
+  if (!enabled) {
+    return null;
+  }
+
+  const baseDate =
+    parseDate(dateRestrictionConfig.expirationDate) || new Date(DEFAULT_EXPIRATION);
+
+  if (isDevMode()) {
+    if (dateRestrictionConfig.enforceInDev) {
+      const devOverride = parseDate(dateRestrictionConfig.devOverrideDate);
+      return devOverride || baseDate;
+    }
+    return null;
+  }
+
+  return baseDate;
+}
+
+export function hasDateRestrictionExpired(referenceDate: Date = new Date()): boolean {
+  const expirationDate = getEffectiveExpirationDate();
+  if (!expirationDate) {
+    return false;
+  }
+  return referenceDate.getTime() > expirationDate.getTime();
+}
 
 /**
  * Validates authentication headers for production
@@ -74,18 +122,15 @@ export function validateAuthHeaders(headers: Headers | Record<string, string | n
  * @returns { valid: boolean, error?: string }
  */
 export function checkDateRestriction(): { valid: boolean; error?: string } {
-  // Skip date restriction in development
-  if (isDevMode()) {
+  const expirationDate = getEffectiveExpirationDate();
+  if (!expirationDate) {
     return { valid: true };
   }
 
-  const expirationDate = new Date('2025-12-31T23:59:59.999Z');
-  const now = new Date();
-
-  if (now > expirationDate) {
+  if (hasDateRestrictionExpired()) {
     return {
       valid: false,
-      error: 'This content is no longer available after December 31, 2025',
+      error: `This content is no longer available after ${expirationDate.toISOString()}`,
     };
   }
 

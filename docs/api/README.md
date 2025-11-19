@@ -50,7 +50,7 @@ In production, requests must include:
 
 - **Header**: `timestamp` (ISO 8601 format)
 - **Header**: `user_id` (integer)
-- **Header**: `sign` (Base64 encoded: `base64(timestamp + "forecap2025" + user_id)`)
+- **Header**: `sign` = `base64(timestamp + user_id)` (if the backend sets `AUTH_SIGNATURE_SECRET`, append it between timestamp and user_id before encoding)
 
 Alternatively, these can be passed as query parameters for client-side usage.
 
@@ -60,7 +60,7 @@ Alternatively, these can be passed as query parameters for client-side usage.
 curl -X GET "https://api.forecoffee.com/v1/api/user-data" \
   -H "timestamp: 2025-11-10T20:00:00.000Z" \
   -H "user_id: 12345" \
-  -H "sign: MjAyNS0xMS0xMFQyMDowMDowMC4wMDBaZm9yZWNhcDIwMjUxMjM0NQ=="
+  -H "sign: MjAyNS0xMS0xMFQyMDowMDowMC4wMDBaMTIzNDU="
 ```
 
 ## Example Response

@@ -44,6 +44,9 @@ REDIS_PASSWORD=
 PORT=3000
 NODE_ENV=development
 ALLOWED_ORIGINS=http://localhost:9002
+
+# Authentication (optional)
+# AUTH_SIGNATURE_SECRET=forecap2025
 ```
 
 ### Development
@@ -72,7 +75,7 @@ Get user recap data by user_id.
 **Headers:**
 - `timestamp`: ISO 8601 timestamp
 - `user_id`: User ID (integer)
-- `sign`: Base64(timestamp + "forecap2025" + user_id)
+- `sign`: `base64(timestamp + user_id)` (if you set `AUTH_SIGNATURE_SECRET`, append it between timestamp and user_id)
 
 **Response:**
 ```json
@@ -100,6 +103,8 @@ docker-compose logs -f api
 # Stop
 docker-compose down
 ```
+
+> **MySQL tuning:** Docker Compose automatically mounts `./mysql/conf.d/tuning.cnf`, which sets a 2 GB buffer pool, larger redo logs, and other defaults sized for ~2M MAU traffic. Adjust these values (or copy them into your RDS parameter group) if you change instance sizes.
 
 ### Production Build
 

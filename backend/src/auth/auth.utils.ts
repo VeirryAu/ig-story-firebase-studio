@@ -26,11 +26,29 @@ export function validateAuthHeaders(headers: AuthHeaders): AuthResult {
   const now = new Date();
   const diffMinutes = (now.getTime() - timestampDate.getTime()) / 1000 / 60;
 
-  if (isNaN(diffMinutes) || diffMinutes < 0 || diffMinutes > 10) {
-    return {
-      valid: false,
-      error: 'Invalid or expired timestamp',
-    };
+  // --- Define Tolerance Boundary ---
+  const MAX_AGE_MINUTES = 10;   // Request cannot be older than 10 minutes.
+  const SKEW_TOLERANCE_MINUTES = 2; // Allows the client's clock to be up to 2 minutes fast.
+
+  if (isNaN(diffMinutes)) {
+      // Fails if the timestamp string is completely invalid (returns NaN)
+      return { valid: false, error: 'Invalid timestamp format' };
+  }
+
+  // Check 1: Too Old (More than 10 minutes in the past)
+  if (diffMinutes > MAX_AGE_MINUTES) {
+      return {
+          valid: false,
+          error: `Expired. Request is ${diffMinutes.toFixed(2)} minutes old (Max: 10m)`,
+      };
+  }
+
+  // Check 2: Too Fast (More than 2 minutes in the future)
+  if (diffMinutes < -SKEW_TOLERANCE_MINUTES) {
+      return {
+          valid: false,
+          error: `Invalid. Client clock is ${Math.abs(diffMinutes).toFixed(2)} minutes fast (Max Skew: 2m)`,
+      };
   }
 
   // Validate signature (base64(timestamp + [secret] + user_id))

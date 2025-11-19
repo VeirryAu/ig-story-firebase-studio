@@ -313,6 +313,7 @@ cd backend/load-test
 # Set EC2 IP address
 export EC2_IP=your-ec2-public-ip
 export BASE_URL=http://${EC2_IP}:3000
+export SIGNATURE_SECRET=${AUTH_SIGNATURE_SECRET:-""}  # Leave empty if backend uses default signature
 ```
 
 ### Test Scenarios
@@ -484,6 +485,18 @@ ORDER BY trx_range;
 | **CPU Usage** | < 60% | < 80% | > 80% |
 | **Memory Usage** | < 70% | < 85% | > 85% |
 
+### 2M MAU Load Test Targets
+
+To reliably serve ~2 million monthly active users (peaks of ~1200 RPS) aim for:
+
+| Script | Scenario Focus | Target Throughput | p95 Response | p99 Response | Error Rate |
+|--------|----------------|------------------|--------------|--------------|------------|
+| `k6-test.js` | Mixed smoke/load/stress | ≥ 1,200 RPS | < 150 ms | < 300 ms | < 0.5% |
+| `k6-prometheus.js` | Same as `k6-test` + Prometheus remote write | ≥ 1,100 RPS | < 150 ms | < 320 ms | < 0.5% |
+| `k6-realistic-test.js` | Realistic user distribution | ≥ 900 RPS | < 180 ms | < 350 ms | < 0.5% |
+
+If you increase desired MAU, scale targets linearly (e.g., 3M MAU ⇒ try for ~1,800 RPS headroom).
+
 ### Decision Matrix
 
 **If performance meets targets:**
@@ -534,6 +547,23 @@ ORDER BY trx_range;
 2. **Optimize Code**: Profile and optimize hot paths
 3. **Reduce Overhead**: Minimize logging in production
 4. **Horizontal Scale**: Add more instances
+
+## MySQL Tuning for 2M MAU
+
+For the Docker deployment we ship a tuned MySQL config at `backend/mysql/conf.d/tuning.cnf` (mounted automatically). The key settings are:
+
+| Setting | Value | Why |
+|---------|-------|-----|
+| `innodb_buffer_pool_size` | 2G | Keep hot dataset in memory |
+| `innodb_log_file_size` | 512M | Fewer checkpoints under heavy write bursts |
+| `innodb_flush_log_at_trx_commit` | 2 | Better throughput with acceptable durability trade-off |
+| `innodb_io_capacity` | 2000 | Match modern NVMe throughput |
+| `max_connections` | 500 | Headroom for connection pooling |
+| `thread_cache_size` | 128 | Reduce thread creation overhead |
+| `table_open_cache` | 2000 | Minimize table cache misses |
+| `tmp_table_size` / `max_heap_table_size` | 64M | Prevent on-disk temporary tables |
+
+Adjust upwards if you run on larger EC2 instances. For RDS, apply similar values via Parameter Group.
 
 ## Step 9: Generate Load Test Report
 

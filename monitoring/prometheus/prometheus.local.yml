@@ -34,3 +34,21 @@ scrape_configs:
           environment: 'local'
           instance: 'macbook-docker'
 
+  # MySQL Exporter
+  - job_name: 'mysql-exporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['mysql-exporter:9104']
+        labels:
+          service: 'mysql'
+          environment: 'local'
+
+  # Redis Exporter
+  - job_name: 'redis-exporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'redis'
+          environment: 'local'
+

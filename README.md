@@ -218,11 +218,17 @@ Main configuration file for the application:
 
 ```json
 {
-  "slideDuration": 10000,           // Duration per slide in milliseconds
+  "slideDuration": 10000,
   "backgroundMusic": "/stories-asset/main/sunset-in-bali-audio.aac",
-  "devPauseOnSlide": null,          // Pause on specific slide (dev only)
-  "devMaxSlide": null,              // Limit to specific slide index (dev only)
-  "devTrxCount": 100                // Mock transaction count (dev only)
+  "devPauseOnSlide": null,
+  "devMaxSlide": null,
+  "devTrxCount": 100,
+  "dateRestriction": {
+    "enabled": true,
+    "expirationDate": "2025-12-31T23:59:59.999Z",
+    "enforceInDev": false,
+    "devOverrideDate": null
+  }
 }
 ```
 
@@ -231,6 +237,13 @@ Main configuration file for the application:
 - **`devPauseOnSlide`**: Pauses the story at a specific slide index (useful for testing)
 - **`devMaxSlide`**: Limits the story to show only up to a specific slide index
 - **`devTrxCount`**: Sets a mock transaction count for development
+- **`dateRestriction`**: Controls expiration behavior. Set `expirationDate`, toggle `enabled`, and optionally enforce or override the date in development.
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `AUTH_SIGNATURE_SECRET` | Optional secret string appended between `timestamp` and `user_id` before Base64 encoding the `sign` header. Leave unset for the default `base64(timestamp + user_id)` signature. |
 
 **Note**: These features only work in development mode (`NODE_ENV === 'development'`).
 

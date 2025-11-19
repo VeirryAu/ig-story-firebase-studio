@@ -417,10 +417,17 @@ ALLOWED_ORIGINS=http://localhost:9002
 
 ```json
 {
-  "devTrxCount": 100,
-  "devMaxSlide": 13,
+  "slideDuration": 10000,
+  "backgroundMusic": "/stories-asset/main/sunset-in-bali-audio.aac",
   "devPauseOnSlide": null,
-  "slideDuration": 10000
+  "devMaxSlide": 13,
+  "devTrxCount": 100,
+  "dateRestriction": {
+    "enabled": true,
+    "expirationDate": "2025-12-31T23:59:59.999Z",
+    "enforceInDev": false,
+    "devOverrideDate": null
+  }
 }
 ```
 
@@ -538,7 +545,7 @@ Get user recap data by user_id.
 **Headers:**
 - `timestamp`: ISO 8601 timestamp (e.g., "2025-12-01T00:00:00Z")
 - `user_id`: User ID (integer)
-- `sign`: Base64(timestamp + "forecap2025" + user_id)
+- `sign`: `base64(timestamp + user_id)` (append the same secret between timestamp and user_id if `AUTH_SIGNATURE_SECRET` is configured)
 
 **Response:**
 ```json
@@ -573,7 +580,7 @@ Authentication is validated in `auth.utils.ts`:
 
 1. Check required headers present
 2. Validate timestamp (within 10 minutes)
-3. Verify signature: `base64(timestamp + "forecap2025" + user_id)`
+3. Verify signature: `base64(timestamp + user_id)` (or `base64(timestamp + SECRET + user_id)` if a secret is configured)
 
 ### Caching Strategy
 

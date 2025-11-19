@@ -202,7 +202,8 @@ Should return Prometheus metrics.
 # Generate auth headers
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 USER_ID=1
-SIGN=$(echo -n "${TIMESTAMP}forecap2025${USER_ID}" | base64)
+SIGNATURE_SECRET=${AUTH_SIGNATURE_SECRET:-""}  # leave empty if no secret
+SIGN=$(printf "%s" "${TIMESTAMP}${SIGNATURE_SECRET}${USER_ID}" | base64)
 
 # Test API
 curl -H "timestamp: ${TIMESTAMP}" \

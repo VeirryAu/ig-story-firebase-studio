@@ -80,7 +80,8 @@ curl http://localhost:3000/health
 # Or test with authentication
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 USER_ID=1
-SIGN=$(echo -n "${TIMESTAMP}forecap2025${USER_ID}" | base64)
+SIGNATURE_SECRET=${AUTH_SIGNATURE_SECRET:-""}
+SIGN=$(printf "%s" "${TIMESTAMP}${SIGNATURE_SECRET}${USER_ID}" | base64)
 
 curl -H "timestamp: ${TIMESTAMP}" \
      -H "user_id: ${USER_ID}" \

@@ -4,6 +4,14 @@ Real-time monitoring during load testing using Prometheus and Grafana.
 
 ## Quick Start
 
+### 0. Create Shared Docker Network (once)
+
+```bash
+docker network create forecap-net || true
+```
+
+Both backend and monitoring stacks attach to this external network so exporters can reach the API, MySQL, and Redis containers by name.
+
 ### 1. Start Monitoring Stack
 
 ```bash
@@ -14,7 +22,6 @@ docker-compose up -d
 This starts:
 - **Prometheus** (port 9090) - Metrics collection
 - **Grafana** (port 3001) - Visualization dashboard
-- **Node Exporter** (port 9100) - System metrics
 - **MySQL Exporter** (port 9104) - Database metrics
 - **Redis Exporter** (port 9121) - Cache metrics
 
@@ -67,6 +74,15 @@ The dashboard includes:
 6. **Database Query Duration** - Query performance
 7. **CPU Usage** - System CPU utilization
 8. **Memory Usage** - System memory usage
+9. **MySQL Connections** - Threads connected/running (mysqld-exporter)
+10. **Redis Memory & Clients** - Memory footprint and connected clients (redis-exporter)
+
+### MySQL & Redis Exporters
+
+- **mysqld-exporter** (prom/mysqld-exporter) scrapes `forecap-mysql:3306` via the shared `forecap-net` network. It reads credentials from `monitoring/mysql-exporter/.my.cnf`. Update that file (and restart the container) if you change MySQL users/passwords; use a read-only user in production.
+- **redis-exporter** (oliver006/redis_exporter) scrapes `forecap-redis:6379` for cache metrics.
+
+Both exporters are part of `monitoring/docker-compose.local.yml` and are scraped automatically by Prometheus.
 
 ## Configuration
 

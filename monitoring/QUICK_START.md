@@ -41,7 +41,7 @@ docker compose -f docker-compose.local.yml up -d
 
 ## 📊 Dashboard Panels
 
-The dashboard includes 8 pre-configured panels:
+The dashboard includes 10 pre-configured panels:
 
 1. **Request Rate (RPS)** - Requests per second
 2. **Response Time (p50, p95, p99)** - Response time percentiles
@@ -51,6 +51,8 @@ The dashboard includes 8 pre-configured panels:
 6. **Database Query Duration** - Query performance
 7. **CPU Usage** - System CPU utilization
 8. **Memory Usage** - System memory usage
+9. **MySQL Connections** - Threads connected/running (mysqld-exporter)
+10. **Redis Memory & Clients** - Memory footprint and connected clients (redis-exporter)
 
 ## 🔧 Configuration Options
 
@@ -59,6 +61,8 @@ The dashboard includes 8 pre-configured panels:
 - **Docker (recommended)**: Prometheus targets `forecap-api:3000` via the shared `forecap-net` network (already configured).
 - **Host mode (npm run start:dev)**: Change the target in `prometheus.local.yml` to `host.docker.internal:3000`.
 - **Remote/EC2**: Change the target to your EC2 public IP (ensure security group allows port 3000 from your laptop).
+
+> **Note:** `mysqld-exporter` reads credentials from `monitoring/mysql-exporter/.my.cnf`. Update that file (and restart the exporter) if you change MySQL usernames/passwords.
 
 ## ✅ Verify Everything Works
 

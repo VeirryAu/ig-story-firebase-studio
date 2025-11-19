@@ -10,7 +10,7 @@ info:
     In production, all requests must include authentication headers:
     - `timestamp`: ISO 8601 format timestamp (must be within 10 minutes of current time)
     - `user_id`: Integer user ID
-    - `sign`: Base64 encoded signature = `base64(timestamp + user_id)`
+    - `sign`: Base64 encoded signature = `base64(timestamp + user_id)` (append the same secret between timestamp and user_id if the backend sets `AUTH_SIGNATURE_SECRET`)
     
     ## Date Restriction
     
@@ -74,12 +74,13 @@ paths:
         - name: sign
           in: header
           description: |
-            Base64 signature calculated as `base64(timestamp + user_id)`
-            where `timestamp` is the exact string sent in the `timestamp` header.
+            Base64 signature calculated as `base64(timestamp + user_id)`. If the backend sets
+            `AUTH_SIGNATURE_SECRET`, append the same secret between timestamp and user_id
+            before encoding.
           required: true
           schema:
             type: string
-            example: "MjAyNS0xMS0xMFQyMDowMDowMC4wMDBaZm9yZWNhcDIwMjUxMjM0NQ=="
+            example: "MjAyNS0xMS0xMFQyMDowMDowMC4wMDBaMTIzNDU="
       security:
         - ApiKeyAuth: []
       responses:
