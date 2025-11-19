@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v9"
+	"github.com/redis/go-redis/v9"
 	"github.com/joho/godotenv"
 
 	"github.com/forecap/forecap-2025/backend-go/internal/auth"

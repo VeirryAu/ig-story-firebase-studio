@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-redis/redis/v9"
+	"github.com/redis/go-redis/v9"
 
 	"github.com/forecap/forecap-2025/backend-go/internal/models"
 )
