@@ -13,7 +13,6 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
 import { b64encode } from 'k6/encoding';
-import { b64encode } from 'k6/encoding';
 
 // Custom metrics
 const errorRate = new Rate('errors');
