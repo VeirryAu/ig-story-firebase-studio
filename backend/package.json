@@ -9,7 +9,7 @@
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
     "import:excel": "ts-node src/scripts/import-excel.ts",
-    "import:batch": "ts-node src/scripts/import-batch.ts",
+    "generate:test-data": "ts-node src/scripts/generate-test-data.ts",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage"

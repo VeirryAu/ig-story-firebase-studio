@@ -592,7 +592,7 @@ Authentication is validated in `auth.utils.ts`:
 
 ## Chapter 12: Data Import
 
-### Import Process
+### Import from Excel
 
 Import Excel data (from BigQuery) to MySQL:
 
@@ -600,6 +600,29 @@ Import Excel data (from BigQuery) to MySQL:
 cd backend
 npm run import:excel ../results/forecap_2025_prototype.xlsx
 ```
+
+### Generate Test Data
+
+Generate realistic test data for load testing:
+
+```bash
+# Generate 1 million users (for testing)
+npm run generate:test-data 1000000
+
+# Generate 10 million users (for realistic load testing)
+npm run generate:test-data 10000000
+```
+
+**Generation Features:**
+- **Realistic Distribution**: 50% low trx, 30% medium, 15% high, 5% power users
+- **Realistic Data**: Random names, products, stores
+- **JSON Arrays**: Properly formatted product and store lists
+- **Performance**: ~350-500 rows/second
+- **Progress Tracking**: Real-time progress with ETA
+
+**Expected Time:**
+- 1M users: ~45-60 minutes
+- 10M users: ~8-12 hours
 
 ### Excel File Format
 
@@ -613,7 +636,7 @@ Required columns:
 
 ### Import Script Features
 
-- **Batch Processing**: 10,000 rows per batch
+- **Batch Processing**: 10,000 rows per batch (Excel), 5,000 rows (test data)
 - **Transaction Safety**: Rollback on errors
 - **Progress Tracking**: Real-time progress updates
 - **Error Handling**: Continues on individual row errors
@@ -624,6 +647,20 @@ Required columns:
 ```sql
 -- Check total records
 SELECT COUNT(*) FROM user_recap_data;
+
+-- Check distribution
+SELECT 
+  CASE 
+    WHEN trx_count = 0 THEN '0'
+    WHEN trx_count BETWEEN 1 AND 10 THEN '1-10'
+    WHEN trx_count BETWEEN 11 AND 50 THEN '11-50'
+    WHEN trx_count BETWEEN 51 AND 200 THEN '51-200'
+    ELSE '201+'
+  END as trx_range,
+  COUNT(*) as user_count
+FROM user_recap_data
+GROUP BY trx_range
+ORDER BY trx_range;
 
 -- Check sample data
 SELECT * FROM user_recap_data LIMIT 5;
@@ -889,6 +926,7 @@ cd backend/load-test
 k6 run k6-test.js                    # Load test
 SCENARIO=stress k6 run k6-test.js    # Stress test
 SCENARIO=spike k6 run k6-test.js     # Spike test
+npm run test:realistic               # Realistic user distribution
 ```
 
 ### Test Scenarios
@@ -897,8 +935,20 @@ SCENARIO=spike k6 run k6-test.js     # Spike test
 2. **Load Test**: Ramp to 100 users (normal load)
 3. **Stress Test**: Ramp to 300 users (high load)
 4. **Spike Test**: Sudden spike to 500 users (traffic spike)
+5. **Realistic Test**: Real user distribution with 10M users
+
+### Realistic Load Testing on EC2
+
+For production-like testing, see **[Realistic Load Testing Guide](./realistic-load-testing.md)**:
+
+- **Setup**: EC2 t3.medium with 10 million test users
+- **Generate Data**: `npm run generate:test-data 10000000`
+- **Realistic Distribution**: Mimics real user behavior
+- **Performance Benchmarks**: Expected results for t3.medium
 
 ### Performance Benchmarks
+
+#### General Targets
 
 | Metric | Target | Good | Excellent |
 |--------|--------|------|-----------|
@@ -907,6 +957,17 @@ SCENARIO=spike k6 run k6-test.js     # Spike test
 | p99 Response | < 500ms | < 200ms | < 100ms |
 | Throughput | > 500 RPS | > 1000 RPS | > 2000 RPS |
 | Error Rate | < 1% | < 0.1% | < 0.01% |
+
+#### EC2 t3.medium Specific
+
+| Metric | Target | Acceptable | Needs Optimization |
+|--------|--------|------------|-------------------|
+| p95 Response | < 100ms | < 200ms | > 200ms |
+| Throughput | > 1000 RPS | > 500 RPS | < 500 RPS |
+| Concurrent Users | 100-150 | 50-100 | < 50 |
+| Cache Hit Rate | > 90% | > 80% | < 80% |
+| CPU Usage | < 60% | < 80% | > 80% |
+| Memory Usage | < 70% | < 85% | > 85% |
 
 ### When to Consider Go/Rust
 

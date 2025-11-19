@@ -1,0 +1,37 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+  external_labels:
+    cluster: 'forecap-load-test'
+    environment: 'testing'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "rules/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # NestJS Application Metrics (from EC2)
+  # IMPORTANT: Replace YOUR_EC2_IP with your actual EC2 public IP address
+  # Example: targets: ['54.123.45.67:3000']
+  - job_name: 'forecap-api'
+    scrape_interval: 5s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['YOUR_EC2_IP:3000']  # Replace YOUR_EC2_IP with actual IP
+        labels:
+          service: 'forecap-api'
+          environment: 'load-test'
+          instance: 'ec2-t3-medium'
+

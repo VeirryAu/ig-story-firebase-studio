@@ -706,6 +706,7 @@ A comprehensive, book-style guide covering:
 - **[Deployment Guide](./docs/deployment-guide.md)** - Step-by-step deployment instructions
 - **[Data Import Guide](./docs/import-data-guide.md)** - Import Excel data to MySQL
 - **[Load Testing Guide](./backend/load-test/README.md)** - Performance testing with K6/Artillery
+- **[Realistic Load Testing](./docs/realistic-load-testing.md)** - EC2 t3.medium with 10M users
 - **[Monitoring Setup](./monitoring/README.md)** - Prometheus + Grafana monitoring
 - **[Backend README](./backend/README.md)** - NestJS backend documentation
 - **[API Specification](./docs/api/openapi.yaml)** - OpenAPI/Swagger documentation

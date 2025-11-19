@@ -1,6 +1,6 @@
 // Service Worker Version - Update this when deploying new code
 // Increment this version number each time you deploy to force cache refresh
-const SW_VERSION = '1.0.2';
+const SW_VERSION = '1.0.3';
 const CACHE_NAME = `storyswipe-v${SW_VERSION}`;
 const TTL = 60 * 60 * 1000; // 1 hour in milliseconds
 const urlsToCache = [

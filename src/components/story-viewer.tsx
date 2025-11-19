@@ -815,7 +815,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
     <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center font-body backdrop-blur-sm">
       <div 
         ref={storyViewerRef}
-        className="relative w-full max-w-[430px] aspect-[9/16] bg-primary rounded-lg overflow-hidden shadow-2xl select-none touch-pan-y story-viewer-container"
+        className="relative w-full h-[100dvh] sm:max-w-[430px] sm:aspect-[9/16] sm:h-auto bg-primary sm:rounded-lg overflow-hidden shadow-2xl select-none touch-pan-y story-viewer-container"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}

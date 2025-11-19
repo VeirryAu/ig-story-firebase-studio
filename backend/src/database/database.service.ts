@@ -167,10 +167,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       list_product_favorite?: any;
       list_favorite_store?: any;
     }>,
+    useTransaction: boolean = true,
   ): Promise<number> {
     const connection = await this.pool.getConnection();
     try {
-      await connection.beginTransaction();
+      if (useTransaction) {
+        await connection.beginTransaction();
+      }
 
       let inserted = 0;
       for (const user of users) {
@@ -232,10 +235,14 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         inserted++;
       }
 
-      await connection.commit();
+      if (useTransaction) {
+        await connection.commit();
+      }
       return inserted;
     } catch (error) {
-      await connection.rollback();
+      if (useTransaction) {
+        await connection.rollback();
+      }
       throw error;
     } finally {
       connection.release();
