@@ -56,6 +56,8 @@ The `docker-compose.yml` file includes:
 - **MySQL 8.0** - Database server
 - **Redis 7** - Cache server
 - **NestJS API** - Backend application
+- **Rust API (optional)** - Actix-web port at `4000` for benchmarking
+- **Go API (optional)** - Gin port at `4001` for benchmarking
 
 All services are pre-configured and will start automatically.
 
