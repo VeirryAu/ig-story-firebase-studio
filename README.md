@@ -15,6 +15,7 @@ An Instagram Stories-like interactive year recap application built with Next.js,
 - [Data Structure](#data-structure)
 - [Common Tasks](#common-tasks)
 - [Troubleshooting](#troubleshooting)
+- [Documentation Index](#documentation-index)
 - [Contributing](#contributing)
 
 ## 🎯 Overview
@@ -685,6 +686,59 @@ webView.load(request)
 1. **Check current date**: Content is only accessible until December 31, 2025
 2. **Check environment**: Date restriction is bypassed in development mode
 3. **Verify server time**: Ensure server/client time is synchronized
+
+## 📚 Documentation Index
+
+### Backend & Database
+
+- **[Deployment Guide](./docs/deployment-guide.md)** - Complete guide for deploying to:
+  - Local development
+  - Docker (local and production)
+  - EC2 (AWS)
+  - ECS Fargate (AWS)
+  
+- **[Data Import Guide](./docs/import-data-guide.md)** - How to import Excel data (BigQuery results) to MySQL:
+  - Import script usage
+  - Excel file format
+  - Troubleshooting
+  - Performance optimization
+
+- **[Load Testing Guide](./backend/load-test/README.md)** - Performance testing and comparison:
+  - K6 load testing setup
+  - Artillery testing
+  - Performance benchmarks
+  - NestJS vs Go vs Rust comparison
+  - When to consider alternatives
+
+- **[Monitoring Setup](./monitoring/README.md)** - Real-time monitoring during load tests:
+  - Prometheus + Grafana setup
+  - Real-time metrics dashboard
+  - Application, database, and cache metrics
+  - System resource monitoring
+
+- **[EC2/Fargate Deployment](./docs/ec2-fargate-deployment.md)** - Detailed AWS deployment:
+  - ECS Fargate setup
+  - EC2 with Docker
+  - Auto-scaling configuration
+  - Monitoring and logging
+
+- **[Deployment Architecture](./docs/deployment-architecture.md)** - Architecture overview:
+  - Database design (lean single-table)
+  - Redis caching strategy
+  - Performance optimizations
+  - Cost estimation
+
+### Frontend
+
+- **[Build for S3 with Dev Mode](./docs/build-for-s3-with-dev.md)** - Production build with developer features
+
+### API
+
+- **[OpenAPI Specification](./docs/api/openapi.yaml)** - Complete API documentation
+
+### Backend Code
+
+- **[Backend README](./backend/README.md)** - NestJS backend setup and usage
 
 ## 🤝 Contributing
 

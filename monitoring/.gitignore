@@ -1,0 +1,9 @@
+# Grafana
+grafana_data/
+
+# Prometheus
+prometheus_data/
+
+# Logs
+*.log
+

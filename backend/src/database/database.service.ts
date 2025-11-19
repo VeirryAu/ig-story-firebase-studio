@@ -1,12 +1,17 @@
-import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Injectable, OnModuleInit, OnModuleDestroy, Inject, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as mysql from 'mysql2/promise';
+import { MetricsService } from '../metrics/metrics.service';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private pool: mysql.Pool;
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    @Inject(forwardRef(() => MetricsService))
+    private metricsService?: MetricsService,
+  ) {}
 
   async onModuleInit() {
     this.pool = mysql.createPool({
@@ -22,6 +27,38 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       enableKeepAlive: true,
       keepAliveInitialDelay: 0,
     });
+
+    // Update connection pool metrics periodically
+    if (this.metricsService) {
+      setInterval(() => {
+        this.updateMetrics();
+      }, 5000);
+    }
+  }
+
+  private async updateMetrics() {
+    if (!this.metricsService) return;
+    
+    try {
+      const pool = this.pool as any;
+      const config = pool.config;
+      const poolSize = config.connectionLimit || 20;
+      
+      // Get pool statistics
+      const poolStats = pool.pool?._allConnections || [];
+      const activeConnections = poolStats.filter((conn: any) => 
+        conn._socket && !conn._socket.destroyed
+      ).length;
+      const idleConnections = poolSize - activeConnections;
+
+      this.metricsService.updateConnectionPool(
+        poolSize,
+        activeConnections,
+        idleConnections,
+      );
+    } catch (error) {
+      // Silently fail metrics update
+    }
   }
 
   async onModuleDestroy() {

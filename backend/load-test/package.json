@@ -1,0 +1,17 @@
+{
+  "name": "forecap-load-test",
+  "version": "1.0.0",
+  "description": "Load testing scripts for Forecap API",
+  "scripts": {
+    "test:smoke": "k6 run k6-test.js --env SCENARIO=smoke",
+    "test:load": "k6 run k6-test.js --env SCENARIO=load",
+    "test:stress": "k6 run k6-test.js --env SCENARIO=stress",
+    "test:spike": "k6 run k6-test.js --env SCENARIO=spike",
+    "test:artillery": "artillery run artillery-test.yml",
+    "test:artillery:report": "artillery run --output report.json artillery-test.yml && artillery report report.json"
+  },
+  "devDependencies": {
+    "artillery": "^2.0.0"
+  }
+}
+

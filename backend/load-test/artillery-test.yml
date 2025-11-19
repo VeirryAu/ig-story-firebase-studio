@@ -1,0 +1,66 @@
+# Artillery Load Testing Configuration
+# Install: npm install -g artillery
+# Run: artillery run artillery-test.yml
+
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Warm-up phase
+    - duration: 60
+      arrivalRate: 1
+      name: "Warm up"
+    
+    # Load phase
+    - duration: 300
+      arrivalRate: 10
+      rampTo: 50
+      name: "Load test"
+    
+    # Stress phase
+    - duration: 300
+      arrivalRate: 50
+      rampTo: 200
+      name: "Stress test"
+    
+    # Spike phase
+    - duration: 60
+      arrivalRate: 10
+      rampTo: 500
+      name: "Spike test"
+    
+    # Cool down
+    - duration: 60
+      arrivalRate: 500
+      rampTo: 0
+      name: "Cool down"
+  
+  processor: "./artillery-processor.js"
+  
+  plugins:
+    expect: {}
+    metrics-by-endpoint:
+      stripQueryString: true
+  
+  variables:
+    user_ids: [1, 2, 3, 4, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000]
+
+scenarios:
+  - name: "Get user recap data"
+    weight: 100
+    flow:
+      - function: "generateAuthHeaders"
+      - get:
+          url: "/api/user-data"
+          headers:
+            timestamp: "{{ timestamp }}"
+            user_id: "{{ userId }}"
+            sign: "{{ sign }}"
+          expect:
+            - statusCode: 200
+            - contentType: json
+            - hasProperty: userName
+            - hasProperty: trxCount
+          capture:
+            - json: "$.userName"
+              as: "userName"
+
