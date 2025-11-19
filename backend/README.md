@@ -23,6 +23,34 @@ cd backend
 npm install
 ```
 
+## Testing
+
+### Run Tests
+
+```bash
+# All tests
+npm test
+
+# Unit tests only
+npm run test:unit
+
+# Integration tests (e2e)
+npm run test:integration
+
+# Watch mode
+npm run test:watch
+
+# Coverage report
+npm run test:cov
+```
+
+### Test Coverage
+
+- **Minimum Coverage:** 70% (branches, functions, lines, statements)
+- **Coverage Report:** `coverage/index.html`
+
+See [TESTING.md](./TESTING.md) for detailed testing guide.
+
 ### Environment Variables
 
 Create `.env` file:

@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { AllExceptionsFilter } from './common/exceptions.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,9 @@ async function bootstrap() {
     origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
     credentials: true,
   });
+  
+  // Global exception filter for error logging
+  app.useGlobalFilters(new AllExceptionsFilter());
   
   // Global validation pipe
   app.useGlobalPipes(
