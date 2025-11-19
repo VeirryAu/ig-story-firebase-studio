@@ -7,7 +7,15 @@ Quick guide to run Grafana and Prometheus on your MacBook to monitor your local 
 1. **Docker Desktop** is running
 2. **Backend is running** in Docker (see `backend/SETUP_DOCKER.md`)
 
-## Quick Start (3 Commands)
+## Quick Start (4 Commands)
+
+### Step 0: Ensure Shared Docker Network Exists (one-time)
+
+```bash
+docker network create forecap-net || true
+```
+
+Both backend and monitoring compose files attach to this external network so services can reach each other by name (`forecap-api`, `prometheus-local`, etc.).
 
 ### Step 1: Start Backend (if not already running)
 
@@ -106,7 +114,7 @@ Refresh Grafana dashboard - you should see metrics appear!
 └─────────────────────────────────────┘
 ```
 
-Prometheus uses `host.docker.internal:3000` to reach the backend API.
+Prometheus reaches the backend via the shared Docker network using `forecap-api:3000`.
 
 ## Common Commands
 
@@ -166,16 +174,23 @@ curl http://localhost:3000/metrics
 # Should return Prometheus metrics
 ```
 
-**Check 3: Prometheus can reach backend**
+**Check 3: Prometheus can reach backend via shared network**
 ```bash
 # Test from Prometheus container
-docker exec -it prometheus-local wget -O- http://host.docker.internal:3000/metrics
+docker exec -it prometheus-local wget -O- http://forecap-api:3000/metrics
 ```
 
-**Solution**: If `host.docker.internal` doesn't work, try:
-```yaml
-# In prometheus.local.yml, change to:
-- targets: ['172.17.0.1:3000']  # Docker bridge network IP
+**Solution**: Ensure both stacks joined the shared network:
+```bash
+docker network ls | grep forecap-net
+docker inspect forecap-api | grep forecap-net -A3
+docker inspect prometheus-local | grep forecap-net -A3
+```
+
+If needed, recreate the network and restart both stacks:
+```bash
+docker network rm forecap-net
+docker network create forecap-net
 ```
 
 ### Grafana Shows No Data

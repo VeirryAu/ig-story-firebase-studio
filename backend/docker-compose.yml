@@ -21,6 +21,8 @@ services:
       - mysql
       - redis
     restart: unless-stopped
+    networks:
+      - forecap-net
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
@@ -39,6 +41,8 @@ services:
       - mysql_data:/var/lib/mysql
       - ../scripts/setup-mysql-schema-lean.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     restart: unless-stopped
+    networks:
+      - forecap-net
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
@@ -55,9 +59,15 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
+    networks:
+      - forecap-net
     command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
 
 volumes:
   mysql_data:
   redis_data:
+
+networks:
+  forecap-net:
+    external: true
 

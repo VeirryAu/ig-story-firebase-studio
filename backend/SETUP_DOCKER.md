@@ -30,6 +30,18 @@ If Docker is not running, open **Docker Desktop** application.
 
 ---
 
+## Step 0: Create Shared Docker Network (one-time)
+
+The backend stack exports an external Docker network named `forecap-net`. Create it once:
+
+```bash
+docker network create forecap-net || true
+```
+
+If the network already exists, the command is ignored. Monitoring services will also attach to this network so Prometheus can reach the API by container name.
+
+---
+
 ## Step 1: Navigate to Backend Directory
 
 ```bash

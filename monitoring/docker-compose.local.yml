@@ -18,7 +18,7 @@ services:
       - '--web.enable-lifecycle'
     restart: unless-stopped
     networks:
-      - monitoring
+      - forecap-net
 
   grafana:
     image: grafana/grafana:latest
@@ -35,7 +35,7 @@ services:
       - ./grafana/dashboards:/var/lib/grafana/dashboards
     restart: unless-stopped
     networks:
-      - monitoring
+      - forecap-net
     depends_on:
       - prometheus
 
@@ -44,6 +44,6 @@ volumes:
   grafana_data:
 
 networks:
-  monitoring:
-    driver: bridge
+  forecap-net:
+    external: true
 

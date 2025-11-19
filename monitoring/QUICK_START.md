@@ -11,26 +11,15 @@ Yes! The monitoring is **ready** in Grafana. Here's how to use it:
 
 ## 🚀 Quick Start (3 Steps)
 
-### Step 1: Update Prometheus Config
-
-Edit `monitoring/prometheus/prometheus.local.yml`:
+### Step 1: Create Shared Docker Network (one-time)
 
 ```bash
-cd monitoring
-nano prometheus/prometheus.local.yml
+docker network create forecap-net || true
 ```
 
-**Change this line:**
-```yaml
-- targets: ['YOUR_EC2_IP:3000']  # Replace YOUR_EC2_IP with actual IP
-```
+Both `backend/docker-compose.yml` and `monitoring/docker-compose.local.yml` attach to this external network so services can reach each other by name.
 
-**To:**
-```yaml
-- targets: ['host.docker.internal:3000']  # For local Docker backend
-# OR
-- targets: ['localhost:3000']  # If backend runs directly (not Docker)
-```
+Prometheus already targets `forecap-api:3000`, so no further config change is required once the shared network exists.
 
 ### Step 2: Start Monitoring Stack
 
@@ -65,34 +54,11 @@ The dashboard includes 8 pre-configured panels:
 
 ## 🔧 Configuration Options
 
-### Option A: Backend in Docker (Recommended)
+### Backend Deployment Options
 
-If your backend runs in Docker (`docker compose up`):
-
-```yaml
-# prometheus.local.yml
-- targets: ['host.docker.internal:3000']
-```
-
-### Option B: Backend Directly (npm run start:dev)
-
-If your backend runs directly:
-
-```yaml
-# prometheus.local.yml
-- targets: ['host.docker.internal:3000']
-# OR
-- targets: ['172.17.0.1:3000']  # Docker bridge network IP
-```
-
-### Option C: Backend on EC2
-
-If your backend runs on EC2:
-
-```yaml
-# prometheus.local.yml
-- targets: ['YOUR_EC2_PUBLIC_IP:3000']
-```
+- **Docker (recommended)**: Prometheus targets `forecap-api:3000` via the shared `forecap-net` network (already configured).
+- **Host mode (npm run start:dev)**: Change the target in `prometheus.local.yml` to `host.docker.internal:3000`.
+- **Remote/EC2**: Change the target to your EC2 public IP (ensure security group allows port 3000 from your laptop).
 
 ## ✅ Verify Everything Works
 
@@ -128,16 +94,16 @@ open http://localhost:9090
 
 ### No Data in Dashboard
 
-**Check 1: Prometheus can reach API**
-```bash
-# From Prometheus container
-docker exec -it prometheus-local wget -O- http://host.docker.internal:3000/metrics
-```
-
-**Check 2: API metrics endpoint works**
+**Check 1: API metrics endpoint works**
 ```bash
 curl http://localhost:3000/metrics
 # Should return Prometheus metrics
+```
+
+**Check 2: Prometheus can reach API via Docker network**
+```bash
+# From Prometheus container
+docker exec -it prometheus-local wget -O- http://forecap-api:3000/metrics
 ```
 
 **Check 3: Prometheus targets**
@@ -165,16 +131,21 @@ docker compose -f docker-compose.local.yml logs grafana
 
 **Solution 1: Check network**
 ```bash
-# Test from Prometheus container
-docker exec -it prometheus-local ping host.docker.internal
+# Both stacks must be on the same network
+docker network ls | grep forecap-net
 ```
 
-**Solution 2: Use Docker network IP**
+**Solution 2: Ensure services joined the network**
 ```bash
-# Find Docker network IP
-docker network inspect monitoring_monitoring
+docker inspect forecap-api | grep forecap-net -A3
+docker inspect prometheus-local | grep forecap-net -A3
+```
 
-# Use that IP in prometheus.local.yml
+**Solution 3: Recreate network if needed**
+```bash
+docker network rm forecap-net
+docker network create forecap-net
+# Then restart both docker-compose stacks
 ```
 
 ## 📝 Quick Commands

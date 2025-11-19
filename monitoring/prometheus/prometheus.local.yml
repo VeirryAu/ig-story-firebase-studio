@@ -28,7 +28,7 @@ scrape_configs:
     scrape_interval: 5s
     metrics_path: '/metrics'
     static_configs:
-      - targets: ['host.docker.internal:3000']  # Local Docker backend
+      - targets: ['forecap-api:3000']  # Local Docker backend
         labels:
           service: 'forecap-api'
           environment: 'local'

@@ -78,7 +78,7 @@ Edit `monitoring/prometheus/prometheus.yml`:
 scrape_configs:
   - job_name: 'forecap-api'
     static_configs:
-      - targets: ['host.docker.internal:3000']  # Your API endpoint
+      - targets: ['forecap-api:3000']  # Backend container name on shared network
 ```
 
 For production, use actual IP or service name:
@@ -165,7 +165,7 @@ db_connection_pool_active / db_connection_pool_size * 100
 1. Check API is running: `curl http://localhost:3000/metrics`
 2. Verify Prometheus config: Check `prometheus.yml` targets
 3. Check network: Ensure containers can reach each other
-4. Use `host.docker.internal` for host machine access
+4. Ensure both stacks share the same Docker network (`forecap-net`)
 
 ### Grafana Shows No Data
 
