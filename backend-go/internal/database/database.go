@@ -19,11 +19,18 @@ func New(dsn string, maxOpen int) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
+	
+	// Connection pool settings
 	db.SetMaxOpenConns(maxOpen)
 	db.SetMaxIdleConns(maxOpen / 2)
 	db.SetConnMaxLifetime(30 * time.Minute)
+	// Set connection idle timeout to prevent stale connections
+	db.SetConnMaxIdleTime(5 * time.Minute)
 
-	if err := db.Ping(); err != nil {
+	// Test connection with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := db.PingContext(ctx); err != nil {
 		return nil, err
 	}
 
@@ -60,7 +67,16 @@ FROM user_recap_data
 WHERE user_id = ?`
 
 func (c *Client) GetUserRecap(ctx context.Context, userID uint32) (*models.UserRecapRow, error) {
-	row := c.db.QueryRowContext(ctx, userRecapQuery, userID)
+	// Ensure context has timeout (defensive check)
+	// If context already has timeout, this will use the shorter one
+	queryCtx := ctx
+	if _, hasDeadline := ctx.Deadline(); !hasDeadline {
+		var cancel context.CancelFunc
+		queryCtx, cancel = context.WithTimeout(ctx, 5*time.Second)
+		defer cancel()
+	}
+	
+	row := c.db.QueryRowContext(queryCtx, userRecapQuery, userID)
 
 	var result models.UserRecapRow
 	if err := row.Scan(
@@ -83,6 +99,10 @@ func (c *Client) GetUserRecap(ctx context.Context, userID uint32) (*models.UserR
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
+		}
+		// Check if error is due to context timeout
+		if queryCtx.Err() == context.DeadlineExceeded {
+			return nil, queryCtx.Err()
 		}
 		return nil, err
 	}

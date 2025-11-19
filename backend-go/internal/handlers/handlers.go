@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -61,8 +62,12 @@ func (h *Handler) GetUserData(ctx *gin.Context) {
 		return
 	}
 
+	// Create context with timeout to prevent hanging requests
+	// Use 10 seconds timeout (less than HTTP server's 15s timeout)
+	requestCtx, cancel := context.WithTimeout(ctx.Request.Context(), 10*time.Second)
+	defer cancel()
+
 	start := time.Now()
-	requestCtx := ctx.Request.Context()
 	if cached, err := h.cache.GetUser(requestCtx, userID); err == nil && cached != nil {
 		h.metrics.CacheHit("redis")
 		ctx.JSON(http.StatusOK, cached)
@@ -71,10 +76,16 @@ func (h *Handler) GetUserData(ctx *gin.Context) {
 		h.metrics.CacheMiss("redis")
 	} else {
 		h.metrics.CacheMiss("redis")
+		// If Redis error, continue to database (cache is optional)
 	}
 
 	userRow, err := h.db.GetUserRecap(requestCtx, userID)
 	if err != nil {
+		// Check if error is due to timeout
+		if requestCtx.Err() == context.DeadlineExceeded {
+			ctx.JSON(http.StatusGatewayTimeout, gin.H{"error": "Request timeout"})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})
 		return
 	}
@@ -86,8 +97,9 @@ func (h *Handler) GetUserData(ctx *gin.Context) {
 	}
 
 	response := userRow.ToResponse()
-	if err := h.cache.SetUser(requestCtx, userID, response); err != nil {
-		// log but not fatal
+	// Use background context for cache set (non-blocking, best effort)
+	if err := h.cache.SetUser(context.Background(), userID, response); err != nil {
+		// log but not fatal - cache write failure shouldn't fail the request
 	}
 
 	ctx.JSON(http.StatusOK, response)

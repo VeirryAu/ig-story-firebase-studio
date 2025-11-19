@@ -9,6 +9,7 @@ COLLATE utf8mb4_unicode_ci;
 USE forecap_db;
 
 -- Single table for all user recap data
+-- Using MyISAM for read-heavy workload (faster reads, table-level locking)
 CREATE TABLE IF NOT EXISTS user_recap_data (
     user_id BIGINT NOT NULL PRIMARY KEY,
     user_name VARCHAR(255) NOT NULL,
@@ -28,12 +29,13 @@ CREATE TABLE IF NOT EXISTS user_recap_data (
     list_favorite_store JSON DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Optimize InnoDB settings (run these after table creation)
--- SET GLOBAL innodb_buffer_pool_size = 24G;  -- Adjust based on available RAM
--- SET GLOBAL innodb_log_file_size = 2G;
--- SET GLOBAL innodb_flush_log_at_trx_commit = 2;
+-- Optimize MyISAM settings (run these after table creation)
+-- SET GLOBAL key_buffer_size = 2G;  -- Adjust based on available RAM (for MyISAM indexes)
+-- SET GLOBAL myisam_sort_buffer_size = 256M;  -- For table repair/sort operations
+-- SET GLOBAL read_buffer_size = 2M;  -- For sequential scans
+-- SET GLOBAL read_rnd_buffer_size = 8M;  -- For random reads
 
 -- Create a user for the application (optional, for security)
 -- CREATE USER IF NOT EXISTS 'forecap_app'@'%' IDENTIFIED BY 'your_secure_password';
