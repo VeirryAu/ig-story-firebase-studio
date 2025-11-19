@@ -225,7 +225,7 @@ curl http://localhost:3000/metrics | head -20
 # Test API with random user
 USER_ID=$(shuf -i 1-10000000 -n 1)
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-SIGN=$(echo -n "${TIMESTAMP}forecap2025${USER_ID}" | base64)
+SIGN=$(echo -n "${TIMESTAMP}${USER_ID}" | base64)
 
 curl -H "timestamp: ${TIMESTAMP}" \
      -H "user_id: ${USER_ID}" \

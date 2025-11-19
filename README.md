@@ -205,7 +205,7 @@ The application displays 14 different slides with dynamic content:
 ### 8. Authentication & Security
 
 - **Production Authentication**: Requires headers (`timestamp`, `user_id`, `sign`)
-- **Signature Validation**: `sign = base64(timestamp + "forecap2025" + user_id)`
+- **Signature Validation**: `sign = base64(timestamp + user_id)` (if `AUTH_SIGNATURE_SECRET` is set, the backend expects `base64(timestamp + SECRET + user_id)`)
 - **Timestamp Validation**: Must be within 10 minutes of current time
 - **Date Restriction**: Only accessible until December 31, 2025 (production only)
 - **Development Mode**: Authentication and date restrictions are bypassed
@@ -435,7 +435,7 @@ Functions for authentication and access control.
 **Authentication Headers (Production):**
 - `timestamp`: ISO 8601 format (e.g., "2025-11-10T20:00:00.000Z")
 - `user_id`: Integer user ID
-- `sign`: Base64 encoded signature = `base64(timestamp + "forecap2025" + user_id)`
+- `sign`: Base64 encoded signature = `base64(timestamp + user_id)` (or `base64(timestamp + SECRET + user_id)` if `AUTH_SIGNATURE_SECRET` is configured)
 
 **Date Restriction:**
 - Content is only accessible until December 31, 2025 (production)
@@ -601,7 +601,7 @@ For production, the native app must pass authentication headers:
 webView.loadUrl("https://your-domain.com", mapOf(
     "timestamp" to "2025-11-10T20:00:00.000Z",
     "user_id" to "12345",
-    "sign" to Base64.encode("2025-11-10T20:00:00.000Zforecap202512345")
+    "sign" to Base64.encode("2025-11-10T20:00:00.000Z12345")
 ))
 ```
 
@@ -678,7 +678,7 @@ webView.load(request)
 
 1. **Check timestamp format**: Must be ISO 8601 format
 2. **Check timestamp validity**: Must be within 10 minutes of current time
-3. **Check signature**: Verify signature calculation matches: `base64(timestamp + "forecap2025" + user_id)`
+3. **Check signature**: Verify signature calculation matches: `base64(timestamp + user_id)` (or `base64(timestamp + SECRET + user_id)` if configured)
 4. **Check environment**: Authentication is only enforced in production mode
 
 ### Date Restriction Errors
@@ -771,7 +771,7 @@ This application is designed to run in Android and iOS WebView environments. The
 2. **Handle authentication** (production):
    - Pass `timestamp`, `user_id`, and `sign` headers
    - Ensure timestamp is within 10 minutes of current time
-   - Calculate signature: `base64(timestamp + "forecap2025" + user_id)`
+   - Calculate signature: `base64(timestamp + user_id)` (append the same secret if `AUTH_SIGNATURE_SECRET` is set)
 
 3. **Handle share functionality**:
    - Receive image URL from `shareImageUrl()` call

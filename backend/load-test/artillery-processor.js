@@ -7,7 +7,7 @@ function generateAuthHeaders(context, events, done) {
     Math.floor(Math.random() * context.vars.user_ids.length)
   ];
   const timestamp = new Date().toISOString();
-  const sign = Buffer.from(timestamp + 'forecap2025' + userId).toString('base64');
+  const sign = Buffer.from(timestamp + userId).toString('base64');
   
   context.vars.timestamp = timestamp;
   context.vars.userId = userId;

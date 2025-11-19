@@ -10,7 +10,7 @@ info:
     In production, all requests must include authentication headers:
     - `timestamp`: ISO 8601 format timestamp (must be within 10 minutes of current time)
     - `user_id`: Integer user ID
-    - `sign`: Base64 encoded signature = `base64(timestamp + "forecap2025" + user_id)`
+    - `sign`: Base64 encoded signature = `base64(timestamp + user_id)`
     
     ## Date Restriction
     
@@ -74,7 +74,7 @@ paths:
         - name: sign
           in: header
           description: |
-            Base64 signature calculated as `base64(timestamp + "forecap2025" + user_id)`
+            Base64 signature calculated as `base64(timestamp + user_id)`
             where `timestamp` is the exact string sent in the `timestamp` header.
           required: true
           schema:
@@ -174,7 +174,7 @@ components:
         Authentication using headers. Requires:
         - `timestamp`: ISO 8601 format (e.g., "2025-11-10T20:00:00.000Z")
         - `user_id`: Integer user ID
-        - `sign`: Base64(timestamp + "forecap2025" + user_id)
+        - `sign`: Base64(timestamp + user_id)
   
   schemas:
     ServerResponse:

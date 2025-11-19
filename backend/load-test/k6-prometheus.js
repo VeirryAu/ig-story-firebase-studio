@@ -13,6 +13,7 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Trend, Counter } from 'k6/metrics';
+import { b64encode } from 'k6/encoding';
 
 // Custom metrics
 const errorRate = new Rate('errors');
@@ -23,6 +24,7 @@ const requestsTotal = new Counter('requests_total');
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 const SCENARIO = __ENV.SCENARIO || 'load';
 const PROMETHEUS_RW_URL = __ENV.PROMETHEUS_RW_URL || 'http://localhost:9090/api/v1/write';
+const SIGNATURE_SECRET = __ENV.SIGNATURE_SECRET || '';
 
 // Test data
 const USER_IDS = [
@@ -31,7 +33,10 @@ const USER_IDS = [
 
 function generateAuthHeaders(userId) {
   const timestamp = new Date().toISOString();
-  const sign = btoa(timestamp + 'forecap2025' + userId);
+  const payload = SIGNATURE_SECRET
+    ? `${timestamp}${SIGNATURE_SECRET}${userId}`
+    : `${timestamp}${userId}`;
+  const sign = b64encode(payload, 'std', 'utf-8');
   
   return {
     'timestamp': timestamp,

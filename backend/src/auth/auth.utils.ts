@@ -1,4 +1,4 @@
-import { createHash } from 'crypto';
+const SIGNATURE_SECRET = process.env.AUTH_SIGNATURE_SECRET ?? '';
 
 export interface AuthHeaders {
   timestamp?: string;
@@ -33,10 +33,13 @@ export function validateAuthHeaders(headers: AuthHeaders): AuthResult {
     };
   }
 
-  // Validate signature
-  const expectedSign = createHash('sha256')
-    .update(timestamp + 'forecap2025' + user_id)
-    .digest('base64');
+  // Validate signature (base64(timestamp + [secret] + user_id))
+  const payload = SIGNATURE_SECRET
+    ? `${timestamp}${SIGNATURE_SECRET}${user_id}`
+    : `${timestamp}${user_id}`;
+  const expectedSign = Buffer.from(payload, 'utf-8').toString(
+    'base64',
+  );
 
   if (sign !== expectedSign) {
     return {

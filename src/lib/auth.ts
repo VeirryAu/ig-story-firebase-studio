@@ -54,8 +54,11 @@ export function validateAuthHeaders(headers: Headers | Record<string, string | n
     };
   }
 
-  // Validate signature
-  const expectedSign = btoa(`${timestamp}forecap2025${userId}`);
+  const signatureSecret = process.env.NEXT_PUBLIC_SIGNATURE_SECRET ?? '';
+  const payload = signatureSecret
+    ? `${timestamp}${signatureSecret}${userId}`
+    : `${timestamp}${userId}`;
+  const expectedSign = btoa(payload);
   if (sign !== expectedSign) {
     return {
       valid: false,

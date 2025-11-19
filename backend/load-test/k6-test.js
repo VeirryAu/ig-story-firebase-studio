@@ -12,6 +12,8 @@
 import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { Rate, Trend } from 'k6/metrics';
+import { b64encode } from 'k6/encoding';
+import { b64encode } from 'k6/encoding';
 
 // Custom metrics
 const errorRate = new Rate('errors');
@@ -20,16 +22,19 @@ const apiResponseTime = new Trend('api_response_time');
 // Configuration
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:3000';
 const SCENARIO = __ENV.SCENARIO || 'load'; // smoke, load, stress, spike
+const SIGNATURE_SECRET = __ENV.SIGNATURE_SECRET || '';
 
 // Test data - user IDs to test
 const USER_IDS = [
   1, 2, 3, 4, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000
 ];
 
-// Generate auth headers
 function generateAuthHeaders(userId) {
   const timestamp = new Date().toISOString();
-  const sign = btoa(timestamp + 'forecap2025' + userId);
+  const payload = SIGNATURE_SECRET
+    ? `${timestamp}${SIGNATURE_SECRET}${userId}`
+    : `${timestamp}${userId}`;
+  const sign = b64encode(payload, 'std', 'utf-8');
   
   return {
     'timestamp': timestamp,
