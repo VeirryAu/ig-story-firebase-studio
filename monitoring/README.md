@@ -156,13 +156,13 @@ For production, use actual IP or service name:
 
 ```promql
 # Request rate
-rate(http_requests_total[1m])
+rate(forecap_http_requests_total[1m])
 
-# Error rate percentage
-rate(http_request_errors_total[1m]) / rate(http_requests_total[1m]) * 100
+# Error rate percentage (NestJS)
+rate(http_request_errors_total[1m]) / rate(forecap_http_requests_total{service="forecap-api"}[1m]) * 100
 
 # p95 response time
-histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[1m]))
+histogram_quantile(0.95, rate(forecap_http_request_duration_seconds_bucket[1m]))
 
 # Cache hit rate
 rate(cache_hits_total[1m]) / (rate(cache_hits_total[1m]) + rate(cache_misses_total[1m]))
