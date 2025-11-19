@@ -722,6 +722,7 @@ A comprehensive, book-style guide covering:
 - **[Realistic Load Testing](./docs/realistic-load-testing.md)** - EC2 t3.medium with 10M users
 - **[Backend Performance Comparison](./docs/backend-performance-comparison.md)** - NestJS vs Rust vs Go performance analysis
 - **[Performance Optimization Guide](./docs/performance-optimization-guide.md)** - Programming & infrastructure performance tips
+- **[GC Comparison: Node.js vs Go](./docs/gc-comparison-nodejs-vs-go.md)** - Why NestJS doesn't show GC issues
 - **[MyISAM vs InnoDB](./docs/myisam-vs-innodb.md)** - Why MyISAM for read-heavy workloads
 - **[Monitoring Setup](./monitoring/README.md)** - Prometheus + Grafana monitoring
 - **[Backend README](./backend/README.md)** - NestJS backend documentation
