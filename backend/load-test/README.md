@@ -104,6 +104,10 @@ BASE_URL=https://api.example.com k6 run k6-test.js
 
 # Custom scenario
 SCENARIO=load BASE_URL=http://localhost:3000 k6 run k6-test.js
+
+# Target the Go or Rust backends (docker-compose)
+BASE_URL=http://localhost:4000 k6 run k6-test.js   # Rust
+BASE_URL=http://localhost:4001 k6 run k6-test.js   # Go
 ```
 
 ### Output

@@ -722,6 +722,8 @@ A comprehensive, book-style guide covering:
 - **[Realistic Load Testing](./docs/realistic-load-testing.md)** - EC2 t3.medium with 10M users
 - **[Monitoring Setup](./monitoring/README.md)** - Prometheus + Grafana monitoring
 - **[Backend README](./backend/README.md)** - NestJS backend documentation
+- **[Rust Backend README](./backend-rust/README.md)** - Actix-web backend docs
+- **[Go Backend README](./backend-go/README.md)** - Gin backend for benchmarking
 - **[API Specification](./docs/api/openapi.yaml)** - OpenAPI/Swagger documentation
 
 ## 🤝 Contributing

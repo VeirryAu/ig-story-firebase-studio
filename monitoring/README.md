@@ -112,11 +112,11 @@ For production, use actual IP or service name:
 
 ## Metrics Available
 
-### Application Metrics (from NestJS)
+### Application Metrics (from NestJS/Rust/Go backends)
 
-- `http_requests_total` - Total HTTP requests
-- `http_request_duration_seconds` - Request duration histogram
-- `http_request_errors_total` - Error count
+- `forecap_http_requests_total` - Total HTTP requests (`service` label = `forecap-api`, `forecap-api-rust`, `forecap-api-go`)
+- `forecap_http_request_duration_seconds` - Request duration histogram
+- `http_request_errors_total` - Error count (NestJS only)
 - `db_query_duration_seconds` - Database query time
 - `db_connection_pool_size` - Connection pool size
 - `db_connection_pool_active` - Active connections

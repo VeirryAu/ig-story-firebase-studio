@@ -231,6 +231,16 @@ forecap-2025/
 │   │   └── scripts/       # Import scripts
 │   └── load-test/         # Load testing scripts
 │
+├── backend-rust/          # Rust (Actix) backend for benchmarking
+│   └── src/
+│       ├── handlers.rs    # API handlers
+│       ├── metrics.rs     # Prometheus metrics
+│       └── models.rs      # DB models + response mapping
+│
+├── backend-go/            # Go (Gin) backend for benchmarking
+│   ├── internal/          # Config, auth, DB, cache, metrics, handlers
+│   └── Dockerfile         # Multi-stage Go build
+│
 ├── monitoring/            # Monitoring stack
 │   ├── prometheus/        # Prometheus config
 │   └── grafana/           # Grafana dashboards

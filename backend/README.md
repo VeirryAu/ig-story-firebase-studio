@@ -120,6 +120,20 @@ docker-compose logs -f rust-api
 
 It exposes the same endpoints on `http://localhost:4000`, including `/metrics`, so you can point k6 and Prometheus at it to compare throughput/latency.
 
+### Go Backend (Optional)
+
+The Go implementation (Gin + go-redis + database/sql) is built for parity with NestJS/Rust. Use it to evaluate Go latency/cost under the same workload:
+
+```bash
+# Build and run only the Go service
+docker-compose up -d go-api
+
+# Tail logs
+docker-compose logs -f go-api
+```
+
+It listens on `http://localhost:4001` and exports Prometheus metrics with `service="forecap-api-go"`, so monitoring dashboards show NestJS vs Rust vs Go side-by-side.
+
 ### Production Build
 
 ```bash

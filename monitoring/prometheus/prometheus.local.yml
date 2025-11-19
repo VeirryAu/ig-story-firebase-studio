@@ -62,3 +62,13 @@ scrape_configs:
           service: 'forecap-api-rust'
           environment: 'local'
 
+  # Go API Metrics
+  - job_name: 'forecap-api-go'
+    scrape_interval: 5s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['forecap-api-go:4001']
+        labels:
+          service: 'forecap-api-go'
+          environment: 'local'
+

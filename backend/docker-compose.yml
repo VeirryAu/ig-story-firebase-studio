@@ -98,6 +98,40 @@ services:
       retries: 3
       start_period: 10s
 
+  go-api:
+    build:
+      context: ../backend-go
+      dockerfile: Dockerfile
+    container_name: forecap-api-go
+    ports:
+      - "4001:4001"
+    environment:
+      - PORT=4001
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DATABASE=forecap_db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - CACHE_TTL_SECONDS=300
+      - AUTH_SIGNATURE_SECRET=
+      - SERVICE_NAME=forecap-api-go
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - forecap-net
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:4001/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
 volumes:
   mysql_data:
   redis_data:
