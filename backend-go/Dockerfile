@@ -1,11 +1,12 @@
 # syntax=docker/dockerfile:1
 
-FROM golang:1.22-alpine AS builder
+FROM golang:1.25.3 AS builder
 WORKDIR /app
-COPY go.mod ./
+COPY go.mod go.sum* ./
 COPY internal ./internal
 COPY main.go ./
-RUN apk add --no-cache git && \
+RUN apt-get update && apt-get install -y git && \
+    rm -rf /var/lib/apt/lists/* && \
     go mod download && \
     go build -ldflags="-s -w" -o server .
 
