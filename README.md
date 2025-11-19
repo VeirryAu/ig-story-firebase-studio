@@ -721,6 +721,8 @@ A comprehensive, book-style guide covering:
 - **[Load Testing Guide](./backend/load-test/README.md)** - Performance testing with K6/Artillery
 - **[Realistic Load Testing](./docs/realistic-load-testing.md)** - EC2 t3.medium with 10M users
 - **[Backend Performance Comparison](./docs/backend-performance-comparison.md)** - NestJS vs Rust vs Go performance analysis
+- **[Performance Optimization Guide](./docs/performance-optimization-guide.md)** - Programming & infrastructure performance tips
+- **[MyISAM vs InnoDB](./docs/myisam-vs-innodb.md)** - Why MyISAM for read-heavy workloads
 - **[Monitoring Setup](./monitoring/README.md)** - Prometheus + Grafana monitoring
 - **[Backend README](./backend/README.md)** - NestJS backend documentation
 - **[Rust Backend README](./backend-rust/README.md)** - Actix-web backend docs

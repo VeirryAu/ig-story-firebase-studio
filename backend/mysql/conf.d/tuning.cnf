@@ -16,9 +16,9 @@ tmp_table_size=64M
 max_heap_table_size=64M
 
 # Query cache (useful for read-heavy MyISAM workloads)
-query_cache_type=1
-query_cache_size=128M
-query_cache_limit=2M
+#query_cache_type=1
+#query_cache_size=128M
+#query_cache_limit=2M
 
 skip-name-resolve
 
