@@ -687,58 +687,28 @@ webView.load(request)
 2. **Check environment**: Date restriction is bypassed in development mode
 3. **Verify server time**: Ensure server/client time is synchronized
 
-## 📚 Documentation Index
+## 📚 Documentation
 
-### Backend & Database
+### Complete Documentation Book
 
-- **[Deployment Guide](./docs/deployment-guide.md)** - Complete guide for deploying to:
-  - Local development
-  - Docker (local and production)
-  - EC2 (AWS)
-  - ECS Fargate (AWS)
-  
-- **[Data Import Guide](./docs/import-data-guide.md)** - How to import Excel data (BigQuery results) to MySQL:
-  - Import script usage
-  - Excel file format
-  - Troubleshooting
-  - Performance optimization
+**[📖 Read the Complete Documentation Book](./docs/BOOK.md)**
 
-- **[Load Testing Guide](./backend/load-test/README.md)** - Performance testing and comparison:
-  - K6 load testing setup
-  - Artillery testing
-  - Performance benchmarks
-  - NestJS vs Go vs Rust comparison
-  - When to consider alternatives
+A comprehensive, book-style guide covering:
+- **Part I**: Introduction & Architecture
+- **Part II**: Frontend Development
+- **Part III**: Backend Development
+- **Part IV**: Deployment (Local, Docker, EC2, Fargate)
+- **Part V**: Performance & Monitoring
+- **Part VI**: Operations & Troubleshooting
 
-- **[Monitoring Setup](./monitoring/README.md)** - Real-time monitoring during load tests:
-  - Prometheus + Grafana setup
-  - Real-time metrics dashboard
-  - Application, database, and cache metrics
-  - System resource monitoring
+### Quick Links
 
-- **[EC2/Fargate Deployment](./docs/ec2-fargate-deployment.md)** - Detailed AWS deployment:
-  - ECS Fargate setup
-  - EC2 with Docker
-  - Auto-scaling configuration
-  - Monitoring and logging
-
-- **[Deployment Architecture](./docs/deployment-architecture.md)** - Architecture overview:
-  - Database design (lean single-table)
-  - Redis caching strategy
-  - Performance optimizations
-  - Cost estimation
-
-### Frontend
-
-- **[Build for S3 with Dev Mode](./docs/build-for-s3-with-dev.md)** - Production build with developer features
-
-### API
-
-- **[OpenAPI Specification](./docs/api/openapi.yaml)** - Complete API documentation
-
-### Backend Code
-
-- **[Backend README](./backend/README.md)** - NestJS backend setup and usage
+- **[Deployment Guide](./docs/deployment-guide.md)** - Step-by-step deployment instructions
+- **[Data Import Guide](./docs/import-data-guide.md)** - Import Excel data to MySQL
+- **[Load Testing Guide](./backend/load-test/README.md)** - Performance testing with K6/Artillery
+- **[Monitoring Setup](./monitoring/README.md)** - Prometheus + Grafana monitoring
+- **[Backend README](./backend/README.md)** - NestJS backend documentation
+- **[API Specification](./docs/api/openapi.yaml)** - OpenAPI/Swagger documentation
 
 ## 🤝 Contributing
 
