@@ -106,6 +106,20 @@ docker-compose down
 
 > **MySQL tuning:** Docker Compose automatically mounts `./mysql/conf.d/tuning.cnf`, which sets a 2 GB buffer pool, larger redo logs, and other defaults sized for ~2M MAU traffic. Adjust these values (or copy them into your RDS parameter group) if you change instance sizes.
 
+### Rust Backend (Optional)
+
+The compose file also includes a Rust implementation of the API. Run it side-by-side for benchmarking:
+
+```bash
+# Build and run only the Rust service
+docker-compose up -d rust-api
+
+# Tail logs
+docker-compose logs -f rust-api
+```
+
+It exposes the same endpoints on `http://localhost:4000`, including `/metrics`, so you can point k6 and Prometheus at it to compare throughput/latency.
+
 ### Production Build
 
 ```bash

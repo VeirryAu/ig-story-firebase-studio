@@ -5,9 +5,10 @@ import Redis from 'ioredis';
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   private client: Redis | null = null;
-  private readonly CACHE_TTL = 3600; // 1 hour
-  private readonly CACHE_PREFIX = 'user:recap:';
-  private readonly LOCK_TTL = 10; // 10 seconds
+  private readonly CACHE_TTL_MINUTES = parseInt(this.configService.get('CACHE_TTL_MINUTES', '15') ?? '15');
+  private readonly CACHE_TTL = this.CACHE_TTL_MINUTES * 60; // seconds
+  private readonly CACHE_PREFIX = this.configService.get('CACHE_PREFIX', 'user:recap:');
+  private readonly LOCK_TTL = parseInt(this.configService.get('LOCK_TTL', '10') ?? '10'); // seconds
 
   constructor(private configService: ConfigService) {}
 

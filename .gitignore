@@ -45,3 +45,4 @@ firebase-debug.log
 firestore-debug.log
 .vscode
 backend/load-test/node_modules
+backend-rust/target/

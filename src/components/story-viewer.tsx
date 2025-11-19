@@ -777,7 +777,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
 
     // For screen-13 (video slide), return the AV1 video URL directly
     if (slideId === 'screen-13') {
-      return `${window.location.origin}/stories-asset/slides13/forecap-video-barista-av1.mp4`;
+      return `${window.location.origin}/stories-asset/slides13/forecap-video-barista-h264.mp4`;
     }
 
     // For other slides, generate fullscreen URL
