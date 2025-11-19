@@ -59,6 +59,13 @@ services:
     networks:
       - forecap-net
 
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    pid: host
+    restart: unless-stopped
+    network_mode: host
+
 volumes:
   prometheus_data:
   grafana_data:

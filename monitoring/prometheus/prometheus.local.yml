@@ -52,3 +52,12 @@ scrape_configs:
           service: 'redis'
           environment: 'local'
 
+  # Node Exporter (host metrics)
+  - job_name: 'node-exporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['host.docker.internal:9100']
+        labels:
+          service: 'host'
+          environment: 'local'
+
