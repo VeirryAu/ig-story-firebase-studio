@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import type { Story } from '@/types/story';
 import type { ServerResponse } from '@/types/server';
 import Image from 'next/image';
@@ -27,6 +27,38 @@ interface StoryViewerProps {
   fullscreenSlide?: string; // e.g., "screen-01" or "screen-1"
   fullscreenDuration?: number; // Duration in seconds for fullscreen mode
 }
+
+const shareableSlideIds = [
+  'screen-2',
+  'screen-3',
+  'screen-4',
+  'screen-5',
+  'screen-6',
+  'screen-7',
+  'screen-8',
+  'screen-9',
+  'screen-10',
+  'screen-11',
+  'screen-12',
+  'screen-13',
+];
+
+const shareButtonDelayMap: Record<string, number> = {
+  'screen-2': 1200,
+  'screen-3': 1400,
+  'screen-4': 1200,
+  'screen-5': 1400,
+  'screen-6': 1200,
+  'screen-7': 1500,
+  'screen-8': 1200,
+  'screen-9': 1200,
+  'screen-10': 1600,
+  'screen-11': 1500,
+  'screen-12': 1300,
+  'screen-13': 800,
+};
+
+const defaultShareDelay = 900;
 
 interface VideoSlideProps {
   src: string;
@@ -291,10 +323,12 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const [isMuted, setIsMuted] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareButtonReady, setShareButtonReady] = useState(false);
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const isNavigatingRef = useRef(false); // Prevent rapid-fire navigation
   const storyViewerRef = useRef<HTMLDivElement>(null);
+  const shareButtonTimerRef = useRef<NodeJS.Timeout | null>(null);
   
   // Check if we're in fullscreen mode (no navigation buttons)
   const isFullscreenMode = !!fullscreenSlide;
@@ -357,7 +391,37 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const currentSlide = currentStory?.slides[currentSlideIndex];
   const totalSlides = currentStory?.slides.length || 0;
   const isLastSlide = currentSlideIndex === totalSlides - 1;
-  
+  const shareableSlides = useMemo(() => new Set(shareableSlideIds), []);
+  useEffect(() => {
+    if (shareButtonTimerRef.current) {
+      clearTimeout(shareButtonTimerRef.current);
+      shareButtonTimerRef.current = null;
+    }
+    setShareButtonReady(false);
+
+    const slideId = currentSlide?.id;
+    const shouldShowShareButton =
+      !isFullscreenMode &&
+      !!slideId &&
+      (shareableSlides.has(slideId) || (isLastSlide && slideId === 'screen-13'));
+
+    if (!shouldShowShareButton) {
+      return;
+    }
+
+    const delay = slideId ? shareButtonDelayMap[slideId] ?? defaultShareDelay : defaultShareDelay;
+    shareButtonTimerRef.current = setTimeout(() => {
+      setShareButtonReady(true);
+    }, delay);
+
+    return () => {
+      if (shareButtonTimerRef.current) {
+        clearTimeout(shareButtonTimerRef.current);
+        shareButtonTimerRef.current = null;
+      }
+    };
+  }, [currentSlide?.id, isFullscreenMode, isLastSlide, shareableSlides]);
+
   // Track banner event when first slide loads
   const hasTrackedBannerRef = useRef(false);
   useEffect(() => {
@@ -1070,6 +1134,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             {(currentSlide?.id === 'screen-2' || currentSlide?.id === 'screen-3' || currentSlide?.id === 'screen-4' || currentSlide?.id === 'screen-5' || currentSlide?.id === 'screen-6' || currentSlide?.id === 'screen-7' || currentSlide?.id === 'screen-8' || currentSlide?.id === 'screen-9' || currentSlide?.id === 'screen-10' || currentSlide?.id === 'screen-11' || currentSlide?.id === 'screen-12') && (
               <ShareButton
                 onClick={handleShareButtonClick}
+                isVisible={shareButtonReady}
               />
             )}
 
@@ -1077,6 +1142,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
             {isLastSlide && currentSlide?.id === 'screen-13' && (
               <ShareButton
                 onClick={handleShareModalOpen}
+                isVisible={shareButtonReady}
               />
             )}
           </>
