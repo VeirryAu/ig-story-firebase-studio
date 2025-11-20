@@ -2,17 +2,48 @@
 
 import Image from "next/image";
 import { Star } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { ServerResponse } from "@/types/server";
 import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen3Props {
   serverResponse?: ServerResponse;
+  isActive?: boolean;
 }
 
-export function Screen3({ serverResponse }: Screen3Props) {
+export function Screen3({ serverResponse, isActive = false }: Screen3Props) {
   const { t } = useTranslations();
   const trxCount = serverResponse?.trxCount || 0;
   const favoriteProducts = serverResponse?.listProductFavorite || [];
+
+  const [showHeader, setShowHeader] = useState(false);
+  const [visibleItems, setVisibleItems] = useState<number[]>([]);
+
+  useEffect(() => {
+    let timers: NodeJS.Timeout[] = [];
+
+    if (!isActive) {
+      setShowHeader(false);
+      setVisibleItems([]);
+      timers.forEach(clearTimeout);
+      return () => {};
+    }
+
+    setShowHeader(true);
+
+    favoriteProducts.forEach((_, index) => {
+      const orderFromLowest = favoriteProducts.length - 1 - index;
+      const delay = 250 + orderFromLowest * 140;
+      const timer = setTimeout(() => {
+        setVisibleItems(prev => (prev.includes(index) ? prev : [...prev, index]));
+      }, delay);
+      timers.push(timer);
+    });
+
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [isActive, favoriteProducts]);
 
   return (
     <div 
@@ -21,7 +52,11 @@ export function Screen3({ serverResponse }: Screen3Props) {
     >
       {/* Header Text */}
       <div className="px-6 pt-8 pb-4 mt-20 mb-10">
-        <p className="text-white font-bold text-center text-lg leading-relaxed">
+        <p
+          className={`text-white font-bold text-center text-lg leading-relaxed transition-all duration-500 ${
+            showHeader ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
+        >
           {t('screen3.header', { trxCount })}
         </p>
       </div>
@@ -32,12 +67,16 @@ export function Screen3({ serverResponse }: Screen3Props) {
           const rank = index + 1;
           const isFirstRank = rank === 1;
           const cardBgColor = isFirstRank ? '#F45F49' : '#A54133';
+          const isVisible = visibleItems.includes(index);
+          const transitionDelay = `${isVisible ? index * 160 : 0}ms`;
 
           return (
             <div
               key={index}
-              className="w-full rounded-lg p-4 flex items-center gap-4"
-              style={{ backgroundColor: cardBgColor }}
+              className={`w-full rounded-lg p-4 flex items-center gap-4 transform transition duration-700 ${
+                isVisible ? "opacity-100 translate-x-0 scale-100" : "opacity-0 -translate-x-8 scale-95"
+              }`}
+              style={{ backgroundColor: cardBgColor, transitionDelay }}
             >
               {/* Image circle on left */}
               <div className="flex-shrink-0">
@@ -72,8 +111,7 @@ export function Screen3({ serverResponse }: Screen3Props) {
                 </p>
               </div>
 
-              {/* TODO: Styling Star of Rank #1 */}
-              {/* Ranking with star only on Rank #1 */}
+              {/* Ranking */}
               <div className="flex-shrink-0 flex items-center gap-2">
                 {isFirstRank && (
                   <Star className="w-6 h-6 text-yellow-300 fill-yellow-300" />

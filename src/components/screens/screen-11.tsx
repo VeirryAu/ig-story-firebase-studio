@@ -1,14 +1,16 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 import type { ServerResponse } from "@/types/server";
 import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen11Props {
   serverResponse?: ServerResponse;
+  isActive?: boolean;
 }
 
-export function Screen11({ serverResponse }: Screen11Props) {
+export function Screen11({ serverResponse, isActive = false }: Screen11Props) {
   const { t } = useTranslations();
   const trxCount = serverResponse?.trxCount || 70;
   const totalPoint = serverResponse?.totalPoint || 450;
@@ -20,6 +22,47 @@ export function Screen11({ serverResponse }: Screen11Props) {
   const formatSaving = (saving: string) => {
     return saving.replace(/^Rp\s*/i, '');
   };
+
+  const cardOrder = useMemo(
+    () => ['cups', 'points', 'favoriteProduct', 'favoriteStore', 'totalSaving'],
+    [],
+  );
+
+  const [showHeader, setShowHeader] = useState(false);
+  const [visibleCards, setVisibleCards] = useState<string[]>([]);
+  const [showConclusion, setShowConclusion] = useState(false);
+
+  useEffect(() => {
+    let timers: NodeJS.Timeout[] = [];
+
+    if (!isActive) {
+      setShowHeader(false);
+      setVisibleCards([]);
+      setShowConclusion(false);
+      timers.forEach(clearTimeout);
+      return () => {};
+    }
+
+    setShowHeader(true);
+    cardOrder.forEach((id, index) => {
+      const delay = 220 + index * 150;
+      timers.push(
+        setTimeout(() => {
+          setVisibleCards(prev => (prev.includes(id) ? prev : [...prev, id]));
+        }, delay),
+      );
+    });
+
+    timers.push(
+      setTimeout(() => setShowConclusion(true), 220 + cardOrder.length * 150 + 200),
+    );
+
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [isActive, cardOrder]);
+
+  const isCardVisible = (id: string) => visibleCards.includes(id);
 
   return (
     <div 
@@ -47,7 +90,11 @@ export function Screen11({ serverResponse }: Screen11Props) {
       {/* Main Content */}
       <div className="relative z-10 flex flex-col flex-1 px-6 pt-8 pb-4 mt-16">
         {/* Title */}
-        <h1 className="text-white font-bold text-center text-md mb-8">
+        <h1
+          className={`text-white font-bold text-center text-md mb-8 transition-all duration-500 ${
+            showHeader ? "opacity-100 -translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
+        >
           {t('screen11.title')}
         </h1>
 
@@ -57,7 +104,9 @@ export function Screen11({ serverResponse }: Screen11Props) {
           <div className="grid grid-cols-2 gap-4">
             {/* Total Cup Dibeli */}
             <div 
-              className="rounded-2xl p-4 flex flex-col"
+              className={`rounded-2xl p-4 flex flex-col transition-all duration-500 ${
+                isCardVisible('cups') ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
               style={{ backgroundColor: '#006041' }}
             >
               <p className="text-white font-bold text-xs text-center mb-2">
@@ -73,7 +122,9 @@ export function Screen11({ serverResponse }: Screen11Props) {
 
             {/* Total Poin Didapat */}
             <div 
-              className="rounded-2xl p-4 flex flex-col"
+              className={`rounded-2xl p-4 flex flex-col transition-all duration-500 ${
+                isCardVisible('points') ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
               style={{ backgroundColor: '#006041' }}
             >
               <p className="text-white font-bold text-xs text-center mb-2">
@@ -90,7 +141,9 @@ export function Screen11({ serverResponse }: Screen11Props) {
 
           {/* Row 2: Menu Terfavorit (Full Width) */}
           <div 
-            className="rounded-2xl p-4 flex flex-col"
+            className={`rounded-2xl p-4 flex flex-col transition-all duration-500 ${
+              isCardVisible('favoriteProduct') ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
             style={{ backgroundColor: '#006041' }}
           >
             <p className="text-white font-bold text-xs text-center mb-2">
@@ -108,7 +161,9 @@ export function Screen11({ serverResponse }: Screen11Props) {
           <div className="grid grid-cols-2 gap-4">
             {/* Store Terfavorit */}
             <div 
-              className="rounded-2xl p-4 flex flex-col"
+              className={`rounded-2xl p-4 flex flex-col transition-all duration-500 ${
+                isCardVisible('favoriteStore') ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
               style={{ backgroundColor: '#006041' }}
             >
               <p className="text-white font-bold text-xs text-center mb-2">
@@ -124,7 +179,9 @@ export function Screen11({ serverResponse }: Screen11Props) {
 
             {/* Total Saving */}
             <div 
-              className="rounded-2xl p-4 flex flex-col"
+              className={`rounded-2xl p-4 flex flex-col transition-all duration-500 ${
+                isCardVisible('totalSaving') ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+              }`}
               style={{ backgroundColor: '#006041' }}
             >
               <p className="text-white font-bold text-xs text-center mb-2">
@@ -142,7 +199,11 @@ export function Screen11({ serverResponse }: Screen11Props) {
 
         {/* Concluding Message */}
         <div className="w-full max-w-md mx-auto mt-4 mb-6">
-          <p className="text-white font-bold text-center text-base">
+          <p
+            className={`text-white font-bold text-center text-base transition-all duration-500 ${
+              showConclusion ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            }`}
+          >
             {t('screen11.conclusion')}
           </p>
         </div>

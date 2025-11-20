@@ -1,15 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import type { ServerResponse } from "@/types/server";
 import { useTranslations } from "@/hooks/use-translations";
 
 interface DeliveryPickupScreenProps {
   serverResponse?: ServerResponse;
   isReversed?: boolean; // For screen-9 (reversed colors and different text)
+  isActive?: boolean;
 }
 
-export function DeliveryPickupScreen({ serverResponse, isReversed = false }: DeliveryPickupScreenProps) {
+export function DeliveryPickupScreen({ serverResponse, isReversed = false, isActive = false }: DeliveryPickupScreenProps) {
   const { t } = useTranslations();
   const deliveryCount = serverResponse?.deliveryCount || 0;
   const pickupCount = serverResponse?.pickupCount || 0;
@@ -74,6 +76,30 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
     }
   })();
 
+  const [showTop, setShowTop] = useState(false);
+  const [showImage, setShowImage] = useState(false);
+  const [showBottom, setShowBottom] = useState(false);
+
+  useEffect(() => {
+    let timers: NodeJS.Timeout[] = [];
+
+    if (!isActive) {
+      setShowTop(false);
+      setShowImage(false);
+      setShowBottom(false);
+      timers.forEach(clearTimeout);
+      return () => {};
+    }
+
+    setShowTop(true);
+    timers.push(setTimeout(() => setShowImage(true), 200));
+    timers.push(setTimeout(() => setShowBottom(true), 400));
+
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [isActive]);
+
   return (
     <div 
       className="relative w-full h-full flex flex-col"
@@ -81,13 +107,20 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
     >
       {/* Top Text */}
       <div className="px-6 pt-8 pb-4 mt-16 relative z-10">
-        <p className="text-white font-bold text-center text-lg mb-6">
+        <p
+          className={`text-white font-bold text-center text-lg mb-6 transition-all duration-500 ${
+            showTop ? "opacity-100 -translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
+        >
           {config.topText}
         </p>
 
-        {/* Button with transaction count - hidden when reversed (screen-9) */}
         {!isReversed && (
-          <div className="flex justify-center mb-6">
+          <div
+            className={`flex justify-center mb-6 transition-all duration-500 ${
+              showTop ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
+            }`}
+          >
             <div 
               className="px-6 py-3 rounded-full"
               style={{ backgroundColor: config.secondaryColor }}
@@ -100,7 +133,7 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
         )}
       </div>
 
-      {/* Circle Image - positioned in front of all elements */}
+      {/* Circle Image */}
       <div 
         className="absolute left-1/2 transform -translate-x-1/2"
         style={{
@@ -110,7 +143,9 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
         }}
       >
         <div 
-          className="relative rounded-full overflow-hidden"
+          className={`relative rounded-full overflow-hidden transition-all duration-600 ${
+            showImage ? "opacity-100 scale-100" : "opacity-0 scale-90"
+          }`}
           style={{
             border: '10px solid rgba(0, 0, 0, 0.2)',
             width: '200px',
@@ -127,9 +162,11 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
         </div>
       </div>
 
-      {/* Bottom Card - half of the screen */}
+      {/* Bottom Card */}
       <div 
-        className="absolute bottom-0 left-0 right-0 w-full flex flex-col"
+        className={`absolute bottom-0 left-0 right-0 w-full flex flex-col transition-all duration-600 ${
+          showBottom ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
         style={{ 
           height: '50%',
           backgroundColor: config.secondaryColor,
@@ -138,25 +175,22 @@ export function DeliveryPickupScreen({ serverResponse, isReversed = false }: Del
           zIndex: 10,
         }}
       >
-        <div className="flex-1 flex flex-col items-center justify-center px-6 py-10">
-          {/* Card Text 1 */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 text-center">
           {config.cardText1 && (
-            <p className="text-white font-bold text-center text-lg mb-4 leading-relaxed">
+            <p className="text-white font-bold text-lg mb-4 leading-relaxed">
               {config.cardText1}
             </p>
           )}
 
-          {/* Card Text 2 */}
           {config.cardText2 && (
-            <p className="text-white font-bold text-center text-base leading-relaxed">
+            <p className="text-white font-bold text-base leading-relaxed">
               {config.cardText2}
             </p>
           )}
 
-          {/* Additional Text (for screen-9) */}
           {config.additionalText && (
             <p 
-              className="font-bold text-center text-base mt-4"
+              className="font-bold text-base mt-4"
               style={{ color: 'rgba(208, 215, 132, 1)' }}
             >
               {config.additionalText}

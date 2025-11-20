@@ -874,34 +874,49 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                 )}
                 {slide.type === 'component' && (
                   <div className="w-full h-full">
-                    {slide.id === 'screen-1' && serverResponse?.userName
-                      ? React.cloneElement(slide.component as React.ReactElement, { userName: serverResponse.userName })
-                      : slide.id === 'screen-2' && serverResponse?.trxCount === 0
-                      ? <Screen2NoTrx />
-                      : slide.id === 'screen-2' && serverResponse?.trxCount !== undefined
-                      ? React.cloneElement(slide.component as React.ReactElement, { trxCount: serverResponse.trxCount })
-                      : slide.id === 'screen-3' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-4' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-5' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-7' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-8' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-9' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-10' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-11' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-12' && serverResponse
-                      ? React.cloneElement(slide.component as React.ReactElement, { serverResponse })
-                      : slide.id === 'screen-1' && currentStory?.user?.name
-                      ? React.cloneElement(slide.component as React.ReactElement, { userName: currentStory.user.name || 'John' })
-                      : slide.component
-                    }
+                    {(() => {
+                      if (slide.id === 'screen-2' && serverResponse?.trxCount === 0) {
+                        return <Screen2NoTrx isActive={isActive} />;
+                      }
+
+                      const componentElement = slide.component as React.ReactElement<any>;
+                      const componentProps: Record<string, any> = {
+                        isActive,
+                      };
+
+                      if (slide.id === 'screen-1') {
+                        if (serverResponse?.userName) {
+                          componentProps.userName = serverResponse.userName;
+                        } else if (currentStory?.user?.name) {
+                          componentProps.userName = currentStory.user.name || 'John';
+                        }
+                      }
+
+                      if (slide.id === 'screen-2') {
+                        componentProps.isActive = isActive;
+                        if (serverResponse?.trxCount !== undefined) {
+                          componentProps.trxCount = serverResponse.trxCount;
+                        }
+                      }
+
+                      const slidesRequiringServerData = new Set([
+                        'screen-3',
+                        'screen-4',
+                        'screen-5',
+                        'screen-7',
+                        'screen-8',
+                        'screen-9',
+                        'screen-10',
+                        'screen-11',
+                        'screen-12',
+                      ]);
+
+                      if (slidesRequiringServerData.has(slide.id) && serverResponse) {
+                        componentProps.serverResponse = serverResponse;
+                      }
+
+                      return React.cloneElement(componentElement, componentProps);
+                    })()}
                   </div>
                 )}
               </div>

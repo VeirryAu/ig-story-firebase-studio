@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Upload } from "lucide-react";
 import { useTranslations } from "@/hooks/use-translations";
 
@@ -9,6 +10,11 @@ interface ShareButtonProps {
 
 export function ShareButton({ onClick }: ShareButtonProps) {
   const { t } = useTranslations();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -26,7 +32,9 @@ export function ShareButton({ onClick }: ShareButtonProps) {
 
   return (
     <div
-      className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-50 pointer-events-auto share-button-container"
+      className={`absolute bottom-5 left-1/2 transform -translate-x-1/2 z-50 pointer-events-auto share-button-container transition-all duration-500 ${
+        isMounted ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-4 scale-95"
+      }`}
       data-share-exclude="true"
     >
       <button

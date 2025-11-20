@@ -1,24 +1,68 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 import type { ServerResponse } from "@/types/server";
 import { useTranslations } from "@/hooks/use-translations";
 
 interface Screen10Props {
   serverResponse?: ServerResponse;
+  isActive?: boolean;
 }
 
-export function Screen10({ serverResponse }: Screen10Props) {
+export function Screen10({ serverResponse, isActive = false }: Screen10Props) {
   const { t, locale } = useTranslations();
   const userName = serverResponse?.userName || 'User';
   const cheaperSubsDesc = serverResponse?.cheaperSubsDesc || '325rb Rupiah';
   const cheaperSubsAmount = serverResponse?.cheaperSubsAmount || 325500;
   const topRanking = serverResponse?.topRanking || 50;
 
-  // Format the amount for display
-  const formatAmount = (amount: number) => {
-    return new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-SG').format(amount);
-  };
+  const formatAmount = (amount: number) =>
+    new Intl.NumberFormat(locale === 'id' ? 'id-ID' : 'en-SG').format(amount);
+
+  const blurredTop = useMemo(() => Array.from({ length: 3 }), []);
+  const blurredBottom = useMemo(() => Array.from({ length: 2 }), []);
+
+  const [showHeader, setShowHeader] = useState(false);
+  const [showSavings, setShowSavings] = useState(false);
+  const [visibleListItems, setVisibleListItems] = useState<number[]>([]);
+  const [showBottomCard, setShowBottomCard] = useState(false);
+
+  useEffect(() => {
+    let timers: NodeJS.Timeout[] = [];
+
+    if (!isActive) {
+      setShowHeader(false);
+      setShowSavings(false);
+      setVisibleListItems([]);
+      setShowBottomCard(false);
+      timers.forEach(clearTimeout);
+      return () => {};
+    }
+
+    setShowHeader(true);
+    timers.push(setTimeout(() => setShowSavings(true), 200));
+
+    const listDelays = [
+      ...blurredTop.map((_, idx) => 350 + idx * 120),
+      350 + blurredTop.length * 120 + 120, // highlighted entry
+      ...blurredBottom.map((_, idx) => 350 + blurredTop.length * 120 + 240 + idx * 120),
+    ];
+
+    listDelays.forEach((delay, idx) => {
+      timers.push(
+        setTimeout(() => {
+          setVisibleListItems(prev => (prev.includes(idx) ? prev : [...prev, idx]));
+        }, delay),
+      );
+    });
+
+    timers.push(setTimeout(() => setShowBottomCard(true), 350 + listDelays.length * 120));
+
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [isActive, blurredTop.length, blurredBottom.length]);
 
   return (
     <div 
@@ -27,8 +71,11 @@ export function Screen10({ serverResponse }: Screen10Props) {
     >
       {/* Top Section with Headline */}
       <div className="px-6 pt-8 pb-4 mt-16 relative z-10">
-        {/* Pakai my FORE Plan */}
-        <div className="flex items-center justify-center gap-2 mb-4">
+        <div
+          className={`flex items-center justify-center gap-2 mb-4 transition-all duration-500 ${
+            showHeader ? "opacity-100 -translate-y-0" : "opacity-0 -translate-y-4"
+          }`}
+        >
           <p className="text-white font-bold text-lg">{t('screen10.pakai')}</p>
           <div className="relative">
             <Image
@@ -42,14 +89,21 @@ export function Screen10({ serverResponse }: Screen10Props) {
           </div>
         </div>
 
-        {/* bikin kamu hemat sebanyak */}
-        <p className="text-white font-bold text-center text-lg mb-6">
+        <p
+          className={`text-white font-bold text-center text-lg mb-6 transition-all duration-500 ${
+            showHeader ? "opacity-100 -translate-y-0" : "opacity-0 -translate-y-2"
+          }`}
+        >
           {t('screen10.bikinHemat')}
         </p>
 
         {/* Savings Button */}
-        <div className="flex justify-center mb-8">
-          <div 
+        <div
+          className={`flex justify-center mb-8 transition-all duration-500 ${
+            showSavings ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-2 scale-95"
+          }`}
+        >
+          <div
             className="px-8 py-4 rounded-full"
             style={{ backgroundColor: '#15a6ab' }}
           >
@@ -61,11 +115,12 @@ export function Screen10({ serverResponse }: Screen10Props) {
 
         {/* User List Section */}
         <div className="w-full max-w-md mx-auto space-y-2 mb-6">
-          {/* Blurred entries (other users) */}
-          {[...Array(3)].map((_, index) => (
+          {blurredTop.map((_, index) => (
             <div
               key={`blurred-${index}`}
-              className="w-full rounded-lg p-3 opacity-30 blur-sm"
+              className={`w-full rounded-lg p-3 opacity-30 blur-sm transition-all duration-500 ${
+                visibleListItems.includes(index) ? "opacity-40 translate-x-0" : "opacity-0 -translate-x-3"
+              }`}
               style={{ backgroundColor: '#15a6ab' }}
             >
               <div className="flex justify-between items-center">
@@ -76,8 +131,12 @@ export function Screen10({ serverResponse }: Screen10Props) {
           ))}
 
           {/* Highlighted User Entry */}
-          <div 
-            className="w-full rounded-lg p-4"
+          <div
+            className={`w-full rounded-lg p-4 transition-all duration-500 ${
+              visibleListItems.includes(blurredTop.length)
+                ? "opacity-100 translate-x-0"
+                : "opacity-0 translate-x-4"
+            }`}
             style={{ backgroundColor: '#15a6ab' }}
           >
             <div className="flex justify-between items-center">
@@ -91,25 +150,32 @@ export function Screen10({ serverResponse }: Screen10Props) {
           </div>
 
           {/* More blurred entries */}
-          {[...Array(2)].map((_, index) => (
-            <div
-              key={`blurred-bottom-${index}`}
-              className="w-full rounded-lg p-3 opacity-30 blur-sm"
-              style={{ backgroundColor: '#15a6ab' }}
-            >
-              <div className="flex justify-between items-center">
-                <div className="w-24 h-4 bg-white/50 rounded"></div>
-                <div className="w-32 h-4 bg-white/50 rounded"></div>
+          {blurredBottom.map((_, index) => {
+            const itemIndex = blurredTop.length + 1 + index;
+            return (
+              <div
+                key={`blurred-bottom-${index}`}
+                className={`w-full rounded-lg p-3 opacity-30 blur-sm transition-all duration-500 ${
+                  visibleListItems.includes(itemIndex) ? "opacity-40 translate-x-0" : "opacity-0 translate-x-4"
+                }`}
+                style={{ backgroundColor: '#15a6ab' }}
+              >
+                <div className="flex justify-between items-center">
+                  <div className="w-24 h-4 bg-white/50 rounded"></div>
+                  <div className="w-32 h-4 bg-white/50 rounded"></div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
-      {/* Bottom Card with Congratulatory Message */}
-      <div 
-        className="absolute bottom-0 left-0 right-0 w-full flex flex-col"
-        style={{ 
+      {/* Bottom Card */}
+      <div
+        className={`absolute bottom-0 left-0 right-0 w-full flex flex-col transition-all duration-600 ${
+          showBottomCard ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+        }`}
+        style={{
           height: '20%',
           borderTopLeftRadius: '24px',
           borderTopRightRadius: '24px',
@@ -120,14 +186,15 @@ export function Screen10({ serverResponse }: Screen10Props) {
           <p className="text-white font-bold text-center text-base leading-relaxed">
             {(() => {
               const text = t('screen10.bottomText', { ranking: topRanking });
-              const parts = text.split(`top ${topRanking}`);
+              const marker = `top ${topRanking}`;
+              const parts = text.split(marker);
               if (parts.length === 2) {
                 return (
                   <>
                     {parts[0]}
-                    <span 
+                    <span
                       className="px-2 py-1 inline-block"
-                      style={{ 
+                      style={{
                         backgroundColor: 'rgba(39, 181, 200, 1)',
                         transform: 'rotate(-5.28deg)',
                       }}

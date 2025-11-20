@@ -3,7 +3,7 @@
   "backgroundMusic": "/stories-asset/main/sunset-in-bali-audio.aac",
   "devPauseOnSlide": 13,
   "devMaxSlide": 13,
-  "devTrxCount": 365,
+  "devTrxCount": 10000,
   "dateRestriction": {
     "expirationDate": "2025-12-31T23:59:59.999Z",
     "devOverrideDate": null,

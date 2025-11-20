@@ -1,10 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "@/hooks/use-translations";
 
-export function Screen6() {
+interface Screen6Props {
+  isActive?: boolean;
+}
+
+export function Screen6({ isActive = false }: Screen6Props) {
   const { t } = useTranslations();
   
   // Determine time period based on local computer time
@@ -63,18 +67,53 @@ export function Screen6() {
     }
   }, [timePeriod, t]);
 
+  const [showTop, setShowTop] = useState(false);
+  const [showImage, setShowImage] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+  const [showDescription, setShowDescription] = useState(false);
+
+  useEffect(() => {
+    let timers: NodeJS.Timeout[] = [];
+
+    if (!isActive) {
+      setShowTop(false);
+      setShowImage(false);
+      setShowButton(false);
+      setShowDescription(false);
+      timers.forEach(clearTimeout);
+      return () => {};
+    }
+
+    setShowTop(true);
+    timers.push(setTimeout(() => setShowImage(true), 220));
+    timers.push(setTimeout(() => setShowButton(true), 420));
+    timers.push(setTimeout(() => setShowDescription(true), 600));
+
+    return () => {
+      timers.forEach(clearTimeout);
+    };
+  }, [isActive]);
+
   return (
     <div 
       className="relative w-full h-full flex flex-col items-center justify-center px-6"
       style={{ backgroundColor: config.primaryBg }}
     >
       {/* Top Text */}
-      <p className="text-white font-bold text-center text-lg mb-8 mt-16 px-4">
+      <p
+        className={`text-white font-bold text-center text-lg mb-8 mt-16 px-4 transition-all duration-500 ${
+          showTop ? "opacity-100 -translate-y-0" : "opacity-0 -translate-y-4"
+        }`}
+      >
         {config.topText}
       </p>
 
       {/* Circle Image with Border */}
-      <div className="relative mb-6">
+      <div
+        className={`relative mb-6 transition-all duration-600 ${
+          showImage ? "opacity-100 scale-100" : "opacity-0 scale-90"
+        }`}
+      >
         <div 
           className="relative rounded-full overflow-hidden"
             style={{
@@ -95,7 +134,9 @@ export function Screen6() {
 
       {/* Button with Title */}
       <div 
-        className="px-6 py-3 rounded-full mb-4"
+        className={`px-6 py-3 rounded-full mb-4 transition-all duration-500 ${
+          showButton ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
         style={{ backgroundColor: config.secondaryColor }}
             >
         <p className="text-white font-bold text-base text-center">
@@ -104,7 +145,11 @@ export function Screen6() {
       </div>
 
       {/* Description Text */}
-      <p className="text-white font-bold text-center text-lg px-4 whitespace-pre-line">
+      <p
+        className={`text-white font-bold text-center text-lg px-4 whitespace-pre-line transition-all duration-500 ${
+          showDescription ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
         {config.descriptionText}
       </p>
     </div>
