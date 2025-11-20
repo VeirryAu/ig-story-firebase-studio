@@ -183,7 +183,7 @@ export function Screen10({ serverResponse, isActive = false }: Screen10Props) {
         }}
       >
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-6">
-          <p className="text-white font-bold text-center text-base leading-relaxed">
+          <p className="text-white font-bold text-center text-base leading-relaxed mb-64">
             {(() => {
               const text = t('screen10.bottomText', { ranking: topRanking });
               const marker = `top ${topRanking}`;
