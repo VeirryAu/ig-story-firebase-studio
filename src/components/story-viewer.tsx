@@ -362,8 +362,8 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const hasTrackedBannerRef = useRef(false);
   useEffect(() => {
     if (currentSlideIndex === 0 && !hasTrackedBannerRef.current && serverResponse) {
-      const eventValue = (serverResponse.trxCount || 0) > 0 ? 'happy' : 'sad';
-      track('banner', eventValue);
+      const journey = (serverResponse.trxCount || 0) > 0 ? 'happy' : 'sad';
+      track('Load Forecap', JSON.stringify({ journey }));
       hasTrackedBannerRef.current = true;
     }
   }, [currentSlideIndex, serverResponse]);
@@ -374,9 +374,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
     if (isLastSlide && !hasTrackedFinalSummaryRef.current && serverResponse) {
       const trxCount = serverResponse.trxCount || 0;
       if (trxCount > 0) {
-        track('finalSummarySlideHappy', 'viewed');
-      } else {
-        track('finalSummarySlideSad', 'viewed');
+        track('Load Forecap Completed', JSON.stringify({}));
       }
       hasTrackedFinalSummaryRef.current = true;
     }
@@ -735,7 +733,12 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
     }
 
     const screenName = getScreenName(currentSlide.id);
-    track('in_place', screenName);
+    track('Action forecap share',
+      JSON.stringify({
+        share_type: 'in_place',
+        slide_name: screenName,
+      }),
+    );
 
     const targetElement = storyViewerRef.current;
     if (!targetElement) {
@@ -778,7 +781,12 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const handleCaptureSlide = async (slideId: string): Promise<string> => {
     // Get screen name and track the share event
     const screenName = getScreenName(slideId);
-    track('screen_picker', screenName);
+    track('Action forecap share',
+      JSON.stringify({
+        share_type: 'screen_picker',
+        slide_name: screenName,
+      }),
+    );
 
     // For screen-13 (video slide), return the AV1 video URL directly
     if (slideId === 'screen-13') {
@@ -1043,7 +1051,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                   onClick={(e) => {
                     e.stopPropagation();
                     e.preventDefault();
-                    track('inviteShopping', 'deeplink');
+                    track('Action Forecap Catalog', JSON.stringify({}));
                     // TODO: Add navigation to shop page via handleDeeplink
                   }}
                   onPointerDown={(e) => {
