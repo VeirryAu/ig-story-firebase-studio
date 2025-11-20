@@ -1,10 +1,10 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import config from '@/lib/const.json';
+import appConfig from '@/lib/const.json';
 import { hasDateRestrictionExpired } from '@/lib/auth';
 
 export function middleware(request: NextRequest) {
-  const dateRestrictionEnabled = config.dateRestriction?.enabled !== false;
+  const dateRestrictionEnabled = appConfig.dateRestriction?.enabled !== false;
 
   if (!dateRestrictionEnabled) {
     return NextResponse.next();

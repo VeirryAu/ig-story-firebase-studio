@@ -419,13 +419,6 @@ export default function Home() {
       <div className="text-center">
         {isLoading && (
           <div className="flex flex-col items-center justify-center gap-6">
-            <div className="bg-white rounded-full p-2 flex items-center justify-center">
-              <img 
-                src="/stories-asset/main/fore-logo.svg" 
-                alt="Fore Logo" 
-                className="w-12 h-12"
-              />
-            </div>
             <div className="text-white text-lg font-bold leading-relaxed whitespace-pre-line">
               {t('loading.title')}{"\n"}
               {t('loading.subtitle')}
