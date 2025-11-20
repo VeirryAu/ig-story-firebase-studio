@@ -87,6 +87,14 @@ export class UserController {
             operation: 'get_user_data',
             duration,
             stage: 'service_call',
+            errorType: error instanceof Error ? error.constructor.name : typeof error,
+            errorMessage: error instanceof Error ? error.message : String(error),
+            errorStack: error instanceof Error ? error.stack : undefined,
+            headers: {
+              timestamp: timestamp?.substring(0, 20) + '...',
+              user_id: userId,
+              has_sign: !!sign,
+            },
           },
         );
         throw new InternalServerErrorException('Failed to retrieve user data');
@@ -125,7 +133,7 @@ export class UserController {
         throw error;
       }
 
-      // Log unexpected errors
+      // Log unexpected errors with full context
       this.logger.logError(
         error instanceof Error ? error : new Error(String(error)),
         {
@@ -134,6 +142,16 @@ export class UserController {
           operation: 'get_user_data',
           duration,
           stage: 'controller',
+          errorType: error instanceof Error ? error.constructor.name : typeof error,
+          errorMessage: error instanceof Error ? error.message : String(error),
+          errorStack: error instanceof Error ? error.stack : undefined,
+          headers: {
+            timestamp: timestamp?.substring(0, 20) + '...',
+            user_id: userId,
+            has_sign: !!sign,
+          },
+          httpMethod: 'GET',
+          httpPath: '/api/user-data',
         },
       );
 

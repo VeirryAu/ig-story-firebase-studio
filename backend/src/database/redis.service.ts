@@ -119,21 +119,51 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       const cached = await this.get(key);
       if (cached) {
         try {
-          return JSON.parse(cached);
+          const parsed = JSON.parse(cached);
+          // Validate parsed data structure
+          if (typeof parsed !== 'object' || parsed === null) {
+            throw new Error('Parsed cache data is not an object');
+          }
+          return parsed;
         } catch (error) {
+          // Log detailed error information
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          const rawValuePreview = cached.length > 500 
+            ? cached.substring(0, 500) + '...' 
+            : cached;
+          
           this.logger.logError(
             error instanceof Error ? error : new Error(String(error)),
             {
               userId,
               operation: 'cache_json_parse',
               key,
+              errorType: error instanceof Error ? error.constructor.name : typeof error,
+              errorMessage,
+              rawValueLength: cached.length,
+              rawValuePreview,
+              cacheKey: key,
             },
           );
+          
           // Delete invalid cache entry
           try {
             await this.del(key);
+            this.logger.logWarning('Deleted invalid cache entry', {
+              userId,
+              operation: 'cache_cleanup',
+              key,
+            });
           } catch (delError) {
-            // Ignore delete errors
+            this.logger.logError(
+              delError instanceof Error ? delError : new Error(String(delError)),
+              {
+                userId,
+                operation: 'cache_cleanup',
+                key,
+                stage: 'delete_invalid_entry',
+              },
+            );
           }
           return null;
         }
@@ -146,6 +176,9 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
           userId,
           operation: 'get_user_recap_cache',
           key,
+          stage: 'cache_lookup',
+          errorType: error instanceof Error ? error.constructor.name : typeof error,
+          errorMessage: error instanceof Error ? error.message : String(error),
         },
       );
       return null;

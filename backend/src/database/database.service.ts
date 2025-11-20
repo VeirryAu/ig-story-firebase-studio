@@ -133,8 +133,22 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
             typeof userData.listCircularImages === 'string'
               ? JSON.parse(userData.listCircularImages)
               : userData.listCircularImages;
-        } catch {
-          userData.listCircularImages = null;
+        } catch (error) {
+          // listCircularImages is an array of strings, return empty array
+          this.logger.logError(
+            error instanceof Error ? error : new Error(String(error)),
+            {
+              userId,
+              operation: 'json_parse',
+              field: 'listCircularImages',
+              fieldType: 'array',
+              rawValue: typeof userData.listCircularImages === 'string' 
+                ? userData.listCircularImages.substring(0, 200) 
+                : String(userData.listCircularImages).substring(0, 200),
+              defaultValue: '[]',
+            },
+          );
+          userData.listCircularImages = [];
         }
       }
 
@@ -144,7 +158,21 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
             typeof userData.listProductFavorite === 'string'
               ? JSON.parse(userData.listProductFavorite)
               : userData.listProductFavorite;
-        } catch {
+        } catch (error) {
+          // listProductFavorite is an array of objects, return empty array
+          this.logger.logError(
+            error instanceof Error ? error : new Error(String(error)),
+            {
+              userId,
+              operation: 'json_parse',
+              field: 'listProductFavorite',
+              fieldType: 'array',
+              rawValue: typeof userData.listProductFavorite === 'string'
+                ? userData.listProductFavorite.substring(0, 200)
+                : String(userData.listProductFavorite).substring(0, 200),
+              defaultValue: '[]',
+            },
+          );
           userData.listProductFavorite = [];
         }
       }
@@ -155,14 +183,45 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
             typeof userData.listFavoriteStore === 'string'
               ? JSON.parse(userData.listFavoriteStore)
               : userData.listFavoriteStore;
-        } catch {
+        } catch (error) {
+          // listFavoriteStore is an array of objects, return empty array
+          this.logger.logError(
+            error instanceof Error ? error : new Error(String(error)),
+            {
+              userId,
+              operation: 'json_parse',
+              field: 'listFavoriteStore',
+              fieldType: 'array',
+              rawValue: typeof userData.listFavoriteStore === 'string'
+                ? userData.listFavoriteStore.substring(0, 200)
+                : String(userData.listFavoriteStore).substring(0, 200),
+              defaultValue: '[]',
+            },
+          );
           userData.listFavoriteStore = [];
         }
       }
 
       return userData;
+    } catch (error) {
+      // Log database operation errors with full context
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          userId,
+          operation: 'get_user_recap',
+          stage: 'database_query',
+          queryDuration: Date.now() - startTime,
+          query: 'SELECT * FROM user_recap_data WHERE user_id = ?',
+          errorType: error instanceof Error ? error.constructor.name : typeof error,
+          errorMessage: error instanceof Error ? error.message : String(error),
+        },
+      );
+      throw error; // Re-throw to be handled by service layer
     } finally {
-      connection.release();
+      if (connection) {
+        connection.release();
+      }
     }
   }
 

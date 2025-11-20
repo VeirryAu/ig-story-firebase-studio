@@ -36,6 +36,9 @@ export class UserService {
             requestId,
             operation: 'cache_get',
             stage: 'cache_lookup',
+            errorType: error instanceof Error ? error.constructor.name : typeof error,
+            errorMessage: error instanceof Error ? error.message : String(error),
+            cacheDuration: (Date.now() - cacheStart) / 1000,
           },
         );
         // Continue to database on cache error
@@ -106,6 +109,11 @@ export class UserService {
             stage: 'get_user_recap',
             dbDuration,
             query: 'SELECT * FROM user_recap_data WHERE user_id = ?',
+            errorType: error instanceof Error ? error.constructor.name : typeof error,
+            errorMessage: error instanceof Error ? error.message : String(error),
+            errorStack: error instanceof Error ? error.stack : undefined,
+            hasLock,
+            totalDuration: (Date.now() - startTime) / 1000,
           },
         );
         throw error; // Re-throw to be handled by controller
@@ -188,6 +196,10 @@ export class UserService {
           requestId,
           operation: 'get_user_recap',
           totalDuration,
+          errorType: error instanceof Error ? error.constructor.name : typeof error,
+          errorMessage: error instanceof Error ? error.message : String(error),
+          errorStack: error instanceof Error ? error.stack : undefined,
+          stage: 'service_error',
         },
       );
       throw error;
