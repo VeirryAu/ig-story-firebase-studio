@@ -127,21 +127,21 @@ Test Configuration:
   - User Distribution: 50% (1M) / 30% (5M) / 20% (all)
 
 HTTP Metrics:
-  - Total Requests: ${data.metrics.http_reqs.values.count.toLocaleString()}
-  - Failed Requests: ${(data.metrics.http_req_failed.values.rate * 100).toFixed(2)}%
-  - Average Response Time: ${data.metrics.http_req_duration.values.avg.toFixed(2)}ms
-  - P50 Response Time: ${data.metrics.http_req_duration.values.med.toFixed(2)}ms
-  - P95 Response Time: ${data.metrics.http_req_duration.values['p(95)'].toFixed(2)}ms
-  - P99 Response Time: ${data.metrics.http_req_duration.values['p(99)'].toFixed(2)}ms
-  - Max Response Time: ${data.metrics.http_req_duration.values.max.toFixed(2)}ms
+  - Total Requests: ${data.metrics.http_reqs?.values?.count ? data.metrics.http_reqs.values.count.toLocaleString() : 'N/A'}
+  - Failed Requests: ${data.metrics.http_req_failed?.values?.rate ? (data.metrics.http_req_failed.values.rate * 100).toFixed(2) : '0.00'}%
+  - Average Response Time: ${data.metrics.http_req_duration?.values?.avg ? data.metrics.http_req_duration.values.avg.toFixed(2) : 'N/A'}ms
+  - P50 Response Time: ${data.metrics.http_req_duration?.values?.med ? data.metrics.http_req_duration.values.med.toFixed(2) : 'N/A'}ms
+  - P95 Response Time: ${data.metrics.http_req_duration?.values?.['p(95)'] ? data.metrics.http_req_duration.values['p(95)'].toFixed(2) : 'N/A'}ms
+  - P99 Response Time: ${data.metrics.http_req_duration?.values?.['p(99)'] ? data.metrics.http_req_duration.values['p(99)'].toFixed(2) : 'N/A'}ms
+  - Max Response Time: ${data.metrics.http_req_duration?.values?.max ? data.metrics.http_req_duration.values.max.toFixed(2) : 'N/A'}ms
 
 Custom Metrics:
-  - API Response Time (avg): ${data.metrics.api_response_time.values.avg.toFixed(2)}ms
-  - Error Rate: ${(data.metrics.errors.values.rate * 100).toFixed(2)}%
+  - API Response Time (avg): ${data.metrics.api_response_time?.values?.avg ? data.metrics.api_response_time.values.avg.toFixed(2) : 'N/A'}ms
+  - Error Rate: ${data.metrics.errors?.values?.rate ? (data.metrics.errors.values.rate * 100).toFixed(2) : '0.00'}%
 
 VUs:
-  - Max VUs: ${data.metrics.vus_max.values.max}
-  - Avg VUs: ${data.metrics.vus.values.avg.toFixed(2)}
+  - Max VUs: ${data.metrics.vus_max?.values?.max || 'N/A'}
+  - Avg VUs: ${data.metrics.vus?.values?.avg ? data.metrics.vus.values.avg.toFixed(2) : 'N/A'}
 
 Performance Assessment:
   ${assessPerformance(data)}
@@ -151,9 +151,11 @@ Performance Assessment:
 }
 
 function assessPerformance(data) {
-  const p95 = data.metrics.http_req_duration.values['p(95)'];
-  const errorRate = data.metrics.http_req_failed.values.rate;
-  const throughput = data.metrics.http_reqs.values.count / (data.state.testRunDurationMs / 1000);
+  const p95 = data.metrics.http_req_duration?.values?.['p(95)'] || 0;
+  const errorRate = data.metrics.http_req_failed?.values?.rate || 0;
+  const throughput = data.metrics.http_reqs?.values?.count && data.state?.testRunDurationMs 
+    ? data.metrics.http_reqs.values.count / (data.state.testRunDurationMs / 1000)
+    : 0;
   
   let assessment = '';
   

@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import { AppLogger } from '../common/logger.service';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
@@ -9,8 +10,11 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly CACHE_TTL = this.CACHE_TTL_MINUTES * 60; // seconds
   private readonly CACHE_PREFIX = this.configService.get('CACHE_PREFIX', 'user:recap:');
   private readonly LOCK_TTL = parseInt(this.configService.get('LOCK_TTL', '10') ?? '10'); // seconds
+  private readonly logger = new AppLogger();
 
-  constructor(private configService: ConfigService) {}
+  constructor(private configService: ConfigService) {
+    this.logger.setContext('RedisService');
+  }
 
   async onModuleInit() {
     try {
@@ -27,13 +31,25 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       });
 
       this.client.on('error', (err) => {
-        console.error('Redis error:', err);
+        this.logger.logError(err, {
+          operation: 'redis_connection',
+          event: 'error',
+        });
       });
 
       await this.client.ping();
-      console.log('✓ Redis connected');
+      this.logger.log('Redis connected successfully');
     } catch (error) {
-      console.error('Redis connection failed, continuing without cache:', error);
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          operation: 'redis_connection',
+          stage: 'initialization',
+        },
+      );
+      this.logger.logWarning('Redis connection failed, continuing without cache', {
+        operation: 'redis_connection',
+      });
       this.client = null;
     }
   }
@@ -49,7 +65,13 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     try {
       return await this.client.get(key);
     } catch (error) {
-      console.error('Redis get error:', error);
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          operation: 'redis_get',
+          key,
+        },
+      );
       return null;
     }
   }
@@ -63,7 +85,15 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
         await this.client.set(key, value);
       }
     } catch (error) {
-      console.error('Redis set error:', error);
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          operation: 'redis_set',
+          key,
+          hasTtl: !!ttl,
+          ttl,
+        },
+      );
     }
   }
 
@@ -72,24 +102,72 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     try {
       await this.client.del(key);
     } catch (error) {
-      console.error('Redis del error:', error);
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          operation: 'redis_del',
+          key,
+        },
+      );
     }
   }
 
   async getUserRecap(userId: number): Promise<any | null> {
     if (!this.client) return null;
     const key = `${this.CACHE_PREFIX}${userId}`;
-    const cached = await this.get(key);
-    if (cached) {
-      return JSON.parse(cached);
+    try {
+      const cached = await this.get(key);
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch (error) {
+          this.logger.logError(
+            error instanceof Error ? error : new Error(String(error)),
+            {
+              userId,
+              operation: 'cache_json_parse',
+              key,
+            },
+          );
+          // Delete invalid cache entry
+          try {
+            await this.del(key);
+          } catch (delError) {
+            // Ignore delete errors
+          }
+          return null;
+        }
+      }
+      return null;
+    } catch (error) {
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          userId,
+          operation: 'get_user_recap_cache',
+          key,
+        },
+      );
+      return null;
     }
-    return null;
   }
 
   async setUserRecap(userId: number, data: any): Promise<void> {
     if (!this.client) return;
     const key = `${this.CACHE_PREFIX}${userId}`;
-    await this.set(key, JSON.stringify(data), this.CACHE_TTL);
+    try {
+      const jsonData = JSON.stringify(data);
+      await this.set(key, jsonData, this.CACHE_TTL);
+    } catch (error) {
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          userId,
+          operation: 'set_user_recap_cache',
+          key,
+        },
+      );
+    }
   }
 
   async acquireLock(userId: number): Promise<boolean> {
@@ -105,7 +183,14 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       );
       return result === 'OK';
     } catch (error) {
-      console.error('Redis lock error:', error);
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          userId,
+          operation: 'acquire_lock',
+          lockKey,
+        },
+      );
       return false;
     }
   }
@@ -113,7 +198,18 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   async releaseLock(userId: number): Promise<void> {
     if (!this.client) return;
     const lockKey = `${this.CACHE_PREFIX}${userId}:lock`;
-    await this.del(lockKey);
+    try {
+      await this.del(lockKey);
+    } catch (error) {
+      this.logger.logError(
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          userId,
+          operation: 'release_lock',
+          lockKey,
+        },
+      );
+    }
   }
 }
 

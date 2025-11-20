@@ -34,6 +34,13 @@ services:
       retries: 3
     mem_limit: 3g
     cpus: 1.5
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+        compress: "true"
+        labels: "service=forecap-api,environment=production"
 
   mysql:
     image: mysql:8.0

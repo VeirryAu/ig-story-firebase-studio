@@ -51,6 +51,28 @@ npm run test:cov
 
 See [TESTING.md](./TESTING.md) for detailed testing guide.
 
+## Logging
+
+### View Logs in Docker
+
+```bash
+# Follow logs in real-time
+docker compose logs -f api
+
+# View errors only
+docker compose logs api | grep ERROR
+
+# View last 100 lines
+docker compose logs --tail=100 api
+
+# Use helper script
+./scripts/view-logs.sh errors
+./scripts/view-logs.sh user 12345
+./scripts/view-logs.sh stats
+```
+
+See [DOCKER_LOGGING.md](./DOCKER_LOGGING.md) for complete logging guide.
+
 ### Environment Variables
 
 Create `.env` file:

@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/exceptions.filter';
+import { RequestIdMiddleware } from './common/request-id.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +12,12 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
     credentials: true,
+  });
+  
+  // Add request ID middleware
+  app.use((req: any, res: any, next: any) => {
+    const middleware = new RequestIdMiddleware();
+    middleware.use(req, res, next);
   });
   
   // Global exception filter for error logging

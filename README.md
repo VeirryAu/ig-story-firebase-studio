@@ -720,7 +720,8 @@ A comprehensive, book-style guide covering:
 - **[Data Import Guide](./docs/import-data-guide.md)** - Import Excel data to MySQL
 - **[Load Testing Guide](./backend/load-test/README.md)** - Performance testing with K6/Artillery
 - **[Realistic Load Testing](./docs/realistic-load-testing.md)** - EC2 t3.medium with 10M users
-- **[Backend Performance Comparison](./docs/backend-performance-comparison.md)** - NestJS vs Rust vs Go performance analysis
+- **[Backend Performance Comparison](./docs/backend-performance-comparison.md)** - NestJS vs Rust vs Go performance analysis (Updated Nov 19, 2025)
+- **[Performance Comparison Summary](./docs/performance-comparison-summary.md)** - Quick reference guide
 - **[Performance Optimization Guide](./docs/performance-optimization-guide.md)** - Programming & infrastructure performance tips
 - **[GC Comparison: Node.js vs Go](./docs/gc-comparison-nodejs-vs-go.md)** - Why NestJS doesn't show GC issues
 - **[MyISAM vs InnoDB](./docs/myisam-vs-innodb.md)** - Why MyISAM for read-heavy workloads

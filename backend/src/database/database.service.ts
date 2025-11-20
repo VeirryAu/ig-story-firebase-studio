@@ -2,16 +2,20 @@ import { Injectable, OnModuleInit, OnModuleDestroy, Inject, forwardRef } from '@
 import { ConfigService } from '@nestjs/config';
 import * as mysql from 'mysql2/promise';
 import { MetricsService } from '../metrics/metrics.service';
+import { AppLogger } from '../common/logger.service';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private pool: mysql.Pool;
+  private readonly logger = new AppLogger();
 
   constructor(
     private configService: ConfigService,
     @Inject(forwardRef(() => MetricsService))
     private metricsService?: MetricsService,
-  ) {}
+  ) {
+    this.logger.setContext('DatabaseService');
+  }
 
   async onModuleInit() {
     this.pool = mysql.createPool({
@@ -75,8 +79,13 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
    * Get user recap data - single query with JSON parsing in app
    */
   async getUserRecap(userId: number): Promise<any> {
-    const connection = await this.pool.getConnection();
+    const startTime = Date.now();
+    let connection: mysql.PoolConnection | null = null;
+
     try {
+      connection = await this.pool.getConnection();
+      const queryStart = Date.now();
+      
       const [rows] = await connection.execute(
         `SELECT 
           user_id,
@@ -99,6 +108,18 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         WHERE user_id = ?`,
         [userId],
       );
+
+      const queryDuration = Date.now() - queryStart;
+      
+      // Log slow queries
+      if (queryDuration > 100) {
+        this.logger.logWarning('Slow database query', {
+          userId,
+          operation: 'get_user_recap',
+          queryDuration,
+          query: 'SELECT * FROM user_recap_data WHERE user_id = ?',
+        });
+      }
 
       const userData = (rows as any[])[0];
       if (!userData) {

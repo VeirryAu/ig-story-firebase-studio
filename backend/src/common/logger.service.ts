@@ -1,7 +1,7 @@
 import { Injectable, LoggerService } from '@nestjs/common';
 
 export interface LogContext {
-  userId?: number;
+  userId?: number | string;
   requestId?: string;
   method?: string;
   path?: string;
