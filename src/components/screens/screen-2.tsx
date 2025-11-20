@@ -15,6 +15,7 @@ export function Screen2({ trxCount = 0, isActive = false }: Screen2Props) {
 
   const [showTopText, setShowTopText] = useState(false);
   const [showCircle, setShowCircle] = useState(false);
+  const [showLogo, setShowLogo] = useState(false);
   const [showBottom, setShowBottom] = useState(false);
   const [animatedCount, setAnimatedCount] = useState(0);
   const circleSize = 220;
@@ -27,12 +28,14 @@ export function Screen2({ trxCount = 0, isActive = false }: Screen2Props) {
       setShowTopText(false);
       setShowCircle(false);
       setShowBottom(false);
+      setShowLogo(false);
       setAnimatedCount(0);
       return;
     }
 
     setShowTopText(true);
     const circleTimer = setTimeout(() => setShowCircle(true), 200);
+    const logoTimer = setTimeout(() => setShowLogo(true), 260);
     const bottomTimer = setTimeout(() => setShowBottom(true), 350);
 
     const countTimer = setTimeout(() => {
@@ -56,6 +59,7 @@ export function Screen2({ trxCount = 0, isActive = false }: Screen2Props) {
 
     return () => {
       clearTimeout(circleTimer);
+      clearTimeout(logoTimer);
       clearTimeout(bottomTimer);
       clearTimeout(countTimer);
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
@@ -112,7 +116,11 @@ export function Screen2({ trxCount = 0, isActive = false }: Screen2Props) {
           </div>
           
           {/* Overflow logo at bottom of circle */}
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20">
+          <div
+            className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20 transition-all duration-500 ${
+              showLogo ? "opacity-100 scale-100 translate-y-1/2" : "opacity-0 scale-75 translate-y-full"
+            }`}
+          >
             <Image
               src="/stories-asset/slides02/fore-cup-logo.svg"
               alt="Fore Cup Logo"
