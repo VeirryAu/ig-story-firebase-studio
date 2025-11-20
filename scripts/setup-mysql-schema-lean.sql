@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS user_recap_data (
     total_point INT UNSIGNED DEFAULT NULL,
     total_point_description TEXT DEFAULT NULL,
     total_point_possible_redeem INT UNSIGNED DEFAULT NULL,
+    total_point_product_name VARCHAR(255) DEFAULT NULL,
     total_point_image VARCHAR(500) DEFAULT NULL,
     delivery_count INT UNSIGNED DEFAULT NULL,
     pickup_count INT UNSIGNED DEFAULT NULL,

@@ -20,7 +20,8 @@
     "coffeeCore": "Here is your coffee core!"
   },
   "screen2": {
-    "topText": "Sepanjang 2025, kamu telah membeli",
+    "topText": "Sepanjang 2025,",
+    "topTextSecondary": "kamu telah membeli",
     "cups": "Cups",
     "bottomText": "Tidak hanya membeli kopi berkualitas, terima kasih selalu mendukung para petani lokal 🌟"
   },
@@ -31,7 +32,7 @@
   },
   "screen3": {
     "header": "Dari {trxCount} cup yang kamu beli, favoritmu adalah",
-    "cup": "cup"
+    "cup": "cups"
   },
   "screen4": {
     "topText": "Tidak banyak yang tahu bahwa kamu adalah",
@@ -42,7 +43,9 @@
   },
   "screen5": {
     "topText": "Kami menghitung poin yang sudah kamu kumpulkan, dan wow! Kamu sudah mencapai",
-    "points": "Poin"
+    "points": "Poin",
+    "description": "Poin itu bisa kamu tukarkan dengan {count} cup {productName} di FOREwards lho!",
+    "noPointsDescription": "Terus kumpulkan poin untuk menukarkan hadiah menarik!"
   },
   "screen6": {
     "morning": {

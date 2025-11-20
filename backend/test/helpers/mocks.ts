@@ -6,7 +6,6 @@ export const mockUserData = {
   trxCount: 10,
   variantCount: 5,
   totalPoint: 1000,
-  totalPointDescription: 'Test points',
   totalPointPossibleRedeem: 500,
   totalPointImage: 'https://example.com/image.jpg',
   deliveryCount: 3,

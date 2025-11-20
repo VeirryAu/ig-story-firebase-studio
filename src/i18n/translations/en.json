@@ -20,9 +20,10 @@
     "coffeeCore": "Here is your coffee core!"
   },
   "screen2": {
-    "topText": "Throughout 2025, you've purchased",
+    "topText": "In 2025,",
+    "topTextSecondary": "you've bought...",
     "cups": "Cups",
-    "bottomText": "Not just buying quality coffee, thank you for always supporting local farmers 🌟"
+    "bottomText": "You’ve enjoyed great coffee while supporting our local farmers! Thanks for making every cup count!🌟"
   },
   "screen2Notrx": {
     "topText": "Oh, what a shame..\nYou don't have a recap yet because you haven't made any Fore cup purchases in 2025 😔",
@@ -30,8 +31,8 @@
     "button": "Shop Now"
   },
   "screen3": {
-    "header": "From the {trxCount} cups you bought, your favorites are",
-    "cup": "cup"
+    "header": "From the {trxCount} cups you've ordered this year, here are your go-to favorites:",
+    "cup": "cups"
   },
   "screen4": {
     "topText": "Not many know that you are",
@@ -41,28 +42,30 @@
     "signatureSeekerDesc": "The most loyal to your perfect signature menu!"
   },
   "screen5": {
-    "topText": "We've calculated the points you've collected, and wow! You've reached",
-    "points": "Points"
+    "topText": "We've counted all the cups you've collected, and wow! You've reached",
+    "points": "Points",
+    "description": "Cool! You can redeem those points for {count} cup of your favorite {productName} on FOREwards!",
+    "noPointsDescription": "Keep collecting points to redeem amazing rewards!"
   },
   "screen6": {
     "morning": {
-      "topText": "Always your go-to, day or night. You like to order before 12 noon, which means you're…",
+      "topText": "Always your go-to, day or night. You usually order before 12 noon, which means you're…",
       "buttonText": "Daybreak Catcher",
-      "description": "Fresh energy in the morning becomes fuel for your daily activities.\nJust rise and sip!"
+      "description": "You start your day with a boost of fresh energy. Just rise and sip!"
     },
     "afternoon": {
-      "topText": "Always your go-to, day or night. You like to order after 12 noon, which means you're…",
+      "topText": "Always your go-to, day or night. You usually order after 12 noon, which means you're…",
       "buttonText": "Sun Chaser",
-      "description": "Coffee is always your companion to chase the afternoon spirit until evening.\nStay glowing all day!"
+      "description": "Fueled by coffee, shining through the day. Stay glowing all day!"
     },
     "evening": {
-      "topText": "Always your go-to, day or night. You like to order after 6 PM, which means you're…",
+      "topText": "Always your go-to, day or night. You usually order after 6 PM, which means you're…",
       "buttonText": "Twilight Seeker",
-      "description": "Coffee becomes your closing ritual for the day.  Chill mode: ON"
+      "description": "Coffee is your way to wrap up the day. Chill mode: on"
     }
   },
   "screen7": {
-    "topText": "From 300 stores spread across Indonesia and Singapore, here are 3 places that are your favorites",
+    "topText": "From 300 stores spread across Indonesia and Singapore, here are your top 3 favorite spots",
     "transactions": "x transactions"
   },
   "screen8": {
@@ -100,19 +103,19 @@
   },
   "screen11": {
     "title": "Your #FOREcap 2025 Summary",
-    "totalCupDibeli": "Total Cups Purchased",
-    "totalPoinDidapat": "Total Points Earned",
+    "totalCupDibeli": "Cups Ordered",
+    "totalPoinDidapat": "Points Collected",
     "menuTerfavorit": "Favorite Menu",
     "storeTerfavorit": "Favorite Store",
     "totalSaving": "Total Savings",
     "conclusion": "Thank you for going through 2025 full of color with Fore Coffee"
   },
   "screen12": {
-    "topText1": "Coffee core may differ,",
-    "topText2": "but the spirit remains the same!",
-    "bottomText1": "Come on, increase your transactions at Fore Coffee",
-    "bottomText2": "App because 2026 will have many flavor",
-    "bottomText3": "surprises!"
+    "topText1": "Our coffee cores may differ,",
+    "topText2": "but our spirit’s still together!",
+    "bottomText1": "Keep sipping with Fore Coffee",
+    "bottomText2": "App we’re brewing more",
+    "bottomText3": "surprises for 2026!"
   },
   "shareModal": {
     "title": "Share Slide",

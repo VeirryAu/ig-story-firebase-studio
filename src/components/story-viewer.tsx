@@ -283,7 +283,7 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
 }
 
 export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverResponse, fullscreenSlide, fullscreenDuration }: StoryViewerProps) {
-  const { t } = useTranslations();
+  const { t, locale } = useTranslations();
   const [currentStoryIndex, setCurrentStoryIndex] = useState(initialStoryIndex);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -309,6 +309,11 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   // If trxCount is 0, only show first 2 slides (screen-1 and screen-2)
   if (serverResponse?.trxCount === 0) {
     filteredSlides = originalStory?.slides.slice(0, 2) || [];
+  }
+  
+  // Filter out screen-8 and screen-9 when locale is English
+  if (locale === 'en') {
+    filteredSlides = filteredSlides.filter(slide => slide.id !== 'screen-8' && slide.id !== 'screen-9');
   }
   
   // Apply development mode limit if set

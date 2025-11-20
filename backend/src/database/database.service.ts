@@ -93,8 +93,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
           trx_count as trxCount,
           variant_count as variantCount,
           total_point as totalPoint,
-          total_point_description as totalPointDescription,
           total_point_possible_redeem as totalPointPossibleRedeem,
+          total_point_product_name as totalPointProductName,
           total_point_image as totalPointImage,
           delivery_count as deliveryCount,
           pickup_count as pickupCount,
@@ -235,8 +235,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       trx_count: number;
       variant_count?: number;
       total_point?: number;
-      total_point_description?: string;
       total_point_possible_redeem?: number;
+      total_point_product_name?: string;
       total_point_image?: string;
       delivery_count?: number;
       pickup_count?: number;
@@ -271,8 +271,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         await connection.execute(
           `INSERT INTO user_recap_data (
             user_id, user_name, trx_count, variant_count,
-            total_point, total_point_description, total_point_possible_redeem,
-            total_point_image, delivery_count, pickup_count,
+            total_point, total_point_possible_redeem,
+            total_point_product_name, total_point_image, delivery_count, pickup_count,
             cheaper_subs_desc, cheaper_subs_amount, top_ranking,
             list_circular_images, list_product_favorite, list_favorite_store
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -281,8 +281,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
             trx_count = VALUES(trx_count),
             variant_count = VALUES(variant_count),
             total_point = VALUES(total_point),
-            total_point_description = VALUES(total_point_description),
             total_point_possible_redeem = VALUES(total_point_possible_redeem),
+            total_point_product_name = VALUES(total_point_product_name),
             total_point_image = VALUES(total_point_image),
             delivery_count = VALUES(delivery_count),
             pickup_count = VALUES(pickup_count),
@@ -299,8 +299,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
             user.trx_count,
             user.variant_count || null,
             user.total_point || null,
-            user.total_point_description || null,
             user.total_point_possible_redeem || null,
+            user.total_point_product_name || null,
             user.total_point_image || null,
             user.delivery_count || null,
             user.pickup_count || null,

@@ -20,8 +20,8 @@ interface TestUser {
   trx_count: number;
   variant_count?: number;
   total_point?: number;
-  total_point_description?: string;
   total_point_possible_redeem?: number;
+  total_point_product_name?: string;
   total_point_image?: string;
   delivery_count?: number;
   pickup_count?: number;
@@ -143,10 +143,8 @@ function generateUser(userId: number): TestUser {
     trx_count: trxCount,
     variant_count: variantCount || null,
     total_point: totalPoint || null,
-    total_point_description: totalPoint > 0
-      ? `Poin itu bisa kamu tukarkan dengan ${Math.floor(totalPoint / 25)} cup Butterscotch Sea Salt Latte di FOREwards lho!`
-      : null,
     total_point_possible_redeem: totalPoint > 0 ? Math.floor(totalPoint / 25) : null,
+    total_point_product_name: totalPoint > 0 ? 'Aren Latte' : null,
     total_point_image: totalPoint > 0 ? 'https://example.com/images/latte.jpg' : null,
     delivery_count: deliveryCount || null,
     pickup_count: pickupCount || null,

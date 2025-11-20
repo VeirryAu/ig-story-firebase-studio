@@ -23,7 +23,8 @@ export function Screen2({ trxCount = 0 }: Screen2Props) {
       >
         {/* Top text */}
         <p className="text-white font-bold text-center text-lg mt-16 mb-6">
-          {t('screen2.topText')}
+          <div>{t('screen2.topText')}</div>
+          <div>{t('screen2.topTextSecondary')}</div>
         </p>
 
         {/* Infographic circle with overflow logo */}

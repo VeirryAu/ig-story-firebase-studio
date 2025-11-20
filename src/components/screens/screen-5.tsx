@@ -11,8 +11,8 @@ interface Screen5Props {
 export function Screen5({ serverResponse }: Screen5Props) {
   const { t } = useTranslations();
   const totalPoint = serverResponse?.totalPoint || 0;
-  const totalPointDescription = serverResponse?.totalPointDescription || '';
   const totalPointPossibleRedeem = serverResponse?.totalPointPossibleRedeem || 0;
+  const totalPointProductName = serverResponse?.totalPointProductName || 'Aren Latte';
   const totalPointImage = serverResponse?.totalPointImage || 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=400&h=400&fit=crop&crop=center';
 
   return (
@@ -56,7 +56,10 @@ export function Screen5({ serverResponse }: Screen5Props) {
         {/* Description Text */}
         <div className="w-full max-w-md mt-8 mb-6">
           <p className="text-white font-bold text-center text-lg leading-relaxed px-4">
-            {totalPointDescription}
+            {totalPointPossibleRedeem > 0 
+              ? t('screen5.description', { count: totalPointPossibleRedeem, productName: totalPointProductName })
+              : t('screen5.noPointsDescription')
+            }
           </p>
         </div>
 
