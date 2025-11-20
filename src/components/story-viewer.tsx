@@ -329,6 +329,15 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const isNavigatingRef = useRef(false); // Prevent rapid-fire navigation
   const storyViewerRef = useRef<HTMLDivElement>(null);
   const shareButtonTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const safeAreaTopPadding = 'calc(env(safe-area-inset-top) + 24px)';
+  const safeAreaActionTop = 'calc(env(safe-area-inset-top) + 20px)';
+  const headerActionSize = 44;
+  const headerActionStyle: React.CSSProperties = {
+    top: safeAreaActionTop,
+    width: headerActionSize,
+    height: headerActionSize,
+    borderRadius: '9999px',
+  };
   
   // Check if we're in fullscreen mode (no navigation buttons)
   const isFullscreenMode = !!fullscreenSlide;
@@ -1005,29 +1014,29 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
           </>
         )}
         <div className="absolute inset-0 z-30 flex flex-col">
-          {/* Progress bar - hidden in fullscreen mode */}
           {!isFullscreenMode && (
-          <StoryProgressBar
-            stories={stories}
-            currentStoryIndex={currentStoryIndex}
-            currentSlideIndex={currentSlideIndex}
-            isPaused={isPaused}
-            animationKey={animationKey}
-              onAnimationEnd={isLastSlide ? () => {} : goToNextSlide}
-            videoDuration={videoDuration}
-              currentStory={currentStory}
-          />
-          )}
-          
-          {/* Header with avatar and name - hidden in fullscreen mode */}
-          {!isFullscreenMode && (
-            <div className="pt-5 p-3 flex items-center gap-3" data-share-exclude="true">
-              <Avatar className="h-11 w-11 bg-white p-1">
-                <AvatarImage src={currentStory.user.avatar} alt={currentStory.user.name} className="object-contain" />
-              <AvatarFallback>{currentStory.user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <span className="text-white font-semibold text-sm drop-shadow-md">{currentStory.user.name}</span>
-          </div>
+            <div
+              className="flex flex-col"
+              style={{ paddingTop: safeAreaTopPadding }}
+            >
+              <StoryProgressBar
+                stories={stories}
+                currentStoryIndex={currentStoryIndex}
+                currentSlideIndex={currentSlideIndex}
+                isPaused={isPaused}
+                animationKey={animationKey}
+                onAnimationEnd={isLastSlide ? () => {} : goToNextSlide}
+                videoDuration={videoDuration}
+                currentStory={currentStory}
+              />
+              <div className="px-3 flex items-center gap-3" data-share-exclude="true">
+                <Avatar className="h-11 w-11 bg-white p-1">
+                  <AvatarImage src={currentStory.user.avatar} alt={currentStory.user.name} className="object-contain" />
+                  <AvatarFallback>{currentStory.user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <span className="text-white font-semibold text-sm drop-shadow-md">{currentStory.user.name}</span>
+              </div>
+            </div>
           )}
 
           {/* Clickable tap zones for navigation - hidden in fullscreen mode */}
@@ -1086,17 +1095,24 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
         {!isFullscreenMode && (
         <button 
           onClick={() => setIsMuted(!isMuted)} 
-            className="absolute top-3 right-14 z-40 text-white/80 hover:text-white transition-colors p-2" 
+          className="absolute right-14 z-40 text-white/90 hover:text-white transition-colors flex items-center justify-center bg-black/25 backdrop-blur-sm"
+          style={headerActionStyle}
           aria-label={isMuted ? 'Unmute' : 'Mute'}
           data-share-exclude="true"
         >
-            {isMuted ? <VolumeX size={36} /> : <Volume2 size={36} />}
+          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
         </button>
         )}
         {/* Close button - hidden in fullscreen mode */}
         {!isFullscreenMode && (
-          <button onClick={handleClose} className="absolute top-3 right-3 z-40 text-white/80 hover:text-white transition-colors p-2 drop-shadow-none" aria-label="Close stories" data-share-exclude="true">
-              <X size={36} />
+          <button 
+            onClick={handleClose} 
+            className="absolute right-3 z-40 text-white/90 hover:text-white transition-colors flex items-center justify-center bg-black/25 backdrop-blur-sm"
+            style={headerActionStyle}
+            aria-label="Close stories"
+            data-share-exclude="true"
+          >
+            <X size={24} />
         </button>
         )}
 
