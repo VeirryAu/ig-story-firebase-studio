@@ -18,6 +18,7 @@ import { closeWebView, shareImageUrl, track } from '@/lib/native-bridge';
 import { isDevMode } from '@/lib/env';
 import { useTranslations } from '@/hooks/use-translations';
 import { captureScreenshot } from '@/lib/screenshot';
+import { isWebViewEnvironment } from '@/lib/device';
 
 interface StoryViewerProps {
   stories: Story[];
@@ -68,26 +69,45 @@ interface VideoSlideProps {
   slideId: string;
   videoRefs: React.MutableRefObject<Map<string, HTMLVideoElement>>;
   isMuted: boolean;
+  deferLoading?: boolean;
 }
 
-function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted }: VideoSlideProps) {
+function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted, deferLoading = false }: VideoSlideProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasError, setHasError] = useState(false);
   const [canPlay, setCanPlay] = useState(false);
   const [needsUserInteraction, setNeedsUserInteraction] = useState(false);
+  const [shouldLoadSources, setShouldLoadSources] = useState(!deferLoading);
   
   // For screen-13, we need to handle multiple sources
   const isScreen14 = slideId === 'screen-13';
 
   useEffect(() => {
+    if (!deferLoading) {
+      setShouldLoadSources(true);
+    }
+  }, [deferLoading]);
+
+  useEffect(() => {
+    if (!shouldLoadSources && isActive) {
+      setShouldLoadSources(true);
+    }
+  }, [isActive, shouldLoadSources]);
+
+  useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
-
-    // Register video ref
     videoRefs.current.set(slideId, video);
+    return () => {
+      videoRefs.current.delete(slideId);
+    };
+  }, [slideId, videoRefs]);
 
-    // Set video attributes for optimal Instagram-like playback
-    video.preload = 'auto';
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !shouldLoadSources) return;
+
+    video.preload = deferLoading ? 'none' : 'auto';
     video.playsInline = true;
     video.loop = false;
     video.volume = 1.0; // Full volume
@@ -166,14 +186,13 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
       video.removeEventListener('canplaythrough', handleCanPlayThrough);
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('error', handleError);
-      videoRefs.current.delete(slideId);
     };
-  }, [slideId, videoRefs, isActive, isPaused]);
+  }, [slideId, isActive, isPaused, isMuted, shouldLoadSources, deferLoading]);
 
   // Handle play/pause based on active state
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !canPlay) return;
+    if (!video || !canPlay || !shouldLoadSources) return;
 
     if (isActive && !isPaused) {
       video.play().catch((error) => {
@@ -189,6 +208,9 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
 
   // Handle user interaction to start video with sound
   const handleUserInteraction = () => {
+    if (!shouldLoadSources) {
+      setShouldLoadSources(true);
+    }
     const video = videoRef.current;
     if (!video) return;
     
@@ -201,14 +223,14 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
   // Update muted state when prop changes
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !shouldLoadSources) return;
     video.muted = isMuted;
-  }, [isMuted]);
+  }, [isMuted, shouldLoadSources]);
 
   // Get video duration for slide 14
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || slideId !== 'screen-13') return;
+    if (!video || slideId !== 'screen-13' || !shouldLoadSources) return;
 
     const handleLoadedMetadata = () => {
       if (video.duration && !isNaN(video.duration) && isFinite(video.duration)) {
@@ -236,7 +258,7 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
   // Reset video when slide becomes active
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+    if (!video || !shouldLoadSources) return;
 
     if (isActive) {
       video.currentTime = 0;
@@ -257,7 +279,7 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
         }
       }
     }
-  }, [isActive, isPaused, canPlay]);
+  }, [isActive, isPaused, canPlay, shouldLoadSources]);
 
   return (
     <div className="absolute inset-0 w-full h-full">
@@ -266,25 +288,25 @@ function VideoSlide({ src, alt, isActive, isPaused, slideId, videoRefs, isMuted 
         className="absolute inset-0 w-full h-full object-cover"
         playsInline
         autoPlay
-        preload="auto"
+        preload={deferLoading ? "none" : "auto"}
         aria-label={alt}
       >
-        {isScreen14 ? (
+        {shouldLoadSources && isScreen14 ? (
           <>
             <source src="/stories-asset/slides13/forecap-video-barista-av1.mp4" type='video/mp4; codecs="av01.0.05M.08"' />
             <source src="/stories-asset/slides13/forecap-video-barista.webm" type='video/webm; codecs="vp9"' />
             <source src="/stories-asset/slides13/forecap-video-barista-h264.mp4" type='video/mp4; codecs="avc1.42E01E"' />
           </>
-        ) : (
+        ) : shouldLoadSources ? (
           <source src={src} type="video/mp4" />
-        )}
+        ) : null}
       </video>
-      {!canPlay && !hasError && (
+      {shouldLoadSources && !canPlay && !hasError && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/50">
           <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin" />
         </div>
       )}
-      {needsUserInteraction && (
+      {shouldLoadSources && needsUserInteraction && (
         <div 
           className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer"
           onClick={handleUserInteraction}
@@ -324,6 +346,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [shareButtonReady, setShareButtonReady] = useState(false);
+  const [isWebView, setIsWebView] = useState(() => isWebViewEnvironment());
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
   const isNavigatingRef = useRef(false); // Prevent rapid-fire navigation
@@ -345,6 +368,10 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
   // Development-only: Limit slides to specific index for development convenience
   const devMaxSlide = isDevMode() ? config.devMaxSlide : null;
   
+  useEffect(() => {
+    setIsWebView(isWebViewEnvironment());
+  }, []);
+
   // Filter slides based on trxCount: if trxCount is 0, only show slide1 and slide2
   const originalStory = stories[currentStoryIndex];
   let filteredSlides = originalStory?.slides || [];
@@ -596,9 +623,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
     // For screen-13, we have multiple sources - preload all formats
     if (slide.id === 'screen-13') {
       return [
-        { src: '/stories-asset/slides13/forecap-video-barista-av1.mp4', type: 'video/mp4; codecs="av01.0.05M.08"' },
-        { src: '/stories-asset/slides13/forecap-video-barista.webm', type: 'video/webm; codecs="vp9"' },
-        { src: '/stories-asset/slides13/forecap-video-barista-h264.mp4', type: 'video/mp4; codecs="avc1.42E01E"' },
+        { src: '/stories-asset/slides13/forecap-video-barista-av1.mp4', type: 'video/mp4; codecs="av01.0.05M.08"' }
       ];
     }
     return slide.url ? [{ src: slide.url, type: 'video/mp4' }] : [];
@@ -606,7 +631,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
 
   // Start preloading videos asynchronously from slide 1 (not before)
   // This ensures videos are cached in the background while user views earlier slides
-  useVideoPreload(videoSources, currentSlideIndex >= 0);
+  useVideoPreload(videoSources, currentSlideIndex >= 0 && !isWebView);
 
   // Listen for video duration from slide 14
   useEffect(() => {
@@ -951,6 +976,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                     slideId={slide.id}
                     videoRefs={videoRefs}
                     isMuted={isMuted}
+                    deferLoading={isWebView}
                   />
                 )}
                 {slide.type === 'component' && (

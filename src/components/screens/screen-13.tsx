@@ -20,15 +20,7 @@ export function Screen14({ onVideoReady }: Screen14Props) {
       {
         src: '/stories-asset/slides13/forecap-video-barista-av1.mp4',
         type: 'video/mp4; codecs="av01.0.05M.08"',
-      },
-      {
-        src: '/stories-asset/slides13/forecap-video-barista.webm',
-        type: 'video/webm; codecs="vp9"',
-      },
-      {
-        src: '/stories-asset/slides13/forecap-video-barista-h264.mp4',
-        type: 'video/mp4; codecs="avc1.42E01E"',
-      },
+      }
     ];
 
     // Set video attributes for optimal Instagram-like playback
