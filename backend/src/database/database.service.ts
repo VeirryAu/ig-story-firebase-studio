@@ -237,6 +237,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       total_point?: number;
       total_point_possible_redeem?: number;
       total_point_product_name?: string;
+      total_point_description?: string;
       total_point_image?: string;
       delivery_count?: number;
       pickup_count?: number;
