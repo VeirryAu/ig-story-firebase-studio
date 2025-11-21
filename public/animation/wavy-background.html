@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavy Background Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .wave-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(180deg, #6b8e5f 0%, #5a7d4e 100%);
+        }
+
+        .wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .wave path {
+            animation: morphWave 12s ease-in-out infinite;
+        }
+
+        .wave:nth-child(1) {
+            top: 0%;
+        }
+
+        .wave:nth-child(1) path {
+            fill: url(#gradient1);
+            animation-name: morphWave1;
+            animation-delay: 0s;
+            animation-duration: 11s;
+        }
+
+        .wave:nth-child(2) {
+            top: 30%;
+        }
+
+        .wave:nth-child(2) path {
+            fill: url(#gradient2);
+            animation-name: morphWave2;
+            animation-delay: -3s;
+            animation-duration: 15s;
+        }
+
+        .wave:nth-child(3) {
+            top: 60%;
+        }
+
+        .wave:nth-child(3) path {
+            fill: url(#gradient3);
+            animation-name: morphWave3;
+            animation-delay: -7s;
+            animation-duration: 13s;
+        }
+
+        .wave:nth-child(4) {
+            top: 90%;
+        }
+
+        .wave:nth-child(4) path {
+            fill: url(#gradient4);
+            animation-name: morphWave4;
+            animation-delay: -10s;
+            animation-duration: 17s;
+        }
+
+        @keyframes morphWave1 {
+            0%, 100% {
+                d: path("M0,180 C350,220 450,140 850,180 C1150,210 1400,130 1700,170 C2000,200 2200,150 2400,180 L2400,320 L0,320 Z");
+            }
+            30% {
+                d: path("M0,150 C300,110 600,190 900,160 C1200,140 1450,200 1750,150 C2050,120 2250,180 2400,160 L2400,320 L0,320 Z");
+            }
+            65% {
+                d: path("M0,170 C400,200 550,120 950,170 C1250,210 1500,140 1800,180 C2100,200 2300,130 2400,170 L2400,320 L0,320 Z");
+            }
+        }
+
+        @keyframes morphWave2 {
+            0%, 100% {
+                d: path("M0,160 C280,200 520,110 820,150 C1180,190 1350,120 1650,160 C1950,200 2150,130 2400,150 L2400,320 L0,320 Z");
+            }
+            35% {
+                d: path("M0,140 C320,90 580,180 880,130 C1150,100 1420,190 1720,140 C2020,110 2220,170 2400,130 L2400,320 L0,320 Z");
+            }
+            70% {
+                d: path("M0,180 C380,210 600,130 900,180 C1200,200 1480,140 1780,170 C2080,190 2280,150 2400,170 L2400,320 L0,320 Z");
+            }
+        }
+
+        @keyframes morphWave3 {
+            0%, 100% {
+                d: path("M0,190 C320,230 550,150 850,190 C1100,220 1450,140 1750,180 C2050,210 2250,160 2400,190 L2400,320 L0,320 Z");
+            }
+            40% {
+                d: path("M0,160 C280,110 620,200 920,150 C1150,120 1500,210 1800,160 C2100,130 2300,190 2400,160 L2400,320 L0,320 Z");
+            }
+            75% {
+                d: path("M0,175 C380,195 580,125 880,165 C1180,195 1480,135 1780,175 C2080,195 2280,145 2400,175 L2400,320 L0,320 Z");
+            }
+        }
+
+        @keyframes morphWave4 {
+            0%, 100% {
+                d: path("M0,170 C300,210 580,130 880,170 C1200,200 1420,150 1720,180 C2020,210 2220,140 2400,170 L2400,320 L0,320 Z");
+            }
+            45% {
+                d: path("M0,145 C340,105 650,195 950,155 C1250,115 1550,205 1850,145 C2150,105 2350,185 2400,155 L2400,320 L0,320 Z");
+            }
+            80% {
+                d: path("M0,185 C360,215 620,145 920,185 C1220,205 1500,155 1800,195 C2100,215 2300,165 2400,185 L2400,320 L0,320 Z");
+            }
+        }
+
+        /* Scroll indicators */
+        .scroll-indicator {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            z-index: 5;
+            backdrop-filter: blur(10px);
+        }
+
+        .scroll-indicator.left {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 200px;
+            left: 20px;
+        }
+
+        .scroll-indicator.right {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 80px;
+            height: 200px;
+            right: 20px;
+        }
+
+        /* Demo section */
+        .demo-section {
+            padding: 60px 40px;
+            background: #f5f5f5;
+            text-align: center;
+        }
+
+        .demo-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 32px;
+        }
+
+        .demo-section p {
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.6;
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .color-item {
+            text-align: center;
+        }
+
+        .color-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+
+        .color-code {
+            font-family: 'Monaco', monospace;
+            font-size: 12px;
+            color: #666;
+        }
+
+        button {
+            background: #5a7d4e;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+
+        button:hover {
+            background: #4a6d3e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(90, 125, 78, 0.3);
+        }
+
+        .code-section {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: left;
+            max-width: 900px;
+            margin: 30px auto;
+            overflow-x: auto;
+        }
+
+        .code-section h3 {
+            color: #a6e22e;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .code-section pre {
+            margin: 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .features-box {
+            margin-top: 40px;
+            padding: 30px;
+            background: white;
+            border-radius: 12px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-box h3 {
+            color: #5a7d4e;
+            margin-bottom: 15px;
+        }
+
+        .features-box ul {
+            text-align: left;
+            color: #666;
+            line-height: 2;
+        }
+    </style>
+</head>
+<body>
+    <!-- Wavy Background -->
+    <div class="wave-container">
+        <!-- Wave layers with morphing animation -->
+        <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 320" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#a0b968;stop-opacity:0.9" />
+                    <stop offset="50%" style="stop-color:#6b8e5f;stop-opacity:0.7" />
+                    <stop offset="100%" style="stop-color:#a0b968;stop-opacity:0.9" />
+                </linearGradient>
+            </defs>
+            <path d="M0,160 C300,200 500,120 800,160 C1100,200 1300,120 1600,160 C1900,200 2100,120 2400,160 L2400,320 L0,320 Z"></path>
+        </svg>
+        
+        <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 320" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#7fa374;stop-opacity:0.8" />
+                    <stop offset="50%" style="stop-color:#4a6d3e;stop-opacity:0.6" />
+                    <stop offset="100%" style="stop-color:#7fa374;stop-opacity:0.8" />
+                </linearGradient>
+            </defs>
+            <path d="M0,160 C300,200 500,120 800,160 C1100,200 1300,120 1600,160 C1900,200 2100,120 2400,160 L2400,320 L0,320 Z"></path>
+        </svg>
+        
+        <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 320" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="gradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#6d9262;stop-opacity:0.7" />
+                    <stop offset="50%" style="stop-color:#3d5c33;stop-opacity:0.5" />
+                    <stop offset="100%" style="stop-color:#6d9262;stop-opacity:0.7" />
+                </linearGradient>
+            </defs>
+            <path d="M0,160 C300,200 500,120 800,160 C1100,200 1300,120 1600,160 C1900,200 2100,120 2400,160 L2400,320 L0,320 Z"></path>
+        </svg>
+        
+        <svg class="wave" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 320" preserveAspectRatio="none">
+            <defs>
+                <linearGradient id="gradient4" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#5da399;stop-opacity:0.8" />
+                    <stop offset="50%" style="stop-color:#2d6b64;stop-opacity:0.6" />
+                    <stop offset="100%" style="stop-color:#5da399;stop-opacity:0.8" />
+                </linearGradient>
+            </defs>
+            <path d="M0,160 C300,200 500,120 800,160 C1100,200 1300,120 1600,160 C1900,200 2100,120 2400,160 L2400,320 L0,320 Z"></path>
+        </svg>
+
+        <!-- Scroll indicators (decorative) -->
+        <div class="scroll-indicator left"></div>
+        <div class="scroll-indicator right"></div>
+    </div>
+
+    <!-- Demo Section -->
+    <div class="demo-section">
+        <h2>🌊 Wavy Background Animation</h2>
+        <p>
+            Background dengan 4 layer gelombang yang morph dan bergerak secara organic. 
+            Wave shapes berubah-ubah smooth untuk efek fluid yang natural!
+        </p>
+
+        <h3 style="margin-top: 40px; color: #5a7d4e;">Color Palette</h3>
+        <div class="color-palette">
+            <div class="color-item">
+                <div class="color-box" style="background: #6b8e5f;"></div>
+                <div class="color-code">#6b8e5f</div>
+                <small>Base</small>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background: rgba(139, 166, 78, 0.7);"></div>
+                <div class="color-code">#8ba64e</div>
+                <small>Wave 1</small>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background: rgba(106, 142, 95, 0.6);"></div>
+                <div class="color-code">#6a8e5f</div>
+                <small>Wave 2</small>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background: rgba(90, 125, 78, 0.5);"></div>
+                <div class="color-code">#5a7d4e</div>
+                <small>Wave 3</small>
+            </div>
+            <div class="color-item">
+                <div class="color-box" style="background: rgba(72, 139, 132, 0.6);"></div>
+                <div class="color-code">#488b84</div>
+                <small>Wave 4</small>
+            </div>
+        </div>
+
+        <button onclick="scrollTo(0,0)">↑ Back to Top</button>
+
+        <div class="code-section">
+            <h3>💻 How to Use:</h3>
+            <pre>&lt;!-- 1. Copy the wave-container div --&gt;
+&lt;!-- 2. Waves morph using CSS animation --&gt;
+&lt;!-- 3. Customize colors and timing --&gt;
+
+/* Customize wave colors: */
+.wave:nth-child(1) path {
+    fill: rgba(139, 166, 78, 0.7);
+}
+
+/* Adjust animation speed: */
+@keyframes morphWave {
+    /* Change duration: 8s, 10s, 12s, 14s */
+}</pre>
+        </div>
+
+        <div class="features-box">
+            <h3>✨ Features:</h3>
+            <ul>
+                <li>✅ Organic wavy motion (morphing shapes)</li>
+                <li>✅ No sliding - pure wave deformation</li>
+                <li>✅ 4 independent layers</li>
+                <li>✅ Smooth CSS animations</li>
+                <li>✅ Fully responsive</li>
+                <li>✅ Performance optimized</li>
+                <li>✅ Easy color customization</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 12px; max-width: 800px; margin-left: auto; margin-right: auto;">
+            <p style="margin: 0; color: #856404;">
+                <strong>💡 Note:</strong> Waves use CSS path morphing animation. 
+                Each wave has different timing to create natural, organic movement!
+            </p>
+        </div>
+    </div>
+</body>
+</html>

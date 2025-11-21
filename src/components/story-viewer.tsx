@@ -617,21 +617,26 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
     }
   }, [audioReady, isPaused, isVideoSlide, currentSlideIndex, isMuted, playAudio]);
 
-  // Find video slides and preload them starting from slide 1
-  const videoSlides = currentStory?.slides.filter(slide => slide.type === 'video') || [];
-  const videoSources = videoSlides.map(slide => {
+  // Only preload the next video slide (if any) to save memory
+  // Find the next video slide after current slide
+  const nextVideoSlide = currentStory?.slides
+    .slice(currentSlideIndex + 1)
+    .find(slide => slide.type === 'video');
+  
+  const videoSources = nextVideoSlide ? (() => {
     // For screen-13, we have multiple sources - preload all formats
-    if (slide.id === 'screen-13') {
+    if (nextVideoSlide.id === 'screen-13') {
       return [
-        { src: '/stories-asset/slides13/forecap-video-barista-av1.mp4', type: 'video/mp4; codecs="av01.0.05M.08"' }
+        { src: '/stories-asset/slides13/forecap-video-barista-av1.mp4', type: 'video/mp4; codecs="av01.0.05M.08"' },
+        { src: '/stories-asset/slides13/forecap-video-barista.webm', type: 'video/webm; codecs="vp9"' },
+        { src: '/stories-asset/slides13/forecap-video-barista-h264.mp4', type: 'video/mp4; codecs="avc1.42E01E"' },
       ];
     }
-    return slide.url ? [{ src: slide.url, type: 'video/mp4' }] : [];
-  }).flat();
+    return nextVideoSlide.url ? [{ src: nextVideoSlide.url, type: 'video/mp4' }] : [];
+  })() : [];
 
-  // Start preloading videos asynchronously from slide 1 (not before)
-  // This ensures videos are cached in the background while user views earlier slides
-  useVideoPreload(videoSources, currentSlideIndex >= 0 && !isWebView);
+  // Only preload next video if we're not in webview and there's a next video
+  useVideoPreload(videoSources, currentSlideIndex >= 0 && !isWebView && videoSources.length > 0);
 
   // Listen for video duration from slide 14
   useEffect(() => {
@@ -943,19 +948,19 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
         aria-modal="true"
         aria-label={`Story by ${currentStory.user.name}`}
       >
-        {/* Slides Container */}
+        {/* Slides Container - Only render active slide to save memory */}
         <div className="absolute inset-0">
-          {currentStory.slides.map((slide, index) => {
-            const isActive = index === currentSlideIndex;
+          {(() => {
+            // Only render the current active slide
+            const slide = currentSlide;
+            if (!slide) return null;
+
+            const isActive = true; // Always active since we only render this one
             
             return (
               <div
                 key={slide.id}
-                className="absolute inset-0 transition-opacity duration-300"
-                style={{
-                  opacity: isActive ? 1 : 0,
-                  zIndex: isActive ? 10 : 1,
-                }}
+                className="absolute inset-0"
               >
                 {slide.type === 'image' && slide.url && (
                   <Image
@@ -963,7 +968,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                     alt={slide.alt}
                     fill
                     className="object-cover"
-                    priority={isActive}
+                    priority
                     data-ai-hint={slide.aiHint}
                   />
                 )}
@@ -1028,7 +1033,7 @@ export function StoryViewer({ stories, initialStoryIndex = 0, onClose, serverRes
                 )}
               </div>
             );
-          })}
+          })()}
         </div>
 
         {/* Overlay with UI elements - hidden in fullscreen mode */}
